@@ -1,0 +1,24 @@
+@props([
+    'title' => 'Belum ada data',
+    'message' => 'Data Anda akan ditampilkan di sini.',
+    'actionUrl' => null,
+    'actionText' => null,
+])
+
+<div class="empty-state">
+    <div class="empty-state-icon" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+    </div>
+    <div class="empty-state-text">{{ $title }}</div>
+    <div class="empty-state-subtext">{{ $message }}</div>
+
+    @if($actionUrl && $actionText)
+        <a href="{{ $actionUrl }}" class="btn-primary" style="margin-top: 8px; width: auto; padding: 10px 18px; min-height: 40px;">
+            {{ $actionText }}
+        </a>
+    @endif
+</div>

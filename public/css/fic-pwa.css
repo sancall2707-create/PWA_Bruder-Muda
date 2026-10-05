@@ -1,0 +1,1065 @@
+/* ==========================================================================
+   PWA BRUDER FIC INDONESIA - POLISHED DESIGN SYSTEM
+   Mobile-first, spiritual, modern, professional, responsive
+   ========================================================================== */
+
+:root {
+    --fic-primary: #1455C0;
+    --fic-dark-blue: #003E97;
+    --fic-soft-blue: #EAF3FF;
+    --fic-gold: #F4B942;
+    --fic-gold-soft: #FEF6E7;
+    --fic-green: #35A866;
+    --fic-green-soft: #EBF8F0;
+    --fic-cyan: #0284C7;
+    --fic-cyan-soft: #E0F2FE;
+    --fic-bg: #F6F8FC;
+    --fic-surface: #FFFFFF;
+    --fic-text-primary: #1B2430;
+    --fic-text-secondary: #667085;
+    --fic-text-muted: #98A2B3;
+    --fic-border: #E4E7EC;
+    --fic-danger: #BA1A1A;
+    --fic-danger-soft: #FDF2F2;
+
+    --radius-card: 16px;
+    --radius-control: 12px;
+    --radius-badge: 9999px;
+
+    --shadow-subtle: 0 1px 3px rgba(16, 24, 40, 0.05), 0 1px 2px rgba(16, 24, 40, 0.03);
+    --shadow-card: 0 4px 12px -2px rgba(16, 24, 40, 0.06), 0 2px 6px -2px rgba(16, 24, 40, 0.03);
+    --shadow-elevated: 0 10px 24px -4px rgba(16, 24, 40, 0.1), 0 4px 8px -2px rgba(16, 24, 40, 0.04);
+}
+
+/* --------------------------------------------------------------------------
+   PRIORITAS 1 — GLOBAL CSS RESET & TYPOGRAPHY HYGIENE
+   -------------------------------------------------------------------------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+html {
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #EEF2F6;
+    color: var(--fic-text-primary);
+    line-height: 1.5;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+    padding: 0;
+    overflow-wrap: break-word;
+}
+
+/* --------------------------------------------------------------------------
+   PRIORITAS 2 — APP SHELL & MOBILE CONTAINER
+   -------------------------------------------------------------------------- */
+.app-container {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background-color: var(--fic-bg);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
+}
+
+/* App Header */
+.app-header {
+    background: linear-gradient(135deg, var(--fic-dark-blue) 0%, var(--fic-primary) 100%);
+    color: #ffffff;
+    padding: 16px 20px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    box-shadow: 0 4px 12px rgba(0, 62, 151, 0.15);
+    width: 100%;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.identity-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.identity-logo {
+    width: 38px;
+    height: 38px;
+    background-color: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.identity-titles {
+    display: flex;
+    flex-direction: column;
+}
+
+.identity-title-main {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    line-height: 1.1;
+    color: #ffffff;
+}
+
+.identity-title-sub {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.header-user-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: var(--fic-gold);
+    color: var(--fic-dark-blue);
+    font-weight: 700;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.header-greeting {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-greeting-label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+}
+
+.header-greeting-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.3;
+    overflow-wrap: break-word;
+}
+
+/* Page Subheader with Back Button */
+.page-subheader {
+    background-color: var(--fic-surface);
+    border-bottom: 1px solid var(--fic-border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    width: 100%;
+}
+
+.btn-back {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background-color: var(--fic-bg);
+    border: 1px solid var(--fic-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fic-text-primary);
+    text-decoration: none;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-back:hover {
+    background-color: #E4E7EC;
+}
+
+.page-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--fic-text-primary);
+    line-height: 1.3;
+}
+
+/* Main Content Area - Generous Bottom Space preventing nav obstruction */
+.app-content {
+    flex: 1;
+    padding: 18px 20px calc(108px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.app-content.no-nav {
+    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+}
+
+/* --------------------------------------------------------------------------
+   PRIORITAS 3 — BOTTOM NAVIGATION
+   -------------------------------------------------------------------------- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 480px;
+    min-height: 68px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background-color: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--fic-border);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    z-index: 50;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--fic-text-secondary);
+    text-decoration: none;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    padding: 8px 4px;
+    transition: color 0.15s ease;
+    min-height: 48px;
+}
+
+.nav-item svg {
+    width: 22px;
+    height: 22px;
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+}
+
+.nav-item.active {
+    color: var(--fic-primary);
+    font-weight: 700;
+}
+
+.nav-item.active svg {
+    transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   CARDS & CONTAINERS
+   -------------------------------------------------------------------------- */
+.card {
+    background-color: var(--fic-surface);
+    border-radius: var(--radius-card);
+    border: 1px solid var(--fic-border);
+    padding: 20px;
+    box-shadow: var(--shadow-card);
+    width: 100%;
+    height: auto;
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--fic-text-primary);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-subtitle {
+    font-size: 12px;
+    color: var(--fic-text-secondary);
+    margin-bottom: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   SECTION 1: PROGRESS STAT CARD
+   -------------------------------------------------------------------------- */
+.progress-stat-card {
+    background: linear-gradient(135deg, #ffffff 0%, #F8FAFD 100%);
+    border: 1px solid var(--fic-border);
+    border-radius: var(--radius-card);
+    padding: 20px;
+    box-shadow: var(--shadow-card);
+    width: 100%;
+}
+
+.stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.stat-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--fic-text-secondary);
+}
+
+.stat-body {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.stat-ring {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    flex-shrink: 0;
+}
+
+.stat-ring-svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+}
+
+.stat-ring-circle-bg {
+    fill: none;
+    stroke: var(--fic-soft-blue);
+    stroke-width: 8;
+}
+
+.stat-ring-circle {
+    fill: none;
+    stroke: var(--fic-primary);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 201;
+    stroke-dashoffset: 60; /* ~70% */
+    transition: stroke-dashoffset 0.8s ease;
+}
+
+.stat-ring-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--fic-primary);
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-info-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--fic-text-muted);
+    text-transform: uppercase;
+}
+
+.stat-info-val {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--fic-text-primary);
+    line-height: 1.1;
+}
+
+.stat-info-sub {
+    font-size: 12px;
+    color: var(--fic-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   SECTION 2: REMINDER CARD
+   -------------------------------------------------------------------------- */
+.reminder-card {
+    background-color: var(--fic-surface);
+    border: 1px solid var(--fic-border);
+    border-left: 4px solid var(--fic-primary);
+    border-radius: var(--radius-card);
+    padding: 18px;
+    box-shadow: var(--shadow-card);
+    width: 100%;
+}
+
+.reminder-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--fic-primary);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.reminder-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.reminder-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid #F2F4F7;
+}
+
+.reminder-item:first-child {
+    border-top: none;
+    padding-top: 0;
+}
+
+.reminder-bullet {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--fic-primary);
+    margin-top: 6px;
+    flex-shrink: 0;
+}
+
+.reminder-content {
+    flex: 1;
+}
+
+.reminder-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--fic-text-primary);
+    line-height: 1.3;
+    margin-bottom: 2px;
+}
+
+.reminder-date {
+    font-size: 12px;
+    color: var(--fic-text-secondary);
+    line-height: 1.35;
+}
+
+/* --------------------------------------------------------------------------
+   PRIORITAS 5 — MENU UTAMA DASHBOARD (Grid 2x2 & Card Flexbox)
+   -------------------------------------------------------------------------- */
+.menu-section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.section-title {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--fic-text-secondary);
+    margin-bottom: 12px;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    width: 100%;
+}
+
+.menu-card {
+    background-color: var(--fic-surface);
+    border-radius: var(--radius-card);
+    border: 1px solid var(--fic-border);
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    text-decoration: none;
+    color: var(--fic-text-primary);
+    box-shadow: var(--shadow-card);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    min-height: 152px;
+    height: auto;
+    width: 100%;
+    position: relative;
+    box-sizing: border-box;
+    outline: none;
+}
+
+/* Accessible focus: only when navigating with keyboard, never persistent after click/tap */
+.menu-card:focus {
+    outline: none;
+}
+
+.menu-card:focus:not(:focus-visible) {
+    outline: none;
+    border-color: var(--fic-border);
+}
+
+.menu-card:focus-visible {
+    outline: 2px solid var(--fic-primary);
+    outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .menu-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-elevated);
+    }
+    .menu-card.blue:hover {
+        border-color: var(--fic-primary);
+    }
+    .menu-card.cyan:hover {
+        border-color: var(--fic-cyan);
+    }
+    .menu-card.gold:hover {
+        border-color: var(--fic-gold);
+    }
+    .menu-card.green:hover {
+        border-color: var(--fic-green);
+    }
+}
+
+.menu-card:active {
+    transform: scale(0.98);
+}
+
+.menu-card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.menu-card-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.menu-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--fic-text-primary);
+    margin: 0;
+    padding: 0;
+    word-break: normal;
+    overflow-wrap: break-word;
+}
+
+.menu-card-desc {
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--fic-text-secondary);
+    margin: 0;
+    padding: 0;
+}
+
+/* Color Themes for Menu Card Icons */
+.menu-card.blue .menu-card-icon {
+    background-color: var(--fic-soft-blue);
+    color: var(--fic-primary);
+}
+
+.menu-card.cyan .menu-card-icon {
+    background-color: var(--fic-cyan-soft);
+    color: var(--fic-cyan);
+}
+
+.menu-card.gold .menu-card-icon {
+    background-color: var(--fic-gold-soft);
+    color: #B57900;
+}
+
+.menu-card.green .menu-card-icon {
+    background-color: var(--fic-green-soft);
+    color: var(--fic-green);
+}
+
+/* --------------------------------------------------------------------------
+   BUTTONS & ACTIONS
+   -------------------------------------------------------------------------- */
+.btn-primary {
+    background-color: var(--fic-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-control);
+    padding: 13px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    min-height: 48px;
+    width: 100%;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 2px 6px rgba(20, 85, 192, 0.25);
+    box-sizing: border-box;
+}
+
+.btn-primary:hover {
+    background-color: var(--fic-dark-blue);
+}
+
+.btn-secondary {
+    background-color: #ffffff;
+    color: var(--fic-text-primary);
+    border: 1px solid var(--fic-border);
+    border-radius: var(--radius-control);
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    min-height: 48px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.btn-secondary:hover {
+    background-color: #F8FAFC;
+    border-color: #CBD5E1;
+}
+
+.btn-danger {
+    background-color: var(--fic-danger);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-control);
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.btn-danger:hover {
+    background-color: #991414;
+}
+
+/* --------------------------------------------------------------------------
+   STATUS BADGES
+   -------------------------------------------------------------------------- */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: var(--radius-badge);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    flex-shrink: 0;
+}
+
+.badge-scheduled {
+    background-color: var(--fic-soft-blue);
+    color: var(--fic-primary);
+    border: 1px solid rgba(20, 85, 192, 0.2);
+}
+
+.badge-draft {
+    background-color: #F2F4F7;
+    color: #475467;
+    border: 1px solid #D0D5DD;
+}
+
+.badge-submitted {
+    background-color: #FEF3F2;
+    color: #B42318;
+}
+
+.badge-done, .badge-terkirim {
+    background-color: var(--fic-green-soft);
+    color: #027A48;
+    border: 1px solid rgba(53, 168, 102, 0.25);
+}
+
+.badge-cancelled {
+    background-color: var(--fic-danger-soft);
+    color: var(--fic-danger);
+    border: 1px solid rgba(186, 26, 26, 0.2);
+}
+
+.badge-gold {
+    background-color: var(--fic-gold-soft);
+    color: #B57900;
+    border: 1px solid rgba(244, 185, 66, 0.4);
+}
+
+.badge-cyan {
+    background-color: var(--fic-cyan-soft);
+    color: var(--fic-cyan);
+    border: 1px solid rgba(2, 132, 199, 0.3);
+}
+
+/* --------------------------------------------------------------------------
+   FORM CONTROLS
+   -------------------------------------------------------------------------- */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+.form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fic-text-primary);
+}
+
+.form-label .required {
+    color: var(--fic-danger);
+}
+
+.form-input, .form-textarea, .form-select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--fic-border);
+    border-radius: var(--radius-control);
+    background-color: #ffffff;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--fic-text-primary);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    min-height: 48px;
+    box-sizing: border-box;
+}
+
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+    border-color: var(--fic-primary);
+    box-shadow: 0 0 0 3px rgba(20, 85, 192, 0.15);
+}
+
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-help {
+    font-size: 11px;
+    color: var(--fic-text-secondary);
+}
+
+/* Upload Dropzone */
+.file-upload-box {
+    border: 2px dashed var(--fic-border);
+    border-radius: var(--radius-control);
+    padding: 24px 16px;
+    text-align: center;
+    background-color: #FAFCFF;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+    display: block;
+    width: 100%;
+}
+
+.file-upload-box:hover {
+    border-color: var(--fic-primary);
+    background-color: var(--fic-soft-blue);
+}
+
+.file-upload-icon {
+    width: 36px;
+    height: 36px;
+    color: var(--fic-primary);
+    margin: 0 auto 8px;
+}
+
+.file-upload-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fic-text-primary);
+}
+
+.file-upload-subtext {
+    font-size: 11px;
+    color: var(--fic-text-secondary);
+    margin-top: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   ITEM LISTS & CARDS
+   -------------------------------------------------------------------------- */
+.item-card {
+    background-color: var(--fic-surface);
+    border-radius: var(--radius-card);
+    border: 1px solid var(--fic-border);
+    padding: 18px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+.item-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.item-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--fic-text-primary);
+    line-height: 1.3;
+}
+
+.item-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--fic-text-secondary);
+}
+
+.meta-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.item-card-preview {
+    font-size: 13px;
+    color: #475467;
+    background-color: #F8FAFC;
+    border-radius: 8px;
+    padding: 12px;
+    line-height: 1.5;
+}
+
+/* --------------------------------------------------------------------------
+   EMPTY STATE
+   -------------------------------------------------------------------------- */
+.empty-state {
+    text-align: center;
+    padding: 36px 20px;
+    background-color: var(--fic-surface);
+    border-radius: var(--radius-card);
+    border: 1px dashed var(--fic-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.empty-state-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: var(--fic-soft-blue);
+    color: var(--fic-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-state-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--fic-text-primary);
+}
+
+.empty-state-subtext {
+    font-size: 12px;
+    color: var(--fic-text-secondary);
+    max-width: 260px;
+}
+
+/* --------------------------------------------------------------------------
+   CALENDAR
+   -------------------------------------------------------------------------- */
+.calendar-card {
+    background-color: var(--fic-surface);
+    border-radius: var(--radius-card);
+    border: 1px solid var(--fic-border);
+    padding: 18px;
+    box-shadow: var(--shadow-card);
+    width: 100%;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.calendar-month {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--fic-text-primary);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    text-align: center;
+}
+
+.calendar-day-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--fic-text-muted);
+    padding: 6px 0;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--fic-text-primary);
+    position: relative;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.calendar-day:hover {
+    background-color: #F2F4F7;
+}
+
+.calendar-day.empty {
+    cursor: default;
+}
+
+.calendar-day.selected {
+    background-color: var(--fic-primary);
+    color: #ffffff;
+}
+
+.calendar-day.today {
+    border-color: var(--fic-primary);
+    font-weight: 800;
+}
+
+.calendar-dots {
+    display: flex;
+    gap: 2px;
+    margin-top: 2px;
+    height: 4px;
+}
+
+.dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+}
+.dot.blue { background-color: var(--fic-primary); }
+.dot.cyan { background-color: var(--fic-cyan); }
+.dot.gold { background-color: var(--fic-gold); }
+.calendar-day.selected .dot { background-color: #ffffff; }
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE ADJUSTMENTS (Mobile, Tablet, Desktop)
+   -------------------------------------------------------------------------- */
+@media (max-width: 340px) {
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+    .app-content {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+    .card {
+        padding: 16px;
+    }
+}
+
+@media (min-width: 481px) {
+    body {
+        padding: 24px 0;
+    }
+    .app-container {
+        border-radius: 20px;
+        overflow: hidden;
+        min-height: calc(100vh - 48px);
+        min-height: calc(100dvh - 48px);
+    }
+    .bottom-nav {
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+}

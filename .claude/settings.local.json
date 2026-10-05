@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(composer *)",
+      "PowerShell(composer create-project *)"
+    ]
+  }
+}
