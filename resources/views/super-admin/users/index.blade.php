@@ -23,48 +23,82 @@
         .search-form input { flex:1; padding:12px 14px; border-radius:12px; border:1px solid #E4E7EC; background:#fff; font-size:13px; }
         .search-form button { background:#1455C0; color:#fff; border:none; padding:12px 20px; border-radius:12px; font-weight:700; cursor:pointer; }
         .list { display:flex; flex-direction:column; gap:10px; }
-        .card { background:#fff; border:1px solid #E4E7EC; border-radius:14px; padding:14px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 6px rgba(16,24,40,0.03); }
+        .card { background:#fff; border:1px solid #E4E7EC; border-radius:14px; padding:14px; display:flex; gap:12px; align-items:flex-start; box-shadow:0 2px 6px rgba(16,24,40,0.03); }
+        .avatar { width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,#1455C0,#003E97); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
         .name { font-weight:700; color:#101828; }
         .loc { font-size:12px; color:#667085; margin-top:2px; }
-        .btn { background:#1455C0; color:#fff; padding:10px 16px; border-radius:10px; font-weight:700; text-decoration:none; font-size:13px; }
+        .meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+        .pill { font-size:11px; font-weight:800; border-radius:999px; padding:3px 8px; }
+        .actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+        .btn { background:#1455C0; color:#fff; padding:8px 12px; border-radius:10px; font-weight:700; text-decoration:none; font-size:12px; border:none; cursor:pointer; }
+        .btn-muted { background:#F2F4F7; color:#344054; }
+        .btn-danger { background:#B42318; color:#fff; }
+        .fab { position:fixed; right:max(16px, calc(50vw - 224px)); bottom:24px; width:56px; height:56px; border-radius:18px; background:#1455C0; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:32px; font-weight:500; box-shadow:0 8px 18px rgba(20,85,192,0.35); }
+        .body { padding-bottom:96px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <div class="header-nav">
-                <a href="{{ route('superadmin.fase2-check') }}" class="btn-header-back" aria-label="Kembali ke Dashboard">
+                <a href="{{ route('superadmin.dashboard') }}" class="btn-header-back" aria-label="Kembali ke Dashboard">
                     ←
                 </a>
                 <div class="badge"><span>👥</span> MANAJEMEN BRUDER</div>
             </div>
-            <h1 class="title">Daftar Bruder Muda</h1>
+            <h1 class="title">Manajemen Data Bruder</h1>
             <p class="subtitle">Kelola akun, cari cepat, tambah baru.</p>
         </div>
         <div class="body">
+            @if(session('success'))
+                <div style="background:#ECFDF3; border:1px solid #ABEFC6; color:#027A48; padding:12px 14px; border-radius:12px; font-size:13px; font-weight:700;">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <form method="GET" class="search-form">
-                <input type="text" name="search" placeholder="Cari nama, username, komunitas..." value="{{ request('search') }}">
+                <input type="text" name="search" placeholder="Cari nama, username, komunitas..." value="{{ $search }}">
                 <button type="submit">Cari</button>
             </form>
 
             <div class="list">
                 @forelse($users as $u)
-                    <div class="card">
-                        <div>
+                    @php
+                        $words = preg_split('/\s+/', trim($u->name)) ?: [];
+                        $initials = strtoupper(substr($words[0] ?? 'B', 0, 1).substr($words[1] ?? '', 0, 1));
+                        $monthDone = ($u->bimbingan_month_count ?? 0) + ($u->wawanhati_month_count ?? 0) + ($u->journal_month_count ?? 0);
+                    @endphp
+                    <article class="card">
+                        <div class="avatar" aria-hidden="true">{{ $initials }}</div>
+                        <div style="flex:1;">
                             <div class="name">{{ $u->name }}</div>
-                            <div class="loc">{{ $u->community_location ?? 'Komunitas belum diset' }}</div>
+                            <div class="loc">{{ '@'.$u->username }} · {{ $u->community_location ?? 'Komunitas belum diset' }}</div>
+                            <div class="meta">
+                                <span class="pill" style="color: {{ $u->is_active ? '#027A48' : '#B42318' }}; background: {{ $u->is_active ? '#ECFDF3' : '#FEF3F2' }};">{{ $u->is_active ? 'Aktif' : 'Nonaktif' }}</span>
+                                <span class="pill" style="color:#1455C0; background:#EFF4FF;">{{ $monthDone }}/3 bulan ini</span>
+                            </div>
+                            <div class="actions">
+                                <a href="{{ route('superadmin.users.track-record', $u) }}" class="btn">Track Record</a>
+                                <form method="POST" action="{{ route('superadmin.users.status', $u) }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-muted">{{ $u->is_active ? 'Nonaktifkan' : 'Aktifkan' }}</button>
+                                </form>
+                                <form method="POST" action="{{ route('superadmin.users.destroy', $u) }}" onsubmit="return confirm('Hapus akun {{ $u->name }} dari daftar? Riwayat laporannya tetap tersimpan.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger">Hapus</button>
+                                </form>
+                            </div>
                         </div>
-                        <a href="{{ route('superadmin.users.track-record', $u->id) }}" class="btn">Track Record</a>
-                    </div>
+                    </article>
                 @empty
                     <div class="card" style="text-align:center; color:#667085;">Belum ada data bruder muda.</div>
                 @endforelse
             </div>
 
             {{ $users->links() }}
-
-            <a href="{{ route('superadmin.users.create') }}" class="btn" style="width:100%; text-align:center; box-sizing:border-box; padding:14px; margin-top:8px;">+ Tambah Bruder Baru</a>
         </div>
+        <a href="{{ route('superadmin.users.create') }}" class="fab" aria-label="Tambah bruder muda">+</a>
     </div>
 </body>
 </html>

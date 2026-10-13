@@ -48,10 +48,30 @@
 
         <div class="card">
             <div class="card-title">Statistik Pembinaan</div>
-            <div class="detail-row"><span class="detail-label">Bimbingan Rohani</span><span class="detail-value">{{ $user->spiritualGuidanceReports->count() }} Laporan</span></div>
-            <div class="detail-row"><span class="detail-label">Wawanhati Pilok</span><span class="detail-value">{{ $user->wawanhatiReports->count() }} Laporan</span></div>
-            <div class="detail-row"><span class="detail-label">Jurnal Pengembangan Diri</span><span class="detail-value">{{ $user->selfDevelopmentJournals->count() }} Jurnal</span></div>
-            <div class="detail-row"><span class="detail-label">Agenda Pribadi</span><span class="detail-value">{{ $user->personalAgendas->count() }} Item</span></div>
+            <div class="detail-row"><span class="detail-label">Status akun</span><span class="detail-value">{{ $user->is_active ? 'Aktif' : 'Nonaktif' }}</span></div>
+            <div class="detail-row"><span class="detail-label">Bimbingan Rohani</span><span class="detail-value">{{ $user->spiritual_guidance_reports_count }} Laporan</span></div>
+            <div class="detail-row"><span class="detail-label">Wawanhati Pilok</span><span class="detail-value">{{ $user->wawanhati_reports_count }} Laporan</span></div>
+            <div class="detail-row"><span class="detail-label">Jurnal Pengembangan Diri</span><span class="detail-value">{{ $user->self_development_journals_count }} Jurnal</span></div>
+            <div class="detail-row"><span class="detail-label">Agenda Pribadi</span><span class="detail-value">{{ $user->personal_agendas_count }} Item</span></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Laporan Terbaru</div>
+            @forelse($recentBimbingan as $report)
+                <div class="detail-row"><span class="detail-label">Bimbingan</span><span class="detail-value">{{ $report->mentor_name }}</span></div>
+            @empty
+            @endforelse
+            @forelse($recentWawanhati as $report)
+                <div class="detail-row"><span class="detail-label">Wawanhati</span><span class="detail-value">{{ $report->local_leader_name }}</span></div>
+            @empty
+            @endforelse
+            @forelse($recentJournals as $journal)
+                <div class="detail-row"><span class="detail-label">Jurnal</span><span class="detail-value">{{ $journal->activity_name }}</span></div>
+            @empty
+            @endforelse
+            @if($recentBimbingan->isEmpty() && $recentWawanhati->isEmpty() && $recentJournals->isEmpty())
+                <div class="detail-value">Belum ada laporan tersimpan.</div>
+            @endif
         </div>
 
         <a href="{{ route('superadmin.users.index') }}" class="back-link">← Kembali ke Daftar Bruder</a>

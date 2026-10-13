@@ -24,25 +24,31 @@ class SuperAdminOverviewService
         $start = $month->copy()->startOfMonth();
         $end = $month->copy()->endOfMonth();
 
-        $activeBruders = User::where('role', 'user')->where('is_active', true)->count();
+        $activeIds = User::where('role', 'user')->where('is_active', true)->pluck('id');
+        $activeBruders = $activeIds->count();
         $inactiveBruders = User::where('role', 'user')->where('is_active', false)->count();
         $admins = User::whereIn('role', ['admin', 'super_admin'])->count();
 
-        $bimbinganSubmitted = SpiritualGuidanceReport::whereBetween('meeting_at', [$start, $end])
+        $bimbinganSubmitted = SpiritualGuidanceReport::whereIn('user_id', $activeIds)
+            ->whereBetween('meeting_at', [$start, $end])
             ->whereIn('status', ['submitted', 'published', 'completed', 'approved'])
             ->count();
 
-        $wawanhatiSubmitted = WawanhatiReport::whereBetween('meeting_at', [$start, $end])
+        $wawanhatiSubmitted = WawanhatiReport::whereIn('user_id', $activeIds)
+            ->whereBetween('meeting_at', [$start, $end])
             ->whereIn('status', ['submitted', 'published', 'completed', 'approved'])
             ->count();
 
-        $journalPublished = SelfDevelopmentJournal::whereBetween('activity_date', [$start, $end])
+        $journalPublished = SelfDevelopmentJournal::whereIn('user_id', $activeIds)
+            ->whereBetween('activity_date', [$start->toDateString(), $end->toDateString()])
             ->whereIn('status', ['published', 'submitted', 'completed', 'approved'])
             ->count();
 
-        $expectedReports = max(1, $activeBruders * 3);
+        $expectedReports = $activeBruders * 3;
         $completedReports = $bimbinganSubmitted + $wawanhatiSubmitted + $journalPublished;
-        $completionPercent = min(100, round(($completedReports / $expectedReports) * 100));
+        $completionPercent = $expectedReports === 0
+            ? 0
+            : min(100, (int) round(($completedReports / $expectedReports) * 100));
 
         return [
             'period_label' => $month->translatedFormat('F Y'),
@@ -62,14 +68,44 @@ class SuperAdminOverviewService
     }
 
     /**
+     * Daftar bruder muda beserta capaian laporan bulan berjalan.
+     */
+    public function bruderDirectory(?string $search = null)
+    {
+        $start = now()->startOfMonth();
+        $end = now()->endOfMonth();
+        $counted = ['submitted', 'published', 'completed', 'approved'];
+
+        $query = User::query()->where('role', 'user');
+
+        $search = trim((string) $search);
+        if ($search !== '') {
+            $like = '%'.addcslashes($search, '%_\\').'%';
+            $query->where(function ($inner) use ($like) {
+                $inner->where('name', 'like', $like)
+                    ->orWhere('username', 'like', $like)
+                    ->orWhere('community_location', 'like', $like);
+            });
+        }
+
+        return $query->withCount([
+            'spiritualGuidanceReports as bimbingan_month_count' => fn ($reports) => $reports
+                ->whereBetween('meeting_at', [$start, $end])
+                ->whereIn('status', $counted),
+            'wawanhatiReports as wawanhati_month_count' => fn ($reports) => $reports
+                ->whereBetween('meeting_at', [$start, $end])
+                ->whereIn('status', $counted),
+            'selfDevelopmentJournals as journal_month_count' => fn ($journals) => $journals
+                ->whereBetween('activity_date', [$start->toDateString(), $end->toDateString()])
+                ->whereIn('status', $counted),
+        ])->orderByDesc('is_active')->orderBy('name');
+    }
+
+    /**
      * Daftar bruder muda untuk kartu ringkas dashboard.
      */
     public function bruderCards(int $limit = 8)
     {
-        return User::where('role', 'user')
-            ->orderByDesc('is_active')
-            ->orderBy('name')
-            ->limit($limit)
-            ->get();
+        return $this->bruderDirectory()->limit($limit)->get();
     }
 }
