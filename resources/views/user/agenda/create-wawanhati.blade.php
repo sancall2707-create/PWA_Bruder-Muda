@@ -18,6 +18,14 @@
         @csrf
         <input type="hidden" name="agenda_type" value="wawanhati">
 
+        @if ($errors->any())
+            <div style="background-color: #FEF3F2; border: 1px solid #FECDCA; border-radius: 12px; padding: 12px 14px; color: #B42318; font-size: 13px; margin-bottom: 18px;">
+                @foreach ($errors->all() as $error)
+                    <div>{{ $error }}</div>
+                @endforeach
+            </div>
+        @endif
+
         <!-- Nama Pimpinan Lokal -->
         <div class="form-group">
             <label for="local_leader_name" class="form-label">

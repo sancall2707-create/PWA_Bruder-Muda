@@ -86,6 +86,8 @@
                 class="form-textarea"
                 rows="6"
                 placeholder="Tuliskan catatan dialog seputar kehidupan komunitas, karya kerasulan, dan hal-hal pembinaan (200–500 karakter)..."
+                minlength="200"
+                maxlength="500"
                 required
             >{{ old('report_content') }}</textarea>
             <span class="form-help">Wawanhati adalah dialog persaudaraan dan evaluasi pembinaan bersama Piko. Minimal 200 karakter, maksimal 500 karakter.</span>

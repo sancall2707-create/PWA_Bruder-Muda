@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PersonalAgenda;
+use App\Models\ProvincialMessage;
 use App\Models\SelfDevelopmentJournal;
 use App\Models\SpiritualGuidanceReport;
-use App\Models\SpiritualGuidanceSchedule;
-use App\Models\User;
 use App\Models\WawanhatiReport;
-use App\Models\WawanhatiSchedule;
+use App\Services\PersonalScheduleQuery;
 use Illuminate\Contracts\View\View;
 
 class DashboardController extends Controller
@@ -20,15 +18,14 @@ class DashboardController extends Controller
     public function user(): View
     {
         $user = auth()->user();
-        
+
         // Statistik pembinaan bulan berjalan
         $stats = $this->getMonthlyStats($user->id);
-        
-        // Jadwal mendatang
-        $upcomingSchedules = $this->getUpcomingSchedules($user->id);
-        
+
+        $upcomingSchedules = app(PersonalScheduleQuery::class)->upcoming($user->id);
+
         // Sapaan provinsial terbaru
-        $sapaan = \App\Models\ProvincialMessage::where('is_active', true)
+        $sapaan = ProvincialMessage::where('is_active', true)
             ->latest('published_at')
             ->first();
 
@@ -88,69 +85,5 @@ class DashboardController extends Controller
             'target' => $target,
             'persentase' => $persentase,
         ];
-    }
-
-    /**
-     * Ambil jadwal mendatang 3 item terdekat.
-     */
-    private function getUpcomingSchedules(int $userId): array
-    {
-        $now = now();
-        
-        $bimbingan = SpiritualGuidanceSchedule::where('user_id', $userId)
-            ->where('scheduled_at', '>=', $now)
-            ->where('status', '!=', 'cancelled')
-            ->orderBy('scheduled_at')
-            ->limit(2)
-            ->get()
-            ->map(function ($s) {
-                return [
-                    'type' => 'bimbingan',
-                    'title' => 'Bimbingan Rohani',
-                    'person' => $s->mentor_name,
-                    'datetime' => $s->scheduled_at,
-                    'location' => $s->location,
-                ];
-            });
-
-        $wawanhati = WawanhatiSchedule::where('user_id', $userId)
-            ->where('scheduled_at', '>=', $now)
-            ->where('status', '!=', 'cancelled')
-            ->orderBy('scheduled_at')
-            ->limit(2)
-            ->get()
-            ->map(function ($s) {
-                return [
-                    'type' => 'wawanhati',
-                    'title' => 'Wawanhati Pilok',
-                    'person' => $s->local_leader_name,
-                    'datetime' => $s->scheduled_at,
-                    'location' => $s->location,
-                ];
-            });
-
-        $agenda = PersonalAgenda::where('user_id', $userId)
-            ->where('start_at', '>=', $now)
-            ->where('status', '!=', 'cancelled')
-            ->orderBy('start_at')
-            ->limit(2)
-            ->get()
-            ->map(function ($a) {
-                return [
-                    'type' => 'lainnya',
-                    'title' => $a->title,
-                    'person' => $a->description,
-                    'datetime' => $a->start_at,
-                    'location' => $a->location,
-                ];
-            });
-
-        $all = $bimbingan->merge($wawanhati)->merge($agenda)
-            ->sortBy('datetime')
-            ->take(3)
-            ->values()
-            ->toArray();
-
-        return $all;
     }
 }

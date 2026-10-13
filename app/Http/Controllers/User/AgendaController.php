@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\PersonalAgenda;
 use App\Models\SpiritualGuidanceSchedule;
 use App\Models\WawanhatiSchedule;
+use App\Services\PersonalScheduleQuery;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,80 +18,11 @@ class AgendaController extends Controller
      */
     public function index(): View
     {
-        $userId = auth()->id();
-        $now = now();
+        $month = now();
+        $agendas = app(PersonalScheduleQuery::class)->inMonth(auth()->id(), $month);
+        $monthLabel = $month->locale('id')->translatedFormat('F Y');
 
-        $bimbinganSchedules = SpiritualGuidanceSchedule::where('user_id', $userId)
-            ->where('scheduled_at', '>=', $now)
-            ->where('status', '!=', 'cancelled')
-            ->orderBy('scheduled_at')
-            ->get()
-            ->map(function ($s) {
-                return [
-                    'type' => 'bimbingan',
-                    'id' => $s->id,
-                    'category' => 'bimbingan',
-                    'title' => 'Bimbingan Rohani',
-                    'target_person' => $s->mentor_name,
-                    'date_formatted' => $s->scheduled_at->translatedFormat('d M Y'),
-                    'time_formatted' => $s->scheduled_at->format('H:i'),
-                    'location' => $s->location,
-                    'notes' => $s->topic_notes,
-                    'status' => $s->status,
-                ];
-            });
-
-        $wawanhatiSchedules = WawanhatiSchedule::where('user_id', $userId)
-            ->where('scheduled_at', '>=', $now)
-            ->where('status', '!=', 'cancelled')
-            ->orderBy('scheduled_at')
-            ->get()
-            ->map(function ($s) {
-                return [
-                    'type' => 'wawanhati',
-                    'id' => $s->id,
-                    'category' => 'wawanhati',
-                    'title' => 'Wawanhati Pilok',
-                    'target_person' => $s->local_leader_name,
-                    'date_formatted' => $s->scheduled_at->translatedFormat('d M Y'),
-                    'time_formatted' => $s->scheduled_at->format('H:i'),
-                    'location' => $s->location,
-                    'notes' => $s->topic_notes,
-                    'status' => $s->status,
-                ];
-            });
-
-        $personalAgendas = PersonalAgenda::where('user_id', $userId)
-            ->where('start_at', '>=', $now)
-            ->where('status', '!=', 'cancelled')
-            ->orderBy('start_at')
-            ->get()
-            ->map(function ($a) {
-                return [
-                    'type' => 'lainnya',
-                    'id' => $a->id,
-                    'category' => 'lainnya',
-                    'title' => $a->title,
-                    'target_person' => $a->description,
-                    'date_formatted' => $a->start_at->translatedFormat('d M Y'),
-                    'time_formatted' => $a->start_at->format('H:i'),
-                    'location' => $a->location,
-                    'notes' => $a->description,
-                    'status' => $a->status,
-                ];
-            });
-
-        $allAgendas = $bimbinganSchedules
-            ->merge($wawanhatiSchedules)
-            ->merge($personalAgendas)
-            ->sortBy(function ($a) {
-                return $a['date_formatted'] . ' ' . $a['time_formatted'];
-            })
-            ->values();
-
-        $agendas = $allAgendas->map(fn($a) => (object) $a);
-
-        return view('user.agenda.index', compact('agendas', 'allAgendas'));
+        return view('user.agenda.index', compact('agendas', 'monthLabel'));
     }
 
     /**
@@ -122,18 +54,29 @@ class AgendaController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $type = $request->input('agenda_type', 'lainnya');
+        $type = $request->validate([
+            'agenda_type' => ['required', 'in:bimbingan,wawanhati,lainnya'],
+        ], [
+            'agenda_type.required' => 'Jenis agenda wajib dipilih.',
+            'agenda_type.in' => 'Jenis agenda tidak dikenali.',
+        ])['agenda_type'];
 
         if ($type === 'bimbingan') {
             $validated = $request->validate([
                 'mentor_name' => ['required', 'string', 'max:255'],
                 'meeting_date' => ['required', 'date'],
-                'meeting_time' => ['nullable', 'string'],
-                'location' => ['nullable', 'string', 'max:255'],
-                'topic_notes' => ['nullable', 'string'],
+                'meeting_time' => ['required', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
+                'location' => ['required', 'string', 'max:255'],
+                'topic_notes' => ['nullable', 'string', 'max:2000'],
+            ], [
+                'mentor_name.required' => 'Nama pembimbing rohani wajib diisi.',
+                'meeting_date.required' => 'Hari dan tanggal pertemuan wajib diisi.',
+                'meeting_time.required' => 'Waktu pertemuan wajib diisi.',
+                'meeting_time.regex' => 'Format waktu pertemuan tidak valid.',
+                'location.required' => 'Tempat / ruangan wajib diisi.',
             ]);
 
-            $datetime = $validated['meeting_date'] . ' ' . ($validated['meeting_time'] ?? '10:00') . ':00';
+            $datetime = $this->combineDateAndTime($validated['meeting_date'], $validated['meeting_time']);
 
             SpiritualGuidanceSchedule::create([
                 'user_id' => auth()->id(),
@@ -147,12 +90,18 @@ class AgendaController extends Controller
             $validated = $request->validate([
                 'local_leader_name' => ['required', 'string', 'max:255'],
                 'meeting_date' => ['required', 'date'],
-                'meeting_time' => ['nullable', 'string'],
-                'location' => ['nullable', 'string', 'max:255'],
-                'topic_notes' => ['nullable', 'string'],
+                'meeting_time' => ['required', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
+                'location' => ['required', 'string', 'max:255'],
+                'topic_notes' => ['nullable', 'string', 'max:2000'],
+            ], [
+                'local_leader_name.required' => 'Nama pimpinan lokal wajib diisi.',
+                'meeting_date.required' => 'Hari dan tanggal pertemuan wajib diisi.',
+                'meeting_time.required' => 'Waktu pertemuan wajib diisi.',
+                'meeting_time.regex' => 'Format waktu pertemuan tidak valid.',
+                'location.required' => 'Tempat / ruangan wajib diisi.',
             ]);
 
-            $datetime = $validated['meeting_date'] . ' ' . ($validated['meeting_time'] ?? '14:00') . ':00';
+            $datetime = $this->combineDateAndTime($validated['meeting_date'], $validated['meeting_time']);
 
             WawanhatiSchedule::create([
                 'user_id' => auth()->id(),
@@ -166,12 +115,18 @@ class AgendaController extends Controller
             $validated = $request->validate([
                 'title' => ['required', 'string', 'max:255'],
                 'start_date' => ['required', 'date'],
-                'start_time' => ['nullable', 'string'],
-                'location' => ['nullable', 'string', 'max:255'],
-                'description' => ['nullable', 'string'],
+                'start_time' => ['required', 'regex:/^\d{2}:\d{2}(:\d{2})?$/'],
+                'location' => ['required', 'string', 'max:255'],
+                'description' => ['nullable', 'string', 'max:2000'],
+            ], [
+                'title.required' => 'Nama kegiatan wajib diisi.',
+                'start_date.required' => 'Hari dan tanggal pelaksanaan wajib diisi.',
+                'start_time.required' => 'Waktu pelaksanaan wajib diisi.',
+                'start_time.regex' => 'Format waktu pelaksanaan tidak valid.',
+                'location.required' => 'Lokasi kegiatan wajib diisi.',
             ]);
 
-            $datetime = $validated['start_date'] . ' ' . ($validated['start_time'] ?? '09:00') . ':00';
+            $datetime = $this->combineDateAndTime($validated['start_date'], $validated['start_time']);
 
             PersonalAgenda::create([
                 'user_id' => auth()->id(),
@@ -184,5 +139,14 @@ class AgendaController extends Controller
         }
 
         return redirect()->route('agenda.index')->with('success', 'Agenda berhasil ditambahkan ke jadwal Anda.');
+    }
+
+    private function combineDateAndTime(string $date, string $time): string
+    {
+        if (preg_match('/^\d{2}:\d{2}$/', $time)) {
+            $time .= ':00';
+        }
+
+        return $date.' '.$time;
     }
 }

@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SuperAdmin\MonitoringController;
+use App\Http\Controllers\SuperAdmin\ProvincialMessageManagementController;
+use App\Http\Controllers\SuperAdmin\UserManagementController;
 use App\Http\Controllers\User\AgendaController;
 use App\Http\Controllers\User\CalendarController;
 use App\Http\Controllers\User\JournalController;
@@ -9,6 +12,7 @@ use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\ProvincialMessageController;
 use App\Http\Controllers\User\SpiritualGuidanceController;
 use App\Http\Controllers\User\WawanhatiController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 // Redirect root ke dashboard jika login, atau ke halaman login jika guest
@@ -48,11 +52,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/bimbingan-rohani', [SpiritualGuidanceController::class, 'index'])->name('bimbingan.index');
         Route::get('/bimbingan-rohani/tambah', [SpiritualGuidanceController::class, 'create'])->name('bimbingan.create');
         Route::post('/bimbingan-rohani', [SpiritualGuidanceController::class, 'store'])->name('bimbingan.store');
+        Route::get('/bimbingan-rohani/{report}/bukti', [SpiritualGuidanceController::class, 'proof'])->name('bimbingan.proof');
 
         // 6 & 7. Wawanhati & Input Laporan Wawanhati
         Route::get('/wawanhati', [WawanhatiController::class, 'index'])->name('wawanhati.index');
         Route::get('/wawanhati/tambah', [WawanhatiController::class, 'create'])->name('wawanhati.create');
         Route::post('/wawanhati', [WawanhatiController::class, 'store'])->name('wawanhati.store');
+        Route::get('/wawanhati/{report}/bukti', [WawanhatiController::class, 'proof'])->name('wawanhati.proof');
 
         // 8, 9, 10, 11. Agenda Pribadi & Input Jadwal
         Route::get('/agenda', [AgendaController::class, 'index'])->name('agenda.index');
@@ -86,24 +92,25 @@ Route::middleware('auth')->group(function () {
     // Fase 2 Routes Super Admin
     Route::middleware('role:super_admin')->prefix('super-admin')->name('superadmin.')->group(function () {
         Route::get('/fase-1-check', function () {
-            $users = \App\Models\User::orderBy('role')->orderBy('name')->get();
+            $users = User::orderBy('role')->orderBy('name')->get();
+
             return view('dashboard.fase-1-check', compact('users'));
         })->name('fase1-check');
 
         Route::get('/fase-2-check', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'index'])->name('fase2-check');
 
         // Manajemen User / Bruder Muda
-        Route::get('/users', [App\Http\Controllers\SuperAdmin\UserManagementController::class, 'index'])->name('users.index');
-        Route::get('/users/create', [App\Http\Controllers\SuperAdmin\UserManagementController::class, 'create'])->name('users.create');
-        Route::post('/users', [App\Http\Controllers\SuperAdmin\UserManagementController::class, 'store'])->name('users.store');
-        Route::get('/users/{user}/track-record', [App\Http\Controllers\SuperAdmin\UserManagementController::class, 'trackRecord'])->name('users.track-record');
+        Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
+        Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
+        Route::get('/users/{user}/track-record', [UserManagementController::class, 'trackRecord'])->name('users.track-record');
 
         // Monitoring Laporan & Agenda
-        Route::get('/monitoring', [App\Http\Controllers\SuperAdmin\MonitoringController::class, 'index'])->name('monitoring.index');
-        Route::get('/monitoring/export', [App\Http\Controllers\SuperAdmin\MonitoringController::class, 'export'])->name('monitoring.export');
+        Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
+        Route::get('/monitoring/export', [MonitoringController::class, 'export'])->name('monitoring.export');
 
         // Sapaan & Publikasi
-        Route::get('/sapaan', [App\Http\Controllers\SuperAdmin\ProvincialMessageManagementController::class, 'index'])->name('sapaan.index');
-        Route::post('/sapaan', [App\Http\Controllers\SuperAdmin\ProvincialMessageManagementController::class, 'store'])->name('sapaan.store');
+        Route::get('/sapaan', [ProvincialMessageManagementController::class, 'index'])->name('sapaan.index');
+        Route::post('/sapaan', [ProvincialMessageManagementController::class, 'store'])->name('sapaan.store');
     });
 });
