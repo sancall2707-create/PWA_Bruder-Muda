@@ -104,6 +104,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
         Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
         Route::get('/users/{user}/track-record', [UserManagementController::class, 'trackRecord'])->name('users.track-record');
+        Route::post('/users/{user}/status', [UserManagementController::class, 'updateStatus'])->name('users.status');
+        Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
 
         // Monitoring Laporan & Agenda
         Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');

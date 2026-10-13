@@ -4,29 +4,27 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\SuperAdminOverviewService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class UserManagementController extends Controller
 {
+    public function __construct(
+        protected SuperAdminOverviewService $overviewService
+    ) {}
+
     /**
      * Tampilkan daftar bruder muda & pencarian.
      */
     public function index(Request $request): View
     {
-        $query = User::where('role', 'user');
-
-        if ($search = $request->input('search')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('username', 'like', "%{$search}%")
-                  ->orWhere('community_location', 'like', "%{$search}%");
-            });
-        }
-
-        $users = $query->orderBy('name')->paginate(10);
+        $search = trim((string) $request->input('search', ''));
+        $users = $this->overviewService
+            ->bruderDirectory($search === '' ? null : $search)
+            ->paginate(10)
+            ->withQueryString();
 
         return view('super-admin.users.index', compact('users', 'search'));
     }
@@ -54,15 +52,15 @@ class UserManagementController extends Controller
             'birth_date' => ['nullable', 'date'],
             'parents_name' => ['nullable', 'string', 'max:255'],
             'last_education' => ['nullable', 'string', 'max:255'],
-            'entry_year' => ['nullable', 'integer', 'min:1950', 'max:' . (date('Y') + 1)],
+            'entry_year' => ['nullable', 'integer', 'min:1950', 'max:'.(date('Y') + 1)],
             'bio' => ['nullable', 'string', 'max:1000'],
         ]);
 
-        $user = new User();
+        $user = new User;
         $user->name = $validated['name'];
         $user->username = strtolower($validated['username']);
         $user->email = $validated['email'] ?? null;
-        $user->password = Hash::make($validated['password']);
+        $user->password = $validated['password'];
         $user->role = 'user';
         $user->community_location = $validated['community_location'] ?? null;
         $user->phone = $validated['phone'] ?? null;
@@ -83,13 +81,55 @@ class UserManagementController extends Controller
      */
     public function trackRecord(User $user): View
     {
-        $user->load([
-            'spiritualGuidanceReports' => fn($q) => $q->latest('meeting_at')->limit(5),
-            'wawanhatiReports' => fn($q) => $q->latest('meeting_at')->limit(5),
-            'selfDevelopmentJournals' => fn($q) => $q->latest('activity_date')->limit(5),
-            'personalAgendas' => fn($q) => $q->latest('start_at')->limit(5),
+        abort_unless($user->role === 'user', 404);
+
+        $user->loadCount([
+            'spiritualGuidanceReports',
+            'wawanhatiReports',
+            'selfDevelopmentJournals',
+            'personalAgendas',
         ]);
 
-        return view('super-admin.users.track-record', compact('user'));
+        $recentBimbingan = $user->spiritualGuidanceReports()->latest('meeting_at')->limit(5)->get();
+        $recentWawanhati = $user->wawanhatiReports()->latest('meeting_at')->limit(5)->get();
+        $recentJournals = $user->selfDevelopmentJournals()->latest('activity_date')->limit(5)->get();
+
+        return view('super-admin.users.track-record', compact(
+            'user',
+            'recentBimbingan',
+            'recentWawanhati',
+            'recentJournals',
+        ));
+    }
+
+    /**
+     * Aktifkan atau nonaktifkan akun bruder muda.
+     */
+    public function updateStatus(User $user): RedirectResponse
+    {
+        abort_unless($user->role === 'user', 404);
+
+        $user->is_active = ! $user->is_active;
+        $user->save();
+
+        $label = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
+
+        return redirect()->route('superadmin.users.index')
+            ->with('success', "Akun {$user->name} berhasil {$label}.");
+    }
+
+    /**
+     * Hapus akun bruder muda tanpa menghapus riwayat laporannya.
+     */
+    public function destroy(Request $request, User $user): RedirectResponse
+    {
+        abort_unless($user->role === 'user', 404);
+        abort_if($user->is($request->user()), 403);
+
+        $name = $user->name;
+        $user->delete();
+
+        return redirect()->route('superadmin.users.index')
+            ->with('success', "Akun {$name} dihapus dari daftar bruder muda.");
     }
 }
