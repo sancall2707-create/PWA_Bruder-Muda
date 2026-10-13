@@ -14,7 +14,7 @@
                 Ringkasan Wawanhati
             </div>
             <div style="font-size: 14px; font-weight: 700; color: var(--fic-text-primary); margin-top: 2px;">
-                {{ $summary['selesai'] ?? 1 }} Selesai &bull; {{ $summary['terkirim'] ?? 1 }} Terkirim
+                {{ $summary['selesai'] }} Selesai &bull; {{ $summary['terkirim'] }} Terkirim
             </div>
         </div>
         <span class="badge badge-cyan">Pimpinan Lokal (Piko)</span>
@@ -55,7 +55,7 @@
                         <line x1="16" y1="2" x2="16" y2="6"></line>
                         <line x1="8" y1="2" x2="8" y2="6"></line>
                     </svg>
-                    <span>{{ $report->meeting_at }}</span>
+                    <span>{{ $report->meeting_at->locale('id')->translatedFormat('j F Y') }}</span>
                 </div>
                 <div class="meta-row">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -70,6 +70,10 @@
                 <div class="item-card-preview">
                     {{ $report->report_content }}
                 </div>
+            @endif
+
+            @if($report->proof_file)
+                <a href="{{ route('wawanhati.proof', $report) }}" style="font-size: 12px; font-weight: 700; color: var(--fic-cyan);">Unduh logbook</a>
             @endif
         </div>
     @empty

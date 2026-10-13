@@ -117,6 +117,8 @@
                 class="form-textarea"
                 rows="6"
                 placeholder="Bagaimana kegiatan ini mempengaruhi panggilan dan kehidupan rohani Anda sebagai Bruder FIC? (200–500 karakter)"
+                minlength="200"
+                maxlength="500"
                 required
             >{{ old('reflection') }}</textarea>
             <span class="form-help">Refleksi singkat minimal 200 karakter dan maksimal 500 karakter.</span>

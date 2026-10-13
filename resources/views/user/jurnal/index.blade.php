@@ -57,7 +57,7 @@
                         <line x1="16" y1="2" x2="16" y2="6"></line>
                         <line x1="8" y1="2" x2="8" y2="6"></line>
                     </svg>
-                    <span>Tanggal: <strong>{{ $journal->activity_date }}</strong></span>
+                    <span>Tanggal: <strong>{{ $journal->activity_date->locale('id')->translatedFormat('j F Y') }}</strong></span>
                 </div>
             </div>
 

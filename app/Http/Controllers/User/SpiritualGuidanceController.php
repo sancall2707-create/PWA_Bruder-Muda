@@ -7,6 +7,8 @@ use App\Models\SpiritualGuidanceReport;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SpiritualGuidanceController extends Controller
 {
@@ -59,7 +61,7 @@ class SpiritualGuidanceController extends Controller
 
         $proofPath = null;
         if ($request->hasFile('proof_file')) {
-            $proofPath = $request->file('proof_file')->store('logbooks/bimbingan', 'public');
+            $proofPath = $request->file('proof_file')->store('logbooks/bimbingan', 'local');
         }
 
         SpiritualGuidanceReport::create([
@@ -74,5 +76,20 @@ class SpiritualGuidanceController extends Controller
         ]);
 
         return redirect()->route('bimbingan.index')->with('success', 'Laporan Bimbingan Rohani berhasil dikirim dan tersimpan di sistem.');
+    }
+
+    public function proof(SpiritualGuidanceReport $report): StreamedResponse
+    {
+        abort_unless($report->user_id === auth()->id(), 404);
+        abort_unless($this->isOwnedLogbook($report->proof_file), 404);
+
+        return Storage::disk('local')->download($report->proof_file);
+    }
+
+    private function isOwnedLogbook(?string $path): bool
+    {
+        return is_string($path)
+            && str_starts_with($path, 'logbooks/bimbingan/')
+            && Storage::disk('local')->exists($path);
     }
 }

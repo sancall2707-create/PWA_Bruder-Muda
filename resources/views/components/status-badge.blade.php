@@ -14,7 +14,18 @@
         default => 'badge-draft',
     };
 
-    $label = ucfirst($status);
+    $label = match ($normalized) {
+        'submitted', 'terkirim' => 'Terkirim',
+        'published' => 'Dipublikasikan',
+        'scheduled', 'terjadwal' => 'Terjadwal',
+        'completed', 'selesai', 'done' => 'Selesai',
+        'draft' => 'Draf',
+        'cancelled', 'dibatalkan', 'batal' => 'Dibatalkan',
+        'bimbingan' => 'Bimbingan',
+        'wawanhati' => 'Wawanhati',
+        'lainnya', 'agenda' => 'Agenda',
+        default => ucfirst($status),
+    };
 @endphp
 
 <span class="badge {{ $badgeClass }}">

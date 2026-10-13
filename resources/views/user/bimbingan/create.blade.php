@@ -86,6 +86,8 @@
                 class="form-textarea"
                 rows="6"
                 placeholder="Tuliskan poin-poin refleksi, arahan pembimbing, dan resolusi hidup rohani (200–500 karakter)..."
+                minlength="200"
+                maxlength="500"
                 required
             >{{ old('report_content') }}</textarea>
             <span class="form-help">Catatan bimbingan bersifat rahasia dan dipergunakan untuk pendampingan formatif. Minimal 200 karakter, maksimal 500 karakter.</span>

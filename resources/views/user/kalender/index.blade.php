@@ -8,19 +8,19 @@
 <!-- Calendar Card -->
 <div class="calendar-card">
     <div class="calendar-header">
-        <button type="button" class="btn-back" style="width: 32px; height: 32px;" aria-label="Bulan Sebelumnya">
+        <a href="{{ route('kalender', ['month' => $prevMonth]) }}" class="btn-back" style="width: 32px; height: 32px;" aria-label="Bulan Sebelumnya">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
-        </button>
+        </a>
 
-        <span class="calendar-month">Oktober 2026</span>
+        <span class="calendar-month">{{ $monthLabel }}</span>
 
-        <button type="button" class="btn-back" style="width: 32px; height: 32px;" aria-label="Bulan Berikutnya">
+        <a href="{{ route('kalender', ['month' => $nextMonth]) }}" class="btn-back" style="width: 32px; height: 32px;" aria-label="Bulan Berikutnya">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
-        </button>
+        </a>
     </div>
 
     <!-- Day Headers: Min, Sen, Sel, Rab, Kam, Jum, Sab -->
@@ -33,34 +33,29 @@
         <div class="calendar-day-label">Jum</div>
         <div class="calendar-day-label">Sab</div>
 
-        <!-- 1 Oktober 2026 jatuh pada hari Kamis -> 4 empty cells (Min-Rab) -->
-        <div class="calendar-day empty"></div>
-        <div class="calendar-day empty"></div>
-        <div class="calendar-day empty"></div>
-        <div class="calendar-day empty"></div>
+        @for ($blank = 0; $blank < $leadingBlanks; $blank++)
+            <div class="calendar-day empty"></div>
+        @endfor
 
-        <!-- Days 1 to 31 -->
-        @for ($day = 1; $day <= 31; $day++)
+        @for ($day = 1; $day <= $daysInMonth; $day++)
             @php
-                $isSelected = ($day === 12);
-                $isBimbingan = in_array($day, [12]);
-                $isWawanhati = in_array($day, [14]);
-                $isAgendaLain = in_array($day, [5, 20]);
+                $dayDate = $month->copy()->day($day)->toDateString();
+                $isSelected = $selectedDate->day === $day;
             @endphp
-            <div class="calendar-day {{ $isSelected ? 'selected' : '' }}">
+            <a href="{{ route('kalender', ['month' => $monthKey, 'date' => $dayDate]) }}" class="calendar-day {{ $isSelected ? 'selected' : '' }}" style="text-decoration: none; color: inherit;">
                 <span>{{ $day }}</span>
                 <div class="calendar-dots">
-                    @if($isBimbingan)
+                    @if(!empty($dots['bimbingan'][$day]))
                         <span class="dot blue"></span>
                     @endif
-                    @if($isWawanhati)
+                    @if(!empty($dots['wawanhati'][$day]))
                         <span class="dot cyan"></span>
                     @endif
-                    @if($isAgendaLain)
+                    @if(!empty($dots['lainnya'][$day]))
                         <span class="dot gold"></span>
                     @endif
                 </div>
-            </div>
+            </a>
         @endfor
     </div>
 
@@ -85,13 +80,20 @@
 <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 4px;">
     <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 4px;">
         <span style="font-size: 13px; font-weight: 700; color: var(--fic-text-primary);">
-            Agenda: Senin, 12 Oktober 2026
+            Agenda: {{ $selectedLabel }}
         </span>
-        <span class="badge badge-scheduled">2 Kegiatan</span>
+        <span class="badge badge-scheduled">{{ $selectedDateAgendas->count() }} Kegiatan</span>
     </div>
 
-    @foreach($selectedDateAgendas as $agenda)
-        <div class="item-card" style="border-left: 4px solid {{ $agenda->color === 'blue' ? 'var(--fic-primary)' : 'var(--fic-gold)' }};">
+    @forelse($selectedDateAgendas as $agenda)
+        @php
+            $borderColor = match ($agenda->category) {
+                'bimbingan' => 'var(--fic-primary)',
+                'wawanhati' => 'var(--fic-cyan)',
+                default => 'var(--fic-gold)',
+            };
+        @endphp
+        <div class="item-card" style="border-left: 4px solid {{ $borderColor }};">
             <div class="item-card-header">
                 <div>
                     <div class="item-card-title">{{ $agenda->title }}</div>
@@ -99,7 +101,7 @@
                         {{ $agenda->person }}
                     </div>
                 </div>
-                <x-status-badge :status="$agenda->type === 'bimbingan' ? 'bimbingan' : 'agenda'" />
+                <x-status-badge :status="$agenda->category" />
             </div>
 
             <div class="item-card-meta">
@@ -108,7 +110,7 @@
                         <circle cx="12" cy="12" r="10"></circle>
                         <polyline points="12 6 12 12 16 14"></polyline>
                     </svg>
-                    <span>{{ $agenda->time }}</span>
+                    <span>{{ $agenda->time_formatted }}</span>
                 </div>
                 <div class="meta-row">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -119,6 +121,11 @@
                 </div>
             </div>
         </div>
-    @endforeach
+    @empty
+        <x-empty-state
+            title="Tidak ada kegiatan pada tanggal ini"
+            message="Jadwal yang Anda simpan akan muncul di tanggal yang dipilih."
+        />
+    @endforelse
 </div>
 @endsection

@@ -1,31 +1,36 @@
 @extends('layouts.user-app')
 
 @section('content')
-<!-- SECTION 1: STATISTIK PEMBINAAN BULAN INI -->
-<!-- TODO: Replace placeholder calculation with dynamic sum from SpiritualGuidanceReport, WawanhatiReport, and SelfDevelopmentJournal -->
+@php
+    $ringOffset = 201 - (201 * (($stats['persentase'] ?? 0) / 100));
+    $reminderColor = [
+        'bimbingan' => 'var(--fic-primary)',
+        'wawanhati' => 'var(--fic-cyan)',
+        'lainnya' => 'var(--fic-gold)',
+    ];
+@endphp
+
 <div class="progress-stat-card">
     <div class="stat-header">
         <span class="stat-title">Statistik Pembinaan Bulan Ini</span>
-        <span class="badge badge-scheduled">Oktober 2026</span>
+        <span class="badge badge-scheduled">{{ now()->locale('id')->translatedFormat('F Y') }}</span>
     </div>
     <div class="stat-body">
         <div class="stat-ring">
             <svg class="stat-ring-svg" viewBox="0 0 80 80">
                 <circle class="stat-ring-circle-bg" cx="40" cy="40" r="32" />
-                <circle class="stat-ring-circle" cx="40" cy="40" r="32" />
+                <circle class="stat-ring-circle" cx="40" cy="40" r="32" style="stroke-dashoffset: {{ $ringOffset }}" />
             </svg>
-            <div class="stat-ring-text">70%</div>
+            <div class="stat-ring-text">{{ $stats['persentase'] }}%</div>
         </div>
         <div class="stat-info">
             <span class="stat-info-label">Pencapaian Target</span>
-            <span class="stat-info-val">7 / 10</span>
-            <span class="stat-info-sub">Laporan Selesai Dilaksanakan</span>
+            <span class="stat-info-val">{{ $stats['total'] }} / {{ $stats['target'] }}</span>
+            <span class="stat-info-sub">Laporan tersimpan bulan ini</span>
         </div>
     </div>
 </div>
 
-<!-- SECTION 2: REMINDER JADWAL TERDEKAT -->
-<!-- TODO: Replace with query from upcoming schedules in next 7 days -->
 <div class="reminder-card">
     <div class="reminder-header">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -35,20 +40,21 @@
         <span>Pengingat Jadwal Terdekat</span>
     </div>
     <div class="reminder-list">
-        <div class="reminder-item">
-            <div class="reminder-bullet" style="background-color: var(--fic-primary);"></div>
-            <div class="reminder-content">
-                <div class="reminder-title">Bimbingan Rohani Bulanan</div>
-                <div class="reminder-date">12 Oktober 2026 &bull; 10:00 WIB (Ruang Bimbingan)</div>
+        @forelse($upcomingSchedules as $schedule)
+            <div class="reminder-item">
+                <div class="reminder-bullet" style="background-color: {{ $reminderColor[$schedule->category] ?? 'var(--fic-primary)' }};"></div>
+                <div class="reminder-content">
+                    <div class="reminder-title">{{ $schedule->title }}</div>
+                    <div class="reminder-date">{{ $schedule->person }} &bull; {{ $schedule->date_formatted }} &bull; {{ $schedule->time_formatted }}@if($schedule->location) ({{ $schedule->location }})@endif</div>
+                </div>
             </div>
-        </div>
-        <div class="reminder-item">
-            <div class="reminder-bullet" style="background-color: var(--fic-cyan);"></div>
-            <div class="reminder-content">
-                <div class="reminder-title">Wawanhati Pimpinan Lokal (Piko)</div>
-                <div class="reminder-date">14 Oktober 2026 &bull; 14:00 WIB (Ruang Piko Solo)</div>
+        @empty
+            <div class="reminder-item">
+                <div class="reminder-content">
+                    <div class="reminder-date">Belum ada jadwal dalam 7 hari ke depan.</div>
+                </div>
             </div>
-        </div>
+        @endforelse
     </div>
 </div>
 
