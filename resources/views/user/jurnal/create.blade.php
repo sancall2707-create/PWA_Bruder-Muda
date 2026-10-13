@@ -105,17 +105,21 @@
 
         <!-- Refleksi Singkat -->
         <div class="form-group">
-            <label for="reflection" class="form-label">
-                Refleksi Singkat <span class="required">*</span>
-            </label>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label for="reflection" class="form-label">
+                    Refleksi Singkat <span class="required">*</span>
+                </label>
+                <span id="charCounter" style="font-size: 11px; font-weight: 700; color: #667085;">0 / 200 - 500 karakter</span>
+            </div>
             <textarea
                 id="reflection"
                 name="reflection"
                 class="form-textarea"
                 rows="6"
-                placeholder="Bagaimana kegiatan ini mempengaruhi panggilan dan kehidupan rohani Anda sebagai Bruder FIC?"
+                placeholder="Bagaimana kegiatan ini mempengaruhi panggilan dan kehidupan rohani Anda sebagai Bruder FIC? (200–500 karakter)"
                 required
             >{{ old('reflection') }}</textarea>
+            <span class="form-help">Refleksi singkat minimal 200 karakter dan maksimal 500 karakter.</span>
         </div>
 
         <button type="submit" class="btn-primary" style="background-color: var(--fic-green); margin-top: 8px;">
@@ -123,4 +127,26 @@
         </button>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const textarea = document.getElementById('reflection');
+        const counter = document.getElementById('charCounter');
+        if (textarea && counter) {
+            function updateCounter() {
+                const len = textarea.value.length;
+                counter.innerText = `${len} / 200 - 500 karakter`;
+                if (len < 200) {
+                    counter.style.color = '#B42318'; // merah jika kurang
+                } else if (len > 500) {
+                    counter.style.color = '#B42318'; // merah jika lebih
+                } else {
+                    counter.style.color = '#027A48'; // hijau jika pas 200-500
+                }
+            }
+            textarea.addEventListener('input', updateCounter);
+            updateCounter();
+        }
+    });
+</script>
 @endsection

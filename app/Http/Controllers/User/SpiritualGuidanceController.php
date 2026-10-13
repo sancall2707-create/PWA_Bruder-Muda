@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\SpiritualGuidanceReport;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,30 +15,13 @@ class SpiritualGuidanceController extends Controller
      */
     public function index(): View
     {
-        // TEMPORARY DISPLAY DATA
-        // TODO: Replace with database data from SpiritualGuidanceReport::where('user_id', auth()->id())->latest()->get()
-        $reports = [
-            (object) [
-                'id' => 1,
-                'mentor_name' => 'Br. Yohanes Subagio, FIC',
-                'meeting_at' => '12 Okt 2026, 10:00 WIB',
-                'location' => 'Ruang Bimbingan Komunitas Ambarawa',
-                'report_content' => 'Mendiskusikan perkembangan hidup doa pribadi, dinamika komunitas harian, dan tantangan dalam karya kerasulan.',
-                'status' => 'Selesai',
-            ],
-            (object) [
-                'id' => 2,
-                'mentor_name' => 'Br. Yohanes Subagio, FIC',
-                'meeting_at' => '18 Sep 2026, 14:00 WIB',
-                'location' => 'Wisma Pembinaan FIC Semarang',
-                'report_content' => 'Refleksi atas kaul ketaatan dan kesiapan mengemban tugas studi dan perutusan baru.',
-                'status' => 'Terkirim',
-            ],
-        ];
+        $reports = SpiritualGuidanceReport::where('user_id', auth()->id())
+            ->latest('meeting_at')
+            ->get();
 
         $summary = [
-            'selesai' => 1,
-            'menunggu' => 1,
+            'selesai' => $reports->whereIn('status', ['completed', 'approved', 'published', 'Selesai'])->count(),
+            'menunggu' => $reports->whereIn('status', ['submitted', 'draft', 'Terkirim', 'scheduled'])->count(),
         ];
 
         return view('user.bimbingan.index', compact('reports', 'summary'));
@@ -52,24 +36,43 @@ class SpiritualGuidanceController extends Controller
     }
 
     /**
-     * Simpan laporan Bimbingan Rohani.
-     * UI Phase: Safe validation and placeholder storage.
+     * Simpan laporan Bimbingan Rohani ke Database.
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'meeting_date' => ['required', 'string'],
+        $validated = $request->validate([
+            'meeting_date' => ['required', 'date'],
             'mentor_name' => ['required', 'string', 'max:255'],
             'location' => ['required', 'string', 'max:255'],
-            'report_content' => ['required', 'string'],
+            'report_content' => ['required', 'string', 'min:200', 'max:500'],
+            'proof_file' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
         ], [
             'meeting_date.required' => 'Hari dan tanggal pertemuan wajib diisi.',
             'mentor_name.required' => 'Nama pembimbing wajib diisi.',
             'location.required' => 'Tempat pertemuan wajib diisi.',
             'report_content.required' => 'Isi bimbingan / catatan wajib diisi.',
+            'report_content.min' => 'Isi bimbingan / catatan refleksi minimal 200 karakter.',
+            'report_content.max' => 'Isi bimbingan / catatan refleksi maksimal 500 karakter.',
+            'proof_file.mimes' => 'Format file bukti harus berupa JPG, PNG, atau PDF.',
+            'proof_file.max' => 'Ukuran file bukti maksimal 5MB.',
         ]);
 
-        // TODO: Simpan ke database SpiritualGuidanceReport saat backend CRUD aktif
-        return redirect()->route('bimbingan.index')->with('success', 'Laporan Bimbingan Rohani berhasil dikirim (Simulasi UI).');
+        $proofPath = null;
+        if ($request->hasFile('proof_file')) {
+            $proofPath = $request->file('proof_file')->store('logbooks/bimbingan', 'public');
+        }
+
+        SpiritualGuidanceReport::create([
+            'user_id' => auth()->id(),
+            'mentor_name' => $validated['mentor_name'],
+            'meeting_at' => $validated['meeting_date'],
+            'location' => $validated['location'],
+            'report_content' => $validated['report_content'],
+            'proof_file' => $proofPath,
+            'status' => 'submitted',
+            'submitted_at' => now(),
+        ]);
+
+        return redirect()->route('bimbingan.index')->with('success', 'Laporan Bimbingan Rohani berhasil dikirim dan tersimpan di sistem.');
     }
 }

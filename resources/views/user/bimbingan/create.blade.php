@@ -74,18 +74,21 @@
 
         <!-- Isi Bimbingan / Catatan -->
         <div class="form-group">
-            <label for="report_content" class="form-label">
-                Isi Bimbingan / Catatan Refleksi <span class="required">*</span>
-            </label>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <label for="report_content" class="form-label">
+                    Isi Bimbingan / Catatan Refleksi <span class="required">*</span>
+                </label>
+                <span id="charCounter" style="font-size: 11px; font-weight: 700; color: #667085;">0 / 200 - 500 karakter</span>
+            </div>
             <textarea
                 id="report_content"
                 name="report_content"
                 class="form-textarea"
                 rows="6"
-                placeholder="Tuliskan poin-poin refleksi, arahan pembimbing, dan resolusi hidup rohani..."
+                placeholder="Tuliskan poin-poin refleksi, arahan pembimbing, dan resolusi hidup rohani (200–500 karakter)..."
                 required
             >{{ old('report_content') }}</textarea>
-            <span class="form-help">Catatan bimbingan bersifat rahasia dan dipergunakan untuk pendampingan formatif.</span>
+            <span class="form-help">Catatan bimbingan bersifat rahasia dan dipergunakan untuk pendampingan formatif. Minimal 200 karakter, maksimal 500 karakter.</span>
         </div>
 
         <!-- Upload Bukti Logbook / Catatan Fisik (UI Phase) -->
@@ -123,4 +126,26 @@
         </button>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const textarea = document.getElementById('report_content');
+        const counter = document.getElementById('charCounter');
+        if (textarea && counter) {
+            function updateCounter() {
+                const len = textarea.value.length;
+                counter.innerText = `${len} / 200 - 500 karakter`;
+                if (len < 200) {
+                    counter.style.color = '#B42318'; // merah jika kurang
+                } else if (len > 500) {
+                    counter.style.color = '#B42318'; // merah jika lebih
+                } else {
+                    counter.style.color = '#027A48'; // hijau jika pas 200-500
+                }
+            }
+            textarea.addEventListener('input', updateCounter);
+            updateCounter();
+        }
+    });
+</script>
 @endsection

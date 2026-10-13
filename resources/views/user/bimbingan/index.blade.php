@@ -33,7 +33,7 @@
         <line x1="12" y1="5" x2="12" y2="19"></line>
         <line x1="5" y1="12" x2="19" y2="12"></line>
     </svg>
-    + TAMBAH LAPORAN BIMBINGAN BARU
+    TAMBAH LAPORAN BIMBINGAN BARU
 </a>
 
 <!-- List of Reports -->
@@ -76,8 +76,6 @@
         <x-empty-state
             title="Belum ada laporan Bimbingan Rohani"
             message="Catat refleksi dan hasil bimbingan rohani Anda bersama pembimbing."
-            actionText="+ Tambah Laporan Pertama"
-            :actionUrl="route('bimbingan.create')"
         />
     @endforelse
 </div>

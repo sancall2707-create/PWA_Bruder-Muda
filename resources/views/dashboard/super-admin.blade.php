@@ -109,7 +109,8 @@
         </form>
 
         <div class="nav-links">
-            <span>Uji akses halaman lain:</span><br>
+            <span>Uji akses halaman lain &amp; Pengecekan Fase:</span><br>
+            <a href="{{ route('superadmin.fase1-check') }}">🔍 Check Halaman Pengecekan Fase 1</a><br><br>
             <a href="{{ route('admin.dashboard') }}">Ke /admin (Boleh)</a>
             <a href="{{ route('dashboard') }}">Ke /dashboard (Boleh)</a>
         </div>

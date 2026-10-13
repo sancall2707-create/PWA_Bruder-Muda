@@ -79,7 +79,31 @@ Route::middleware('auth')->group(function () {
         ->name('admin.dashboard');
 
     // Dashboard Super Admin (super_admin saja)
-    Route::get('/super-admin', [DashboardController::class, 'superAdmin'])
+    Route::get('/super-admin', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'index'])
         ->middleware('role:super_admin')
         ->name('superadmin.dashboard');
+
+    // Fase 2 Routes Super Admin
+    Route::middleware('role:super_admin')->prefix('super-admin')->name('superadmin.')->group(function () {
+        Route::get('/fase-1-check', function () {
+            $users = \App\Models\User::orderBy('role')->orderBy('name')->get();
+            return view('dashboard.fase-1-check', compact('users'));
+        })->name('fase1-check');
+
+        Route::get('/fase-2-check', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'index'])->name('fase2-check');
+
+        // Manajemen User / Bruder Muda
+        Route::get('/users', [App\Http\Controllers\SuperAdmin\UserManagementController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [App\Http\Controllers\SuperAdmin\UserManagementController::class, 'create'])->name('users.create');
+        Route::post('/users', [App\Http\Controllers\SuperAdmin\UserManagementController::class, 'store'])->name('users.store');
+        Route::get('/users/{user}/track-record', [App\Http\Controllers\SuperAdmin\UserManagementController::class, 'trackRecord'])->name('users.track-record');
+
+        // Monitoring Laporan & Agenda
+        Route::get('/monitoring', [App\Http\Controllers\SuperAdmin\MonitoringController::class, 'index'])->name('monitoring.index');
+        Route::get('/monitoring/export', [App\Http\Controllers\SuperAdmin\MonitoringController::class, 'export'])->name('monitoring.export');
+
+        // Sapaan & Publikasi
+        Route::get('/sapaan', [App\Http\Controllers\SuperAdmin\ProvincialMessageManagementController::class, 'index'])->name('sapaan.index');
+        Route::post('/sapaan', [App\Http\Controllers\SuperAdmin\ProvincialMessageManagementController::class, 'store'])->name('sapaan.store');
+    });
 });

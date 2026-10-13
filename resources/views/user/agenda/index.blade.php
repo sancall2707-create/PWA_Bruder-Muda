@@ -50,7 +50,7 @@
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        + TAMBAH JADWAL BIMBINGAN ROHANI
+        TAMBAH JADWAL BIMBINGAN ROHANI
     </a>
 
     <a href="{{ route('agenda.wawanhati.create') }}" class="btn-primary" style="background-color: var(--fic-cyan); font-size: 13px;">
@@ -58,7 +58,7 @@
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        + TAMBAH JADWAL WAWANHATI / PIKO
+        TAMBAH JADWAL WAWANHATI / PIKO
     </a>
 
     <a href="{{ route('agenda.lainnya.create') }}" class="btn-primary" style="background-color: #B57900; font-size: 13px;">
@@ -66,7 +66,7 @@
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        + TAMBAH AGENDA LAINNYA
+        TAMBAH AGENDA LAINNYA
     </a>
 </div>
 
