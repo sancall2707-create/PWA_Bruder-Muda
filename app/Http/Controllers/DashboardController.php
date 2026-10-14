@@ -24,12 +24,10 @@ class DashboardController extends Controller
 
         $upcomingSchedules = app(PersonalScheduleQuery::class)->upcoming($user->id);
 
-        // Sapaan provinsial terbaru
-        $sapaan = ProvincialMessage::where('is_active', true)
-            ->latest('published_at')
-            ->first();
+        $sapaan = ProvincialMessage::currentSapaan();
+        $announcements = ProvincialMessage::currentAnnouncements();
 
-        return view('dashboard.user', compact('user', 'stats', 'upcomingSchedules', 'sapaan'));
+        return view('dashboard.user', compact('user', 'stats', 'upcomingSchedules', 'sapaan', 'announcements'));
     }
 
     /**

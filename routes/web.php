@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:user,admin,super_admin')->group(function () {
         // 2. Sapaan Provinsial
         Route::get('/sapaan-provinsial', [ProvincialMessageController::class, 'index'])->name('sapaan-provinsial');
+        Route::get('/sapaan-provinsial/foto/{message}', [ProvincialMessageController::class, 'photo'])->name('sapaan-provinsial.foto');
 
         // 3. Dashboard / Menu Utama Bruder Muda
         Route::get('/dashboard', [DashboardController::class, 'user'])->name('dashboard');
@@ -115,5 +116,8 @@ Route::middleware('auth')->group(function () {
         // Sapaan & Publikasi
         Route::get('/sapaan', [ProvincialMessageManagementController::class, 'index'])->name('sapaan.index');
         Route::post('/sapaan', [ProvincialMessageManagementController::class, 'store'])->name('sapaan.store');
+        Route::get('/sapaan/{message}/edit', [ProvincialMessageManagementController::class, 'edit'])->name('sapaan.edit');
+        Route::put('/sapaan/{message}', [ProvincialMessageManagementController::class, 'update'])->name('sapaan.update');
+        Route::post('/sapaan/{message}/status', [ProvincialMessageManagementController::class, 'updateStatus'])->name('sapaan.status');
     });
 });
