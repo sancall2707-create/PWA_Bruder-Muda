@@ -111,6 +111,16 @@ class SuperAdminMonitoringTest extends TestCase
             ->assertSee('08:30 WIB')
             ->assertSee('Retret Pribadi Pantau')
             ->assertSee('Menunggu');
+
+        $excel = $this->actingAs($admin)->get(route('superadmin.monitoring.export', [
+            'bulan' => 10,
+            'tahun' => 2026,
+            'jenis' => 'agenda',
+            'format' => 'excel',
+        ]));
+        $excel->assertOk();
+        $this->assertStringContainsString('Rm. Mentor Pantau', $excel->getContent());
+        $this->assertStringContainsString('16:00 WIB', $excel->getContent());
     }
 
     public function test_agenda_calendar_shows_the_selected_day(): void

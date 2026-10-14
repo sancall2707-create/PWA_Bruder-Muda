@@ -12,7 +12,7 @@ class MonitoringExport
     public function excel(string $kind, array $filters, Collection $rows): string
     {
         $headers = $kind === 'agenda'
-            ? ['Jenis Agenda', 'Nama Bruder', 'Tanggal', 'Waktu', 'Lokasi', 'Keterangan', 'Status']
+            ? ['Jenis Agenda', 'Nama Bruder', 'Tanggal', 'Waktu', 'Lawan Bicara', 'Lokasi', 'Keterangan', 'Status']
             : ['Tipe Laporan', 'Nama Bruder', 'Tanggal', 'Lawan Bicara', 'Status', 'Isi'];
 
         $body = $rows->map(function (object $row) use ($kind) {
@@ -22,6 +22,7 @@ class MonitoringExport
                     $row->bruder,
                     $row->date_label,
                     $row->time_label,
+                    $row->counterpart,
                     $row->location,
                     $row->summary,
                     $row->status_label,
