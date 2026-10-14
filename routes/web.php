@@ -109,6 +109,7 @@ Route::middleware('auth')->group(function () {
 
         // Monitoring Laporan & Agenda
         Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
+        Route::get('/monitoring/agenda', [MonitoringController::class, 'agenda'])->name('monitoring.agenda');
         Route::get('/monitoring/export', [MonitoringController::class, 'export'])->name('monitoring.export');
 
         // Sapaan & Publikasi

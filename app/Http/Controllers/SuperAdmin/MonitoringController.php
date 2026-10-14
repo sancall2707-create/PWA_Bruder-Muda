@@ -3,113 +3,76 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PersonalAgenda;
-use App\Models\SelfDevelopmentJournal;
-use App\Models\SpiritualGuidanceReport;
 use App\Models\User;
-use App\Models\WawanhatiReport;
+use App\Services\MonitoringExport;
+use App\Services\MonitoringQuery;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 
 class MonitoringController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(
+        private readonly MonitoringQuery $monitoring,
+        private readonly MonitoringExport $exporter,
+    ) {}
+
+    public function index(Request $request): View
     {
-        $bruderFilter = $request->input('bruder_filter');
-        $monthFilter  = $request->input('month_filter');
+        $filters = $this->monitoring->filters($request);
 
-        $bruders = User::where('role', 'user')->orderBy('name')->get();
-
-        $bimbingans = SpiritualGuidanceReport::with('user')
-            ->when($bruderFilter, fn($q) => $q->where('user_id', $bruderFilter))
-            ->when($monthFilter, fn($q) => $q->whereMonth('meeting_at', $monthFilter))
-            ->latest('meeting_at')->take(30)->get()
-            ->map(fn($r) => (object)[
-                'user'          => $r->user,
-                'date'          => $r->meeting_at,
-                'type_label'    => 'Bimbingan Rohani',
-                'preview'       => $r->mentor_name,
-                'status'        => $r->status,
-                'status_text'   => 'Terkirim',
-                'status_bg'     => '#EFF8FF',
-                'status_color'  => '#1455C0',
-                'status_border' => '#B2DDFF',
-            ]);
-
-        $wawanhatis = WawanhatiReport::with('user')
-            ->when($bruderFilter, fn($q) => $q->where('user_id', $bruderFilter))
-            ->when($monthFilter, fn($q) => $q->whereMonth('meeting_at', $monthFilter))
-            ->latest('meeting_at')->take(30)->get()
-            ->map(fn($r) => (object)[
-                'user'          => $r->user,
-                'date'          => $r->meeting_at,
-                'type_label'    => 'Wawanhati Pilok',
-                'preview'       => $r->local_leader_name,
-                'status'        => $r->status,
-                'status_text'   => 'Terkirim',
-                'status_bg'     => '#F0FDF4',
-                'status_color'  => '#027A48',
-                'status_border' => '#ABEFC6',
-            ]);
-
-        $journals = SelfDevelopmentJournal::with('user')
-            ->when($bruderFilter, fn($q) => $q->where('user_id', $bruderFilter))
-            ->when($monthFilter, fn($q) => $q->whereMonth('activity_date', $monthFilter))
-            ->latest('activity_date')->take(30)->get()
-            ->map(fn($r) => (object)[
-                'user'          => $r->user,
-                'date'          => $r->activity_date,
-                'type_label'    => 'Jurnal Pengembangan Diri',
-                'preview'       => $r->activity_name,
-                'status'        => $r->status,
-                'status_text'   => 'Dipublikasi',
-                'status_bg'     => '#FFF8E1',
-                'status_color'  => '#B57900',
-                'status_border' => '#FFD966',
-            ]);
-
-        $reports = $bimbingans->merge($wawanhatis)->merge($journals)
-            ->sortByDesc(fn($r) => $r->date)
-            ->values();
-
-        return view('super-admin.monitoring.index', compact('reports', 'bruders'));
+        return view('super-admin.monitoring.index', [
+            'filters' => $filters,
+            'bruders' => $this->bruders(),
+            'reports' => $this->monitoring->reports($filters),
+            'headerTitle' => 'Monitoring Laporan',
+            'headerSubtitle' => $filters['period_label'],
+        ]);
     }
 
-    public function agenda(Request $request)
+    public function agenda(Request $request): View
     {
-        $bruderFilter = $request->input('bruder_filter');
+        $filters = $this->monitoring->filters($request);
+        $agendas = $this->monitoring->agendas($filters);
+        $tampilan = $request->input('tampilan') === 'kalender' ? 'kalender' : 'daftar';
 
-        $bruders = User::where('role', 'user')->orderBy('name')->get();
-
-        $agendas = PersonalAgenda::with('user')
-            ->when($bruderFilter, fn($q) => $q->where('user_id', $bruderFilter))
-            ->orderBy('start_at')
-            ->take(40)->get();
-
-        return view('super-admin.monitoring.agenda', compact('agendas', 'bruders'));
+        return view('super-admin.monitoring.agenda', [
+            'filters' => $filters,
+            'bruders' => $this->bruders(),
+            'agendas' => $agendas,
+            'tampilan' => $tampilan,
+            'calendar' => $this->monitoring->calendar($agendas, $filters['tahun'], $filters['bulan'], $request->input('tanggal')),
+            'headerTitle' => 'Rekapitulasi Agenda',
+            'headerSubtitle' => $filters['period_label'],
+        ]);
     }
 
-    public function export(Request $request): StreamedResponse
+    public function export(Request $request): Response
     {
-        $filename = 'rekap-laporan-pwa-bruder-muda-' . date('Y-m-d') . '.csv';
+        $filters = $this->monitoring->filters($request);
+        $kind = $request->input('jenis') === 'agenda' ? 'agenda' : 'laporan';
+        $format = $request->input('format') === 'pdf' ? 'pdf' : 'excel';
+        $rows = $kind === 'agenda'
+            ? $this->monitoring->agendas($filters)
+            : $this->monitoring->reports($filters);
 
-        return response()->streamDownload(function () {
-            $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['Tipe Laporan', 'Nama Bruder', 'Tanggal', 'Pembimbing/Pimpinan', 'Status', 'Isi/Judul']);
+        $filename = $this->exporter->filename($kind, $format, $filters);
+        $body = $format === 'pdf'
+            ? $this->exporter->pdf($kind, $filters, $rows)
+            : $this->exporter->excel($kind, $filters, $rows);
 
-            foreach (SpiritualGuidanceReport::with('user')->latest()->get() as $b) {
-                fputcsv($handle, ['Bimbingan Rohani', $b->user->name ?? '-', optional($b->meeting_at)->format('Y-m-d') ?? '-', $b->mentor_name, $b->status, substr(strip_tags($b->report_content ?? ''), 0, 100)]);
-            }
+        $contentType = $format === 'pdf'
+            ? 'application/pdf'
+            : 'application/vnd.ms-excel; charset=UTF-8';
 
-            foreach (WawanhatiReport::with('user')->latest()->get() as $w) {
-                fputcsv($handle, ['Wawanhati Pilok', $w->user->name ?? '-', optional($w->meeting_at)->format('Y-m-d') ?? '-', $w->local_leader_name, $w->status, substr(strip_tags($w->report_content ?? ''), 0, 100)]);
-            }
+        return response($body, 200, [
+            'Content-Type' => $contentType,
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ]);
+    }
 
-            foreach (SelfDevelopmentJournal::with('user')->latest()->get() as $j) {
-                fputcsv($handle, ['Jurnal', $j->user->name ?? '-', optional($j->activity_date)->format('Y-m-d') ?? '-', $j->organizer, $j->status, substr(strip_tags($j->activity_name ?? ''), 0, 100)]);
-            }
-
-            fclose($handle);
-        }, $filename, ['Content-Type' => 'text/csv']);
+    private function bruders()
+    {
+        return User::query()->where('role', 'user')->orderBy('name')->get();
     }
 }
