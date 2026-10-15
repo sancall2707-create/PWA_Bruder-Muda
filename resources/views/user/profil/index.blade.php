@@ -14,16 +14,19 @@
 <div class="card" style="text-align: center; padding: 28px 20px;">
     <!-- Large Avatar with Initials -->
     @php
-        $user = auth()->user();
         $initials = 'BM';
         if ($user && !empty($user->name)) {
             $words = explode(' ', trim($user->name));
             $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
         }
     @endphp
-    <div style="width: 76px; height: 76px; border-radius: 50%; background: linear-gradient(135deg, var(--fic-primary) 0%, var(--fic-dark-blue) 100%); color: #ffffff; font-size: 26px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; box-shadow: 0 4px 12px rgba(20, 85, 192, 0.25); border: 3px solid #ffffff;">
-        {{ $initials }}
-    </div>
+    @if ($photoUrl)
+        <img src="{{ $photoUrl }}" alt="Foto profil {{ $user->name }}" width="76" height="76" style="width: 76px; height: 76px; border-radius: 50%; object-fit: cover; display: block; margin: 0 auto 14px; box-shadow: 0 4px 12px rgba(20, 85, 192, 0.25); border: 3px solid #ffffff;">
+    @else
+        <div style="width: 76px; height: 76px; border-radius: 50%; background: linear-gradient(135deg, var(--fic-primary) 0%, var(--fic-dark-blue) 100%); color: #ffffff; font-size: 26px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; box-shadow: 0 4px 12px rgba(20, 85, 192, 0.25); border: 3px solid #ffffff;">
+            {{ $initials }}
+        </div>
+    @endif
 
     <!-- User Information -->
     <h2 style="font-size: 18px; font-weight: 800; color: var(--fic-text-primary); margin-bottom: 2px;">

@@ -78,6 +78,7 @@ Route::middleware('auth')->group(function () {
 
         // 15. Profil User
         Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
+        Route::get('/profil/foto', [ProfileController::class, 'photo'])->name('profil.foto');
         Route::get('/profil/edit', [ProfileController::class, 'edit'])->name('profil.edit');
         Route::post('/profil', [ProfileController::class, 'update'])->name('profil.update');
         Route::get('/profil/kata-sandi', [ProfileController::class, 'editPassword'])->name('profil.kata-sandi');

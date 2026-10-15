@@ -11,7 +11,7 @@
     <div style="margin-bottom: 20px;">
         <h2 style="font-size: 16px; font-weight: 700; color: var(--fic-text-primary);">Formulir Edit Profil</h2>
         <p style="font-size: 12px; color: var(--fic-text-secondary); margin-top: 4px;">
-            Perbarui nama, email, dan komunitas Anda. Username dipakai untuk masuk dan tidak dapat diubah.
+            Perbarui nama, email, komunitas, dan foto profil Anda. Username dipakai untuk masuk dan tidak dapat diubah.
         </p>
     </div>
 
@@ -23,8 +23,31 @@
         </div>
     @endif
 
-    <form action="{{ route('profil.update') }}" method="POST">
+    <form action="{{ route('profil.update') }}" method="POST" enctype="multipart/form-data">
         @csrf
+
+        <div class="form-group">
+            @if ($photoUrl)
+                <img src="{{ $photoUrl }}" alt="Foto profil saat ini" width="76" height="76" style="width: 76px; height: 76px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; box-shadow: 0 4px 12px rgba(20, 85, 192, 0.25);">
+            @endif
+            <label for="profile_photo" class="file-upload-box">
+                <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <div class="file-upload-text">{{ $photoUrl ? 'Ganti Foto Profil' : 'Tambahkan Foto Profil' }}</div>
+                <div class="file-upload-subtext">JPG, JPEG, PNG, atau WEBP. Maksimal 5 MB.</div>
+            </label>
+            <input
+                type="file"
+                id="profile_photo"
+                name="profile_photo"
+                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;"
+            >
+            <span class="form-help">Foto bersifat opsional. Menyimpan profil tanpa memilih berkas tidak menghapus foto yang sudah ada.</span>
+        </div>
 
         <div class="form-group">
             <label for="name" class="form-label">
