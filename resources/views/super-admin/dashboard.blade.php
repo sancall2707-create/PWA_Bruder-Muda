@@ -61,7 +61,7 @@
 
     <a href="{{ route('superadmin.sapaan.index') }}" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px 20px; background: #B57900; color: #fff; text-decoration: none; border-radius: 14px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 12px rgba(181,121,0,0.25);">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        📢 Buat Sapaan Provinsial
+        Buat Sapaan Provinsial
     </a>
 </div>
 
