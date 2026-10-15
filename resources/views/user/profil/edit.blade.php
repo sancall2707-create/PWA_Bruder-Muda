@@ -38,14 +38,15 @@
                 </svg>
                 <div class="file-upload-text">{{ $photoUrl ? 'Ganti Foto Profil' : 'Tambahkan Foto Profil' }}</div>
                 <div class="file-upload-subtext">JPG, JPEG, PNG, atau WEBP. Maksimal 5 MB.</div>
+                <div class="file-upload-filename" id="profilePhotoName" hidden></div>
+                <input
+                    type="file"
+                    id="profile_photo"
+                    name="profile_photo"
+                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                    class="file-upload-input"
+                >
             </label>
-            <input
-                type="file"
-                id="profile_photo"
-                name="profile_photo"
-                accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-                style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;"
-            >
             <span class="form-help">Foto bersifat opsional. Menyimpan profil tanpa memilih berkas tidak menghapus foto yang sudah ada.</span>
         </div>
 
@@ -114,3 +115,21 @@
     </form>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.getElementById('profile_photo').addEventListener('change', function () {
+        var nameEl = document.getElementById('profilePhotoName');
+        var file = this.files && this.files[0];
+
+        if (!file) {
+            nameEl.hidden = true;
+            nameEl.textContent = '';
+            return;
+        }
+
+        nameEl.hidden = false;
+        nameEl.textContent = file.name;
+    });
+</script>
+@endpush
