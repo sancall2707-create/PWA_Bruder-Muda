@@ -67,6 +67,21 @@
             letter-spacing: 0.5px;
         }
 
+        .sa-logout {
+            background: #dc2626;
+            border: 1px solid #b91c1c;
+            color: #ffffff;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .sa-logout:hover {
+            background: #b91c1c;
+        }
+
         .sa-title {
             font-size: 20px;
             font-weight: 800;
@@ -136,7 +151,7 @@
                 </div>
                 <form action="{{ route('logout') }}" method="POST" style="margin:0;">
                     @csrf
-                    <button type="submit" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer;">
+                    <button type="submit" class="sa-logout">
                         LOGOUT
                     </button>
                 </form>
