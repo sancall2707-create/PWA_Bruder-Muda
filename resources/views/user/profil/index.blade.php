@@ -5,6 +5,12 @@
 @endphp
 
 @section('content')
+@if(session('success'))
+    <div style="background-color: var(--fic-green-soft); border: 1px solid rgba(53, 168, 102, 0.3); color: #027A48; padding: 12px 16px; border-radius: 12px; font-size: 13px; font-weight: 600;">
+        {{ session('success') }}
+    </div>
+@endif
+
 <div class="card" style="text-align: center; padding: 28px 20px;">
     <!-- Large Avatar with Initials -->
     @php
@@ -35,9 +41,13 @@
 
     <!-- Detail List -->
     <div style="margin-top: 24px; text-align: left; border-top: 1px solid var(--fic-border); padding-top: 16px;">
-        <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #F2F4F7;">
+        <div style="display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #F2F4F7;">
             <span style="color: var(--fic-text-muted); font-weight: 600;">Email Terdaftar:</span>
-            <span style="font-weight: 600; color: var(--fic-text-primary);">{{ $user->email ?? 'Belum disetel' }}</span>
+            <span style="font-weight: 600; color: var(--fic-text-primary); text-align: right;">{{ $user->email ?? 'Belum disetel' }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #F2F4F7;">
+            <span style="color: var(--fic-text-muted); font-weight: 600;">Komunitas:</span>
+            <span style="font-weight: 600; color: var(--fic-text-primary); text-align: right;">{{ $user->community_location ?: 'Belum disetel' }}</span>
         </div>
         <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #F2F4F7;">
             <span style="color: var(--fic-text-muted); font-weight: 600;">Status Keanggotaan:</span>
@@ -50,23 +60,22 @@
     </div>
 </div>
 
-<!-- Placeholder Profile Actions -->
 <div class="card" style="display: flex; flex-direction: column; gap: 10px;">
-    <button type="button" class="btn-secondary" style="opacity: 0.65; cursor: not-allowed;" title="Fitur akan hadir pada fase profil">
+    <a href="{{ route('profil.edit') }}" class="btn-secondary">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
         </svg>
-        <span>Edit Profil (Tahap Lanjutan)</span>
-    </button>
+        <span>Edit Profil</span>
+    </a>
 
-    <button type="button" class="btn-secondary" style="opacity: 0.65; cursor: not-allowed;" title="Fitur akan hadir pada fase keamanan">
+    <a href="{{ route('profil.kata-sandi') }}" class="btn-secondary">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
         </svg>
-        <span>Ubah Kata Sandi (Tahap Lanjutan)</span>
-    </button>
+        <span>Ubah Kata Sandi</span>
+    </a>
 </div>
 
 <!-- Form Logout POST -->

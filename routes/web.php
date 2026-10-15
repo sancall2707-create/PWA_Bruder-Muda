@@ -78,6 +78,10 @@ Route::middleware('auth')->group(function () {
 
         // 15. Profil User
         Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
+        Route::get('/profil/edit', [ProfileController::class, 'edit'])->name('profil.edit');
+        Route::post('/profil', [ProfileController::class, 'update'])->name('profil.update');
+        Route::get('/profil/kata-sandi', [ProfileController::class, 'editPassword'])->name('profil.kata-sandi');
+        Route::post('/profil/kata-sandi', [ProfileController::class, 'updatePassword'])->name('profil.kata-sandi.update');
     });
 
     // Dashboard Admin (admin, super_admin)
