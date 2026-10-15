@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    @include('partials.fic-icons')
     <title>{{ $title ?? 'Bruder FIC Indonesia' }} - PWA Pendampingan</title>
 
     <!-- Google Fonts: Plus Jakarta Sans & Inter with safe fallbacks -->
@@ -24,7 +25,7 @@
             <header class="app-header">
                 <div class="header-top">
                     <div class="identity-brand">
-                        <div class="identity-logo" aria-label="Logo FIC">FIC</div>
+                        <img src="/images/logo-fic.png" alt="Lambang FIC" class="identity-logo" width="38" height="38">
                         <div class="identity-titles">
                             <span class="identity-title-main">BRUDER FIC</span>
                             <span class="identity-title-sub">INDONESIA</span>

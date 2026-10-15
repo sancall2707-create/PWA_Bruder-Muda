@@ -13,9 +13,7 @@
             @if($message->image_url)
                 <img src="{{ $message->image_url }}" alt="Foto sapaan" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; margin-bottom: 14px;">
             @else
-                <div style="width: 52px; height: 52px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.4); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800;">
-                    FIC
-                </div>
+                <img src="/images/logo-fic.png" alt="Lambang FIC" width="52" height="52" style="width: 52px; height: 52px; object-fit: contain; margin: 0 auto 12px; display: block;">
             @endif
             <span style="font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--fic-gold);">
                 Pesan Penggembalaan
