@@ -31,6 +31,7 @@
         .pill { font-size:11px; font-weight:800; border-radius:999px; padding:3px 8px; }
         .actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
         .btn { background:#1455C0; color:#fff; padding:8px 12px; border-radius:10px; font-weight:700; text-decoration:none; font-size:12px; border:none; cursor:pointer; }
+        a.btn { display:inline-flex; align-items:center; justify-content:center; text-align:center; line-height:1.2; }
         .btn-muted { background:#F2F4F7; color:#344054; }
         .btn-danger { background:#B42318; color:#fff; }
         .fab { position:fixed; right:max(16px, calc(50vw - 224px)); bottom:24px; width:56px; height:56px; border-radius:18px; background:#1455C0; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:32px; font-weight:500; box-shadow:0 8px 18px rgba(20,85,192,0.35); }
