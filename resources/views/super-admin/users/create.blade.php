@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/css/fic-pwa.css">
     <style>
         body { background:#EEF2F6; font-family:'Plus Jakarta Sans','Inter',sans-serif; margin:0; padding:0; min-height:100vh; display:flex; justify-content:center; }
-        .container { width:100%; max-width:480px; background:#F6F8FC; min-height:100vh; display:flex; flex-direction:column; box-shadow:0 0 30px rgba(0,0,0,0.08); }
+        .container { width:100%; max-width:480px; background:#F6F8FC; min-height:100vh; display:flex; flex-direction:column; box-shadow:0 0 30px rgba(0,0,0,0.08); padding-bottom:72px; box-sizing:border-box; }
         .header { background:linear-gradient(135deg,#003E97 0%,#1455C0 100%); color:#fff; padding:20px; border-bottom-left-radius:20px; border-bottom-right-radius:20px; box-shadow:0 4px 16px rgba(0,62,151,0.15); }
         .header-nav { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
         .btn-header-back { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; padding:0; line-height:0; background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.3); border-radius:10px; color:#fff; text-decoration:none; }
@@ -18,7 +18,7 @@
         .badge { display:inline-flex; gap:6px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; text-transform:uppercase; }
         .title { font-size:20px; font-weight:800; margin:0 0 4px; }
         .subtitle { font-size:13px; color:rgba(255,255,255,.85); margin:0; }
-        .body { padding:20px 16px 40px; flex:1; display:flex; flex-direction:column; gap:16px; }
+        .body { padding:20px 16px 96px; flex:1; display:flex; flex-direction:column; gap:16px; }
         .form-section { background:#fff; border-radius:16px; border:1px solid #E4E7EC; padding:18px; box-shadow:0 2px 8px rgba(16,24,40,0.04); display:flex; flex-direction:column; gap:14px; }
         .section-label { font-size:12px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin-bottom:4px; }
         .field { display:flex; flex-direction:column; gap:6px; }
@@ -123,6 +123,7 @@
             </div>
         </form>
     </div>
+    @include('layouts.partials.sa-bottom-nav')
 </div>
 </body>
 </html>
