@@ -51,7 +51,7 @@
 <div style="display: flex; flex-direction: column; gap: 10px;">
     <a href="{{ route('superadmin.users.index') }}" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px 20px; background: #1455C0; color: #fff; text-decoration: none; border-radius: 14px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 12px rgba(20,85,192,0.25);">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-        👥 Kelola Data Bruder
+        Kelola Data Bruder
     </a>
 
     <a href="{{ route('superadmin.monitoring.index') }}" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px 20px; background: #027A48; color: #fff; text-decoration: none; border-radius: 14px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 12px rgba(2,122,72,0.25);">
