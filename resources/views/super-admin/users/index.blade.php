@@ -29,12 +29,13 @@
         .loc { font-size:12px; color:#667085; margin-top:2px; }
         .meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
         .pill { font-size:11px; font-weight:800; border-radius:999px; padding:3px 8px; }
-        .actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
-        .btn { background:#1455C0; color:#fff; padding:8px 12px; border-radius:10px; font-weight:700; text-decoration:none; font-size:12px; border:none; cursor:pointer; }
-        a.btn { display:inline-flex; align-items:center; justify-content:center; text-align:center; line-height:1.2; }
+        .actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:10px; }
+        .actions form { margin:0; display:flex; }
+        .btn { background:#1455C0; color:#fff; min-height:36px; padding:8px 12px; border-radius:10px; font-weight:700; text-decoration:none; font-size:12px; line-height:1; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; text-align:center; white-space:nowrap; }
         .btn-muted { background:#F2F4F7; color:#344054; }
         .btn-danger { background:#B42318; color:#fff; }
-        .fab { position:fixed; right:max(16px, calc(50vw - 224px)); bottom:24px; width:56px; height:56px; border-radius:18px; background:#1455C0; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:32px; font-weight:500; box-shadow:0 8px 18px rgba(20,85,192,0.35); }
+        .fab { position:fixed; right:max(16px, calc(50vw - 224px)); bottom:24px; width:56px; height:56px; border-radius:18px; background:#1455C0; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; line-height:0; padding:0; box-shadow:0 8px 18px rgba(20,85,192,0.35); }
+        .fab svg { display:block; }
         .body { padding-bottom:96px; }
     </style>
 </head>
@@ -99,7 +100,12 @@
 
             {{ $users->links() }}
         </div>
-        <a href="{{ route('superadmin.users.create') }}" class="fab" aria-label="Tambah bruder muda">+</a>
+        <a href="{{ route('superadmin.users.create') }}" class="fab" aria-label="Tambah bruder muda">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </a>
     </div>
 </body>
 </html>
