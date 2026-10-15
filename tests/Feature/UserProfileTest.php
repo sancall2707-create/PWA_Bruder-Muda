@@ -229,6 +229,80 @@ class UserProfileTest extends TestCase
         $this->assertAuthenticatedAs($user);
     }
 
+    public function test_header_avatar_renders_profile_photo_or_initials(): void
+    {
+        Storage::fake('public');
+
+        $withPhoto = User::factory()->create([
+            'name' => 'User Demo FIC',
+            'username' => 'berfoto_header',
+            'email' => 'berfoto.header@fic.local',
+            'role' => 'user',
+            'is_active' => true,
+            'profile_photo' => 'profil/uji-header.jpg',
+        ]);
+        Storage::disk('public')->put('profil/uji-header.jpg', $this->tinyJpeg());
+
+        $withPhotoHtml = $this->actingAs($withPhoto)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('/images/logo-fic.png', false)
+            ->assertSee('class="identity-logo"', false)
+            ->getContent();
+
+        $this->assertMatchesRegularExpression(
+            '/class="header-user-avatar"[^>]*>\s*<img\b(?=[^>]*\bclass="header-user-photo")(?=[^>]*\bsrc="'.preg_quote(route('profil.foto'), '/').'")[^>]*>/',
+            $withPhotoHtml
+        );
+        $this->assertDoesNotMatchRegularExpression(
+            '/class="header-user-avatar"[^>]*>\s*UD\s*</',
+            $withPhotoHtml
+        );
+
+        $withoutPhoto = User::factory()->create([
+            'name' => 'User Demo FIC',
+            'username' => 'tanpa_foto_header',
+            'email' => 'tanpa.foto.header@fic.local',
+            'role' => 'user',
+            'is_active' => true,
+            'profile_photo' => null,
+        ]);
+
+        $withoutPhotoHtml = $this->actingAs($withoutPhoto)
+            ->get(route('sapaan-provinsial'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertMatchesRegularExpression(
+            '/class="header-user-avatar"[^>]*>\s*UD\s*</',
+            $withoutPhotoHtml
+        );
+        $this->assertDoesNotMatchRegularExpression(
+            '/class="header-user-avatar"[^>]*>\s*<img/',
+            $withoutPhotoHtml
+        );
+
+        $unsafe = User::factory()->create([
+            'name' => 'User Demo FIC',
+            'username' => 'jalur_tidak_aman',
+            'email' => 'jalur.tidak.aman@fic.local',
+            'role' => 'user',
+            'is_active' => true,
+            'profile_photo' => 'profil/../sapaan/rahasia.jpg',
+        ]);
+
+        $unsafeHtml = $this->actingAs($unsafe)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertMatchesRegularExpression(
+            '/class="header-user-avatar"[^>]*>\s*UD\s*</',
+            $unsafeHtml
+        );
+        $this->assertStringNotContainsString(route('profil.foto'), $unsafeHtml);
+    }
+
     public function test_guest_cannot_open_profile_forms(): void
     {
         $this->get(route('profil.edit'))->assertRedirect(route('login'));
