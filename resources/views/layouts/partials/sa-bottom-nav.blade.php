@@ -11,6 +11,7 @@
         display: flex;
         justify-content: space-around;
         padding: 8px 0;
+        box-sizing: border-box;
         z-index: 100;
         box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
     }
@@ -38,7 +39,7 @@
     }
 </style>
 <nav class="sa-bottom-nav">
-    <a href="{{ route('superadmin.dashboard') }}" class="sa-nav-item {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}">
+    <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('superadmin.dashboard') }}" class="sa-nav-item {{ request()->routeIs('superadmin.dashboard') || request()->routeIs('admin.dashboard') ? 'active' : '' }}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
         <span>Dashboard</span>
     </a>

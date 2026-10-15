@@ -95,23 +95,11 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:super_admin')
         ->name('superadmin.dashboard');
 
-    // Fase 2 Routes Super Admin
-    Route::middleware('role:super_admin')->prefix('super-admin')->name('superadmin.')->group(function () {
-        Route::get('/fase-1-check', function () {
-            $users = User::orderBy('role')->orderBy('name')->get();
-
-            return view('dashboard.fase-1-check', compact('users'));
-        })->name('fase1-check');
-
-        Route::get('/fase-2-check', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'index'])->name('fase2-check');
-
-        // Manajemen User / Bruder Muda
+    // Fase 2 Routes - Kolaborasi TPPBM & Super Admin
+    Route::middleware('role:admin,super_admin')->prefix('super-admin')->name('superadmin.')->group(function () {
+        // Direktori & Track Record Bruder
         Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
-        Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
-        Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
         Route::get('/users/{user}/track-record', [UserManagementController::class, 'trackRecord'])->name('users.track-record');
-        Route::post('/users/{user}/status', [UserManagementController::class, 'updateStatus'])->name('users.status');
-        Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
 
         // Monitoring Laporan & Agenda
         Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
@@ -124,5 +112,22 @@ Route::middleware('auth')->group(function () {
         Route::get('/sapaan/{message}/edit', [ProvincialMessageManagementController::class, 'edit'])->name('sapaan.edit');
         Route::put('/sapaan/{message}', [ProvincialMessageManagementController::class, 'update'])->name('sapaan.update');
         Route::post('/sapaan/{message}/status', [ProvincialMessageManagementController::class, 'updateStatus'])->name('sapaan.status');
+    });
+
+    // Modul Khusus Super Admin (Akses Sistem & Akun)
+    Route::middleware('role:super_admin')->prefix('super-admin')->name('superadmin.')->group(function () {
+        Route::get('/fase-1-check', function () {
+            $users = User::orderBy('role')->orderBy('name')->get();
+
+            return view('dashboard.fase-1-check', compact('users'));
+        })->name('fase1-check');
+
+        Route::get('/fase-2-check', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'index'])->name('fase2-check');
+
+        // Aksi Akun Super Admin
+        Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
+        Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
+        Route::post('/users/{user}/status', [UserManagementController::class, 'updateStatus'])->name('users.status');
+        Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
     });
 });

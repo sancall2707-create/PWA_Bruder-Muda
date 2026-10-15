@@ -96,7 +96,7 @@
         }
 
         .sa-body {
-            padding: 20px 16px;
+            padding: 20px 16px 92px;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -111,7 +111,7 @@
         <div class="sa-header">
             <div class="sa-header-top">
                 <div class="sa-badge">
-                    SUPER ADMIN
+                    {{ auth()->user()->role === 'admin' ? 'TIM PENDAMPING TPPBM' : 'SUPER ADMIN' }}
                 </div>
                 <form action="{{ route('logout') }}" method="POST" style="margin:0;">
                     @csrf
@@ -120,8 +120,8 @@
                     </button>
                 </form>
             </div>
-            <h1 class="sa-title">{{ $headerTitle ?? 'Dashboard Super Admin' }}</h1>
-            <p class="sa-subtitle">{{ $headerSubtitle ?? 'Kelola pembinaan, bruder muda, & sapaan' }}</p>
+            <h1 class="sa-title">{{ $headerTitle ?? (auth()->user()->role === 'admin' ? 'Dashboard TPPBM' : 'Dashboard Super Admin') }}</h1>
+            <p class="sa-subtitle">{{ $headerSubtitle ?? (auth()->user()->role === 'admin' ? 'Pemantauan formasi rohani & pembinaan bruder muda' : 'Kelola pembinaan, bruder muda, & sapaan') }}</p>
         </div>
 
         <!-- Body Content -->
