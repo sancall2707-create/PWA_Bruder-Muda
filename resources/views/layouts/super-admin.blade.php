@@ -132,7 +132,7 @@
         <div class="sa-header">
             <div class="sa-header-top">
                 <div class="sa-badge">
-                    <span>👑</span> SUPER ADMIN
+                    SUPER ADMIN
                 </div>
                 <form action="{{ route('logout') }}" method="POST" style="margin:0;">
                     @csrf
