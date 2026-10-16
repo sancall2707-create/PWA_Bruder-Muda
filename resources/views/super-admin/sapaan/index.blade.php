@@ -1,33 +1,111 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Sapaan Provinsial</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body{background:#EEF2F6;font-family:'Plus Jakarta Sans','Inter',sans-serif;margin:0;display:flex;justify-content:center}.container{width:100%;max-width:480px;background:#F6F8FC;min-height:100vh}.header{background:linear-gradient(135deg,#003E97,#1455C0);color:#fff;padding:22px 20px;border-bottom-left-radius:20px;border-bottom-right-radius:20px}.title{font-size:20px;font-weight:800;margin:0}.body{padding:20px 16px}.form{display:flex;flex-direction:column;gap:12px}.field label{font-size:12px;font-weight:700;color:#667085;text-transform:uppercase}.field input,.field textarea{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:12px;border:1px solid #E4E7EC;font-size:14px;background:#fff}.btn{border:none;border-radius:12px;padding:14px 18px;font-weight:800;background:#1455C0;color:#fff}.back{display:block;text-align:center;margin-top:12px;color:#1455C0;text-decoration:none;font-weight:700}
-    </style>
-</head>
-<body>
-<div class="container">
-    <div class="header"><h1 class="title">Sapaan &amp; Pengumuman</h1></div>
-    <div class="body">
-        @if(session('success'))
-            <div style="background:#ECFDF3;color:#027A48;padding:12px;border-radius:12px;font-size:13px;font-weight:700;margin-bottom:12px;">
-                {{ session('success') }}
-            </div>
-        @endif
-        <form method="POST" action="{{ route('superadmin.sapaan.store') }}" enctype="multipart/form-data" class="form">
-            @csrf
-            <div class="field"><label>Judul Sapaan</label><input name="title" required></div>
-            <div class="field"><label>Nama Penulis / Pimpinan</label><input name="author_name" value="Br. Agustinus Giwal Santoso, FIC"></div>
-            <div class="field"><label>Foto (Opsional)</label><input type="file" name="image" accept="image/*"></div>
-            <div class="field"><label>Pesan Rohani / Arahan</label><textarea name="content" rows="5" required></textarea></div>
-            <button type="submit" class="btn">PUBLIKASI SAPAAN</button>
-        </form>
-        <a href="{{ route('superadmin.fase2-check') }}" class="back">← Kembali ke Pengecekan Fase 2</a>
+@extends('layouts.super-admin')
+
+@section('content')
+@php
+    $editing = $editing ?? null;
+    $isAnnouncement = old('kind', $editing->kind ?? 'sapaan') === 'pengumuman';
+@endphp
+
+@if($errors->any())
+    <div style="background:#FEF3F2; border:1px solid #FECDCA; color:#B42318; padding:12px 14px; border-radius:12px; font-size:13px; font-weight:700;">
+        {{ $errors->first() }}
     </div>
+@endif
+
+<form method="POST" action="{{ $editing ? route('superadmin.sapaan.update', $editing) : route('superadmin.sapaan.store') }}" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:12px; background:#fff; border:1px solid #E4E7EC; border-radius:16px; padding:16px;">
+    @csrf
+    @if($editing)
+        @method('PUT')
+    @endif
+
+    <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:700; color:#475467;">
+        Jenis publikasi
+        <select name="kind" aria-label="Jenis publikasi" style="padding:12px 14px; border-radius:12px; border:1px solid #D0D5DD; font-size:14px; color:#101828;">
+            <option value="sapaan" {{ old('kind', $editing->kind ?? 'sapaan') === 'sapaan' ? 'selected' : '' }}>Sapaan rohani</option>
+            <option value="pengumuman" {{ $isAnnouncement ? 'selected' : '' }}>Pengumuman / jadwal bersama</option>
+        </select>
+    </label>
+
+    <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:700; color:#475467;">
+        Judul
+        <input name="title" value="{{ old('title', $editing->title ?? '') }}" required maxlength="255" style="padding:12px 14px; border-radius:12px; border:1px solid #D0D5DD; font-size:14px;">
+    </label>
+
+    <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:700; color:#475467;">
+        Nama penulis
+        <input name="author_name" value="{{ old('author_name', $editing->author_name ?? 'Br. Agustinus Giwal Santoso, FIC') }}" required maxlength="255" style="padding:12px 14px; border-radius:12px; border:1px solid #D0D5DD; font-size:14px;">
+    </label>
+
+    <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:700; color:#475467;">
+        Peran
+        <select name="author_role" aria-label="Peran" style="padding:12px 14px; border-radius:12px; border:1px solid #D0D5DD; font-size:14px; color:#101828;">
+            @foreach(['Pemimpin Provinsial FIC Indonesia', 'TPPBM'] as $role)
+                <option value="{{ $role }}" {{ old('author_role', $editing->author_role ?? 'Pemimpin Provinsial FIC Indonesia') === $role ? 'selected' : '' }}>{{ $role }}</option>
+            @endforeach
+        </select>
+    </label>
+
+    <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:700; color:#475467;">
+        Foto (opsional, jpg/png, maksimal 5 MB)
+        <input type="file" name="image" accept="image/jpeg,image/png,image/webp">
+    </label>
+    @if($editing?->image)
+        <img src="{{ route('sapaan-provinsial.foto', $editing) }}" alt="Foto publikasi saat ini" style="width:100%; max-height:180px; object-fit:cover; border-radius:12px;">
+    @endif
+
+    <div style="display:flex; gap:8px;">
+        <label style="flex:1; display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:700; color:#475467;">
+            Tanggal kegiatan
+            <input type="date" name="tanggal_kegiatan" value="{{ old('tanggal_kegiatan', optional($editing?->starts_at)->format('Y-m-d')) }}" style="padding:12px 14px; border-radius:12px; border:1px solid #D0D5DD; font-size:14px;">
+        </label>
+        <label style="width:120px; display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:700; color:#475467;">
+            Waktu
+            <input type="time" name="waktu_kegiatan" value="{{ old('waktu_kegiatan', optional($editing?->starts_at)->format('H:i')) }}" style="padding:12px 14px; border-radius:12px; border:1px solid #D0D5DD; font-size:14px;">
+        </label>
+    </div>
+    <div style="font-size:12px; color:#667085; margin-top:-6px;">Tanggal dipakai untuk pengumuman dan masuk ke pengingat bruder.</div>
+
+    <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:700; color:#475467;">
+        Pesan
+        <textarea name="content" rows="6" required style="padding:12px 14px; border-radius:12px; border:1px solid #D0D5DD; font-size:14px; font-family:inherit;">{{ old('content', $editing->content ?? '') }}</textarea>
+    </label>
+
+    <button type="submit" style="border:none; border-radius:14px; padding:15px; font-weight:800; font-size:15px; background:#1455C0; color:#fff; cursor:pointer;">
+        {{ $editing ? 'Simpan & Publikasikan' : 'Publikasikan' }}
+    </button>
+</form>
+
+<div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
+    @forelse($messages as $item)
+        <div style="background:#fff; border:1px solid #E4E7EC; border-radius:14px; padding:14px;">
+            <div style="display:flex; justify-content:space-between; gap:8px; align-items:flex-start;">
+                <div>
+                    <div style="font-weight:800; color:#101828;">{{ $item->title }}</div>
+                    <div style="font-size:12px; color:#667085; margin-top:2px;">
+                        {{ $item->kind === 'pengumuman' ? 'Pengumuman' : 'Sapaan' }}
+                        &bull; {{ $item->author_name }}
+                        &bull; {{ $item->publishedLabel() }}
+                        @if($item->scheduleLabel())
+                            &bull; {{ $item->scheduleLabel() }}
+                        @endif
+                    </div>
+                </div>
+                <span style="padding:4px 10px; border-radius:999px; font-size:10px; font-weight:700; white-space:nowrap; {{ $item->is_active ? 'background:#ECFDF3;color:#027A48;border:1px solid #ABEFC6;' : 'background:#F2F4F7;color:#667085;border:1px solid #E4E7EC;' }}">
+                    {{ $item->is_active ? 'Tayang' : 'Ditarik' }}
+                </span>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:12px;">
+                <a href="{{ route('superadmin.sapaan.edit', $item) }}" style="flex:1; text-align:center; padding:10px; border-radius:10px; background:#EFF8FF; color:#1455C0; font-weight:700; font-size:13px; text-decoration:none;">Ubah</a>
+                <form method="POST" action="{{ route('superadmin.sapaan.status', $item) }}" style="flex:1; margin:0;">
+                    @csrf
+                    <button type="submit" style="width:100%; padding:10px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; color:#344054; font-weight:700; font-size:13px; cursor:pointer;">
+                        {{ $item->is_active ? 'Tarik' : 'Tayangkan' }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    @empty
+        <div style="text-align:center; color:#667085; padding:20px; background:#fff; border:1px solid #E4E7EC; border-radius:14px;">Belum ada sapaan atau pengumuman.</div>
+    @endforelse
 </div>
-</body>
-</html>
+@endsection

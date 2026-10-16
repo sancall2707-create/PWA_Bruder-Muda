@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    @include('partials.fic-icons')
     <title>Login - PWA BRUDER FIC INDONESIA</title>
 
     <!-- Google Fonts: Plus Jakarta Sans & Inter with safe system fallbacks -->
@@ -42,20 +43,15 @@
             margin-bottom: 28px;
         }
         .brand-emblem {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--fic-dark-blue) 0%, var(--fic-primary) 100%);
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            box-shadow: 0 8px 16px rgba(20, 85, 192, 0.25);
+            width: 96px;
+            height: 96px;
+            object-fit: contain;
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            display: block;
             margin-bottom: 14px;
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            border: 2px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 16px rgba(16, 24, 40, 0.12);
         }
         .brand-title-main {
             font-size: 18px;
@@ -151,10 +147,8 @@
                 border-radius: 16px;
             }
             .brand-emblem {
-                width: 52px;
-                height: 52px;
-                font-size: 20px;
-                border-radius: 14px;
+                width: 80px;
+                height: 80px;
                 margin-bottom: 10px;
             }
             .brand-header {
@@ -167,9 +161,7 @@
     <div class="login-card">
         <!-- Brand Identity -->
         <div class="brand-header">
-            <div class="brand-emblem" aria-hidden="true">
-                FIC
-            </div>
+            <img src="/images/logo-fic.png" alt="Lambang Kongregasi Bruder FIC" class="brand-emblem" width="96" height="96">
             <div class="brand-title-main">BRUDER FIC</div>
             <div class="brand-title-sub">INDONESIA</div>
             <p class="brand-tagline">“Hidup kita bagi Allah dan Sesama”</p>

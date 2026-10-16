@@ -31,6 +31,17 @@
     </div>
 </div>
 
+@if($sapaan)
+    <a href="{{ route('sapaan-provinsial') }}" class="card" style="display:block; text-decoration:none; color:inherit; padding:14px;">
+        <div style="font-size:11px; font-weight:800; letter-spacing:0.4px; color:var(--fic-gold); text-transform:uppercase;">Sapaan Provinsial</div>
+        @if($sapaan->image)
+            <img src="{{ route('sapaan-provinsial.foto', $sapaan) }}" alt="Foto sapaan" style="width:100%; max-height:140px; object-fit:cover; border-radius:12px; margin-top:10px;">
+        @endif
+        <div style="font-weight:800; color:#101828; margin-top:8px;">{{ $sapaan->title }}</div>
+        <div style="font-size:12px; color:#667085; margin-top:2px;">{{ $sapaan->author_name }} &bull; {{ $sapaan->publishedLabel() }}</div>
+    </a>
+@endif
+
 <div class="reminder-card">
     <div class="reminder-header">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -40,6 +51,15 @@
         <span>Pengingat Jadwal Terdekat</span>
     </div>
     <div class="reminder-list">
+        @foreach($announcements as $announcement)
+            <div class="reminder-item">
+                <div class="reminder-bullet" style="background-color: var(--fic-gold);"></div>
+                <div class="reminder-content">
+                    <div class="reminder-title">{{ $announcement->title }}</div>
+                    <div class="reminder-date">Pengumuman @if($announcement->scheduleLabel()) &bull; {{ $announcement->scheduleLabel() }} @endif</div>
+                </div>
+            </div>
+        @endforeach
         @forelse($upcomingSchedules as $schedule)
             <div class="reminder-item">
                 <div class="reminder-bullet" style="background-color: {{ $reminderColor[$schedule->category] ?? 'var(--fic-primary)' }};"></div>
@@ -49,11 +69,13 @@
                 </div>
             </div>
         @empty
-            <div class="reminder-item">
-                <div class="reminder-content">
-                    <div class="reminder-date">Belum ada jadwal dalam 7 hari ke depan.</div>
+            @if($announcements->isEmpty())
+                <div class="reminder-item">
+                    <div class="reminder-content">
+                        <div class="reminder-date">Belum ada jadwal dalam 7 hari ke depan.</div>
+                    </div>
                 </div>
-            </div>
+            @endif
         @endforelse
     </div>
 </div>

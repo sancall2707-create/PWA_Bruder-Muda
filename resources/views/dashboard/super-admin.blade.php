@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @include('partials.fic-icons')
     <title>Dashboard Super Admin - PWA BRUDER FIC (Test View)</title>
     <style>
         body {

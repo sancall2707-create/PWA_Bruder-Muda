@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:user,admin,super_admin')->group(function () {
         // 2. Sapaan Provinsial
         Route::get('/sapaan-provinsial', [ProvincialMessageController::class, 'index'])->name('sapaan-provinsial');
+        Route::get('/sapaan-provinsial/foto/{message}', [ProvincialMessageController::class, 'photo'])->name('sapaan-provinsial.foto');
 
         // 3. Dashboard / Menu Utama Bruder Muda
         Route::get('/dashboard', [DashboardController::class, 'user'])->name('dashboard');
@@ -77,6 +78,11 @@ Route::middleware('auth')->group(function () {
 
         // 15. Profil User
         Route::get('/profil', [ProfileController::class, 'index'])->name('profil');
+        Route::get('/profil/foto', [ProfileController::class, 'photo'])->name('profil.foto');
+        Route::get('/profil/edit', [ProfileController::class, 'edit'])->name('profil.edit');
+        Route::post('/profil', [ProfileController::class, 'update'])->name('profil.update');
+        Route::get('/profil/kata-sandi', [ProfileController::class, 'editPassword'])->name('profil.kata-sandi');
+        Route::post('/profil/kata-sandi', [ProfileController::class, 'updatePassword'])->name('profil.kata-sandi.update');
     });
 
     // Dashboard Admin (admin, super_admin)
@@ -89,7 +95,26 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:super_admin')
         ->name('superadmin.dashboard');
 
-    // Fase 2 Routes Super Admin
+    // Fase 2 Routes - Kolaborasi TPPBM & Super Admin
+    Route::middleware('role:admin,super_admin')->prefix('super-admin')->name('superadmin.')->group(function () {
+        // Direktori & Track Record Bruder
+        Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
+        Route::get('/users/{user}/track-record', [UserManagementController::class, 'trackRecord'])->name('users.track-record');
+
+        // Monitoring Laporan & Agenda
+        Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
+        Route::get('/monitoring/agenda', [MonitoringController::class, 'agenda'])->name('monitoring.agenda');
+        Route::get('/monitoring/export', [MonitoringController::class, 'export'])->name('monitoring.export');
+
+        // Sapaan & Publikasi
+        Route::get('/sapaan', [ProvincialMessageManagementController::class, 'index'])->name('sapaan.index');
+        Route::post('/sapaan', [ProvincialMessageManagementController::class, 'store'])->name('sapaan.store');
+        Route::get('/sapaan/{message}/edit', [ProvincialMessageManagementController::class, 'edit'])->name('sapaan.edit');
+        Route::put('/sapaan/{message}', [ProvincialMessageManagementController::class, 'update'])->name('sapaan.update');
+        Route::post('/sapaan/{message}/status', [ProvincialMessageManagementController::class, 'updateStatus'])->name('sapaan.status');
+    });
+
+    // Modul Khusus Super Admin (Akses Sistem & Akun)
     Route::middleware('role:super_admin')->prefix('super-admin')->name('superadmin.')->group(function () {
         Route::get('/fase-1-check', function () {
             $users = User::orderBy('role')->orderBy('name')->get();
@@ -99,18 +124,10 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/fase-2-check', [App\Http\Controllers\SuperAdmin\DashboardController::class, 'index'])->name('fase2-check');
 
-        // Manajemen User / Bruder Muda
-        Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
+        // Aksi Akun Super Admin
         Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
         Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
-        Route::get('/users/{user}/track-record', [UserManagementController::class, 'trackRecord'])->name('users.track-record');
-
-        // Monitoring Laporan & Agenda
-        Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
-        Route::get('/monitoring/export', [MonitoringController::class, 'export'])->name('monitoring.export');
-
-        // Sapaan & Publikasi
-        Route::get('/sapaan', [ProvincialMessageManagementController::class, 'index'])->name('sapaan.index');
-        Route::post('/sapaan', [ProvincialMessageManagementController::class, 'store'])->name('sapaan.store');
+        Route::post('/users/{user}/status', [UserManagementController::class, 'updateStatus'])->name('users.status');
+        Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
     });
 });
