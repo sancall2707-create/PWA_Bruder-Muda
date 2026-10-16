@@ -40,7 +40,7 @@
         .sa-header {
             background: linear-gradient(135deg, #003E97 0%, #1455C0 100%);
             color: #ffffff;
-            padding: 20px 68px 20px 18px;
+            padding: 20px 18px;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
             box-shadow: 0 4px 16px rgba(0, 62, 151, 0.15);
@@ -98,6 +98,7 @@
                 <div class="sa-badge">
                     {{ auth()->user()->role === 'admin' ? 'TIM PENDAMPING TPPBM' : 'SUPER ADMIN' }}
                 </div>
+                @include('layouts.partials.sa-menu-toggle')
             </div>
             <h1 class="sa-title">{{ $headerTitle ?? (auth()->user()->role === 'admin' ? 'Dashboard TPPBM' : 'Dashboard Super Admin') }}</h1>
             <p class="sa-subtitle">{{ $headerSubtitle ?? (auth()->user()->role === 'admin' ? 'Pemantauan formasi rohani & pembinaan bruder muda' : 'Kelola pembinaan, bruder muda, & sapaan') }}</p>

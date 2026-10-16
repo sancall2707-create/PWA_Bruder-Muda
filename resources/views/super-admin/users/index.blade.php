@@ -12,7 +12,7 @@
     <style>
         body { background:#EEF2F6; font-family:'Plus Jakarta Sans','Inter',sans-serif; margin:0; padding:0; min-height:100vh; display:flex; justify-content:center; }
         .container { width:100%; max-width:480px; background:#F6F8FC; min-height:100vh; display:flex; flex-direction:column; box-shadow:0 0 30px rgba(0,0,0,0.08); padding-bottom:72px; box-sizing:border-box; }
-        .header { background:linear-gradient(135deg,#003E97 0%,#1455C0 100%); color:#fff; padding:20px 68px 20px 20px; border-bottom-left-radius:20px; border-bottom-right-radius:20px; box-shadow:0 4px 16px rgba(0,62,151,0.15); }
+        .header { background:linear-gradient(135deg,#003E97 0%,#1455C0 100%); color:#fff; padding:20px; border-bottom-left-radius:20px; border-bottom-right-radius:20px; box-shadow:0 4px 16px rgba(0,62,151,0.15); }
         .header-nav { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
         .btn-header-back { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; padding:0; line-height:0; background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.3); border-radius:10px; color:#fff; text-decoration:none; transition:transform 0.15s ease; }
         .btn-header-back svg { display:block; }
@@ -49,6 +49,7 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
                 </a>
                 <div class="badge">{{ auth()->user()->role === 'admin' ? 'DIREKTORI BRUDER' : 'MANAJEMEN BRUDER' }}</div>
+                @include('layouts.partials.sa-menu-toggle')
             </div>
             <h1 class="title">{{ auth()->user()->role === 'admin' ? 'Direktori Bruder Muda' : 'Manajemen Data Bruder' }}</h1>
             <p class="subtitle">{{ auth()->user()->role === 'admin' ? 'Pantau data diri dan capaian pembinaan bruder.' : 'Kelola akun, cari cepat, tambah baru.' }}</p>

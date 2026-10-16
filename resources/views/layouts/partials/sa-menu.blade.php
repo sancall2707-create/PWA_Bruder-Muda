@@ -3,6 +3,12 @@
     $homeUrl = $isAdmin ? route('admin.dashboard') : route('superadmin.dashboard');
 @endphp
 <style>
+    .sa-container,
+    .container {
+        position: relative;
+        overflow-x: hidden;
+    }
+
     .sa-menu-toggle {
         position: static;
         flex-shrink: 0;
@@ -32,25 +38,26 @@
 
     .sa-menu-overlay,
     .sa-menu-panel {
-        position: fixed;
+        position: absolute;
         top: 0;
-        bottom: 0;
         z-index: 140;
     }
 
     .sa-menu-overlay {
-        left: 50%;
-        width: 100%;
-        max-width: 480px;
-        transform: translateX(-50%);
+        left: 0;
+        right: 0;
+        bottom: 0;
         background: rgba(16, 24, 40, 0.45);
         opacity: 0;
         pointer-events: none;
     }
 
     .sa-menu-panel {
-        right: max(0px, calc(50vw - 240px));
-        width: min(320px, 86vw);
+        right: 0;
+        width: min(320px, 100%);
+        max-width: 100%;
+        height: 100vh;
+        max-height: 100%;
         background: #ffffff;
         box-shadow: -8px 0 24px rgba(16, 24, 40, 0.12);
         transform: translateX(110%);
@@ -58,6 +65,7 @@
         flex-direction: column;
         padding: 18px 16px 20px;
         box-sizing: border-box;
+        overflow: hidden;
     }
 
     .sa-menu.is-open .sa-menu-overlay {
