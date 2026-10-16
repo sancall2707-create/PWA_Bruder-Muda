@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProvincialMessage;
+use App\Services\SapaanImageCompressor;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -111,7 +112,7 @@ class ProvincialMessageManagementController extends Controller
         $image = $current?->image;
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image')->store('sapaan', 'public');
+            $image = (new SapaanImageCompressor)->store($request->file('image'));
         }
 
         return [

@@ -50,7 +50,7 @@
         <input type="file" name="image" accept="image/jpeg,image/png,image/webp">
     </label>
     @if($editing?->image)
-        <img src="{{ route('sapaan-provinsial.foto', $editing) }}" alt="Foto publikasi saat ini" style="width:100%; max-height:180px; object-fit:cover; border-radius:12px;">
+        <img src="{{ route('sapaan-provinsial.foto', $editing) }}" alt="Foto publikasi saat ini" style="width:100%; height:auto; max-height:640px; object-fit:contain; border-radius:12px; display:block;">
     @endif
 
     <div style="display:flex; gap:8px;">
