@@ -47,24 +47,6 @@
     </div>
 </div>
 
-<!-- Quick Action Buttons -->
-<div style="display: flex; flex-direction: column; gap: 10px;">
-    <a href="{{ route('superadmin.users.index') }}" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px 20px; background: #1455C0; color: #fff; text-decoration: none; border-radius: 14px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 12px rgba(20,85,192,0.25);">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-        👥 Kelola Data Bruder
-    </a>
-
-    <a href="{{ route('superadmin.monitoring.index') }}" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px 20px; background: #027A48; color: #fff; text-decoration: none; border-radius: 14px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 12px rgba(2,122,72,0.25);">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-        📑 Monitoring & Ekspor Data
-    </a>
-
-    <a href="{{ route('superadmin.sapaan.index') }}" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px 20px; background: #B57900; color: #fff; text-decoration: none; border-radius: 14px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 12px rgba(181,121,0,0.25);">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        📢 Buat Sapaan Provinsial
-    </a>
-</div>
-
 <!-- Recent Bruder Cards -->
 <div class="section-title" style="font-size: 15px; font-weight: 800; color: #101828; margin-top: 8px; display: flex; align-items: center; justify-content: space-between;">
     <span>Daftar Bruder Muda</span>
