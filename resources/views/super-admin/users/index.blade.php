@@ -12,7 +12,7 @@
     <style>
         body { background:#EEF2F6; font-family:'Plus Jakarta Sans','Inter',sans-serif; margin:0; padding:0; min-height:100vh; display:flex; justify-content:center; }
         .container { width:100%; max-width:480px; background:#F6F8FC; min-height:100vh; display:flex; flex-direction:column; box-shadow:0 0 30px rgba(0,0,0,0.08); padding-bottom:72px; box-sizing:border-box; }
-        .header { background:linear-gradient(135deg,#003E97 0%,#1455C0 100%); color:#fff; padding:20px; border-bottom-left-radius:20px; border-bottom-right-radius:20px; box-shadow:0 4px 16px rgba(0,62,151,0.15); }
+        .header { background:linear-gradient(135deg,#003E97 0%,#1455C0 100%); color:#fff; padding:20px 68px 20px 20px; border-bottom-left-radius:20px; border-bottom-right-radius:20px; box-shadow:0 4px 16px rgba(0,62,151,0.15); }
         .header-nav { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
         .btn-header-back { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; padding:0; line-height:0; background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.3); border-radius:10px; color:#fff; text-decoration:none; transition:transform 0.15s ease; }
         .btn-header-back svg { display:block; }
@@ -36,7 +36,7 @@
         .btn { background:#1455C0; color:#fff; min-height:36px; padding:8px 12px; border-radius:10px; font-weight:700; text-decoration:none; font-size:12px; line-height:1; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; text-align:center; white-space:nowrap; }
         .btn-muted { background:#F2F4F7; color:#344054; }
         .btn-danger { background:#B42318; color:#fff; }
-        .fab { position:fixed; right:max(16px, calc(50vw - 224px)); bottom:88px; z-index:90; width:56px; height:56px; border-radius:18px; background:#1455C0; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; line-height:0; padding:0; box-shadow:0 8px 18px rgba(20,85,192,0.35); }
+        .fab { position:fixed; right:max(16px, calc(50vw - 224px)); bottom:24px; z-index:90; width:56px; height:56px; border-radius:18px; background:#1455C0; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; line-height:0; padding:0; box-shadow:0 8px 18px rgba(20,85,192,0.35); }
         .fab svg { display:block; }
         .body { padding-bottom:120px; }
     </style>
@@ -112,7 +112,7 @@
                 </svg>
             </a>
         @endif
-        @include('layouts.partials.sa-bottom-nav')
+        @include('layouts.partials.sa-menu')
     </div>
 </body>
 </html>

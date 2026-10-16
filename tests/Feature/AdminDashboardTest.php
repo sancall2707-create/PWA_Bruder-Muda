@@ -49,6 +49,13 @@ class AdminDashboardTest extends TestCase
             ->assertSee('Br. Antonius FIC')
             ->assertSee('Monitoring & Ekspor Laporan')
             ->assertSee('Rekapitulasi Agenda & Kalender')
+            ->assertSee('Direktori & Rekam Jejak Bruder')
+            ->assertSee('Rilis Sapaan & Pengumuman Bersama')
+            ->assertSee('Lihat PWA')
+            ->assertSee('aria-label="Buka menu"', false)
+            ->assertSee(route('logout'), false)
+            ->assertDontSee('class="sa-logout"', false)
+            ->assertDontSee('sa-bottom-nav', false)
             ->assertSee('Bimbingan Rohani');
     }
 

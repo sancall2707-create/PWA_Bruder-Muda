@@ -31,7 +31,13 @@ class SuperAdminAccountTest extends TestCase
             ->assertSee('Br. Uji Kepatuhan')
             ->assertSee('Komunitas Uji')
             ->assertSee('1/3 bulan ini')
-            ->assertSee('Aktif');
+            ->assertSee('Aktif')
+            ->assertSee('Kelola Data Bruder')
+            ->assertSee('Monitoring & Ekspor Data')
+            ->assertSee('Buat Sapaan Provinsial')
+            ->assertSee('aria-label="Buka menu"', false)
+            ->assertSee(route('logout'), false)
+            ->assertDontSee('sa-bottom-nav', false);
     }
 
     public function test_bruder_and_guest_cannot_open_account_management(): void
