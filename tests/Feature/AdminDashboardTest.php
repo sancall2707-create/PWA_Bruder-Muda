@@ -82,4 +82,23 @@ class AdminDashboardTest extends TestCase
 
         $this->actingAs($bruder)->get(route('admin.dashboard'))->assertForbidden();
     }
+
+    public function test_admin_sees_return_to_tppbm_dashboard_from_pwa(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Kembali ke Dashboard TPPBM')
+            ->assertSee(route('admin.dashboard'), false);
+    }
+
+    public function test_bruder_does_not_see_tppbm_return_link(): void
+    {
+        $bruder = User::factory()->create(['role' => 'user']);
+
+        $this->actingAs($bruder)->get(route('dashboard'))
+            ->assertOk()
+            ->assertDontSee('Kembali ke Dashboard TPPBM');
+    }
 }
