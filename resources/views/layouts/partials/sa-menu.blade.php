@@ -4,10 +4,9 @@
 @endphp
 <style>
     .sa-menu-toggle {
-        position: fixed;
-        top: 18px;
-        right: max(18px, calc(50vw - 222px));
-        z-index: 130;
+        position: static;
+        flex-shrink: 0;
+        margin-left: auto;
         width: 40px;
         height: 40px;
         padding: 0;
@@ -144,11 +143,6 @@
     }
 </style>
 <div class="sa-menu" data-sa-menu>
-    <button type="button" class="sa-menu-toggle" data-sa-menu-toggle aria-expanded="false" aria-controls="sa-menu-panel" aria-label="Buka menu">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
     <div class="sa-menu-overlay" data-sa-menu-close></div>
     <nav class="sa-menu-panel" id="sa-menu-panel" aria-label="Menu {{ $isAdmin ? 'TPPBM' : 'Super Admin' }}">
         <div class="sa-menu-head">
@@ -174,8 +168,8 @@
 <script>
     (function () {
         var root = document.querySelector('[data-sa-menu]');
-        if (!root) return;
-        var toggle = root.querySelector('[data-sa-menu-toggle]');
+        var toggle = document.querySelector('[data-sa-menu-toggle]');
+        if (!root || !toggle) return;
         function setOpen(open) {
             root.classList.toggle('is-open', open);
             toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
