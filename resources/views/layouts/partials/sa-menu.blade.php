@@ -3,12 +3,6 @@
     $homeUrl = $isAdmin ? route('admin.dashboard') : route('superadmin.dashboard');
 @endphp
 <style>
-    .sa-container,
-    .container {
-        position: relative;
-        overflow-x: hidden;
-    }
-
     .sa-menu-toggle {
         position: static;
         flex-shrink: 0;
@@ -38,34 +32,41 @@
 
     .sa-menu-overlay,
     .sa-menu-panel {
-        position: absolute;
+        position: fixed;
         top: 0;
+        bottom: 0;
         z-index: 140;
     }
 
     .sa-menu-overlay {
-        left: 0;
-        right: 0;
-        bottom: 0;
+        left: 50%;
+        width: 100%;
+        max-width: 480px;
+        transform: translateX(-50%);
         background: rgba(16, 24, 40, 0.45);
         opacity: 0;
         pointer-events: none;
+        transition: opacity 0.2s ease;
     }
 
     .sa-menu-panel {
-        right: 0;
-        width: min(320px, 100%);
-        max-width: 100%;
-        height: 100vh;
-        max-height: 100%;
+        right: max(0px, calc(50vw - 240px));
+        width: min(320px, 86vw);
+        overflow: hidden;
+        pointer-events: none;
+        background: transparent;
+    }
+
+    .sa-menu-sheet {
+        height: 100%;
         background: #ffffff;
         box-shadow: -8px 0 24px rgba(16, 24, 40, 0.12);
         transform: translateX(110%);
+        transition: transform 0.2s ease;
         display: flex;
         flex-direction: column;
         padding: 18px 16px 20px;
         box-sizing: border-box;
-        overflow: hidden;
     }
 
     .sa-menu.is-open .sa-menu-overlay {
@@ -74,12 +75,11 @@
     }
 
     .sa-menu.is-open .sa-menu-panel {
-        transform: translateX(0);
+        pointer-events: auto;
     }
 
-    .sa-menu-overlay,
-    .sa-menu-panel {
-        transition: opacity 0.2s ease, transform 0.2s ease;
+    .sa-menu.is-open .sa-menu-sheet {
+        transform: translateX(0);
     }
 
     .sa-menu-head {
@@ -153,24 +153,26 @@
 <div class="sa-menu" data-sa-menu>
     <div class="sa-menu-overlay" data-sa-menu-close></div>
     <nav class="sa-menu-panel" id="sa-menu-panel" aria-label="Menu {{ $isAdmin ? 'TPPBM' : 'Super Admin' }}">
-        <div class="sa-menu-head">
-            <div class="sa-menu-title">{{ $isAdmin ? 'Menu TPPBM' : 'Menu Super Admin' }}</div>
-            <button type="button" class="sa-menu-close" data-sa-menu-close aria-label="Tutup menu">×</button>
+        <div class="sa-menu-sheet">
+            <div class="sa-menu-head">
+                <div class="sa-menu-title">{{ $isAdmin ? 'Menu TPPBM' : 'Menu Super Admin' }}</div>
+                <button type="button" class="sa-menu-close" data-sa-menu-close aria-label="Tutup menu">×</button>
+            </div>
+            <div class="sa-menu-list">
+                <a class="sa-menu-link {{ request()->routeIs('admin.dashboard') || request()->routeIs('superadmin.dashboard') ? 'active' : '' }}" href="{{ $homeUrl }}">Dashboard</a>
+                @if ($isAdmin)
+                    <a class="sa-menu-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Lihat PWA</a>
+                @endif
+                <a class="sa-menu-link {{ request()->routeIs('superadmin.users*') ? 'active' : '' }}" href="{{ route('superadmin.users.index') }}">{{ $isAdmin ? 'Direktori & Rekam Jejak Bruder' : 'Kelola Data Bruder' }}</a>
+                <a class="sa-menu-link {{ request()->routeIs('superadmin.monitoring.index') ? 'active' : '' }}" href="{{ route('superadmin.monitoring.index') }}">{{ $isAdmin ? 'Monitoring & Ekspor Laporan' : 'Monitoring & Ekspor Data' }}</a>
+                <a class="sa-menu-link {{ request()->routeIs('superadmin.monitoring.agenda') ? 'active' : '' }}" href="{{ route('superadmin.monitoring.agenda') }}">Rekapitulasi Agenda &amp; Kalender</a>
+                <a class="sa-menu-link {{ request()->routeIs('superadmin.sapaan*') ? 'active' : '' }}" href="{{ route('superadmin.sapaan.index') }}">{{ $isAdmin ? 'Rilis Sapaan & Pengumuman Bersama' : 'Buat Sapaan Provinsial' }}</a>
+            </div>
+            <form class="sa-menu-logout" action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit">LOGOUT</button>
+            </form>
         </div>
-        <div class="sa-menu-list">
-            <a class="sa-menu-link {{ request()->routeIs('admin.dashboard') || request()->routeIs('superadmin.dashboard') ? 'active' : '' }}" href="{{ $homeUrl }}">Dashboard</a>
-            @if ($isAdmin)
-                <a class="sa-menu-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Lihat PWA</a>
-            @endif
-            <a class="sa-menu-link {{ request()->routeIs('superadmin.users*') ? 'active' : '' }}" href="{{ route('superadmin.users.index') }}">{{ $isAdmin ? 'Direktori & Rekam Jejak Bruder' : 'Kelola Data Bruder' }}</a>
-            <a class="sa-menu-link {{ request()->routeIs('superadmin.monitoring.index') ? 'active' : '' }}" href="{{ route('superadmin.monitoring.index') }}">{{ $isAdmin ? 'Monitoring & Ekspor Laporan' : 'Monitoring & Ekspor Data' }}</a>
-            <a class="sa-menu-link {{ request()->routeIs('superadmin.monitoring.agenda') ? 'active' : '' }}" href="{{ route('superadmin.monitoring.agenda') }}">Rekapitulasi Agenda &amp; Kalender</a>
-            <a class="sa-menu-link {{ request()->routeIs('superadmin.sapaan*') ? 'active' : '' }}" href="{{ route('superadmin.sapaan.index') }}">{{ $isAdmin ? 'Rilis Sapaan & Pengumuman Bersama' : 'Buat Sapaan Provinsial' }}</a>
-        </div>
-        <form class="sa-menu-logout" action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit">LOGOUT</button>
-        </form>
     </nav>
 </div>
 <script>
