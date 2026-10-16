@@ -25,7 +25,9 @@ class ProvincialMessageController extends Controller
     {
         abort_unless($this->canViewPhoto($message), 404);
 
-        return Storage::disk('public')->response($message->image);
+        return Storage::disk('public')->response($message->image, null, [
+            'Cache-Control' => 'private, max-age=86400',
+        ]);
     }
 
     private function canViewPhoto(ProvincialMessage $message): bool

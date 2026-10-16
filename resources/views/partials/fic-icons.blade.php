@@ -4,3 +4,16 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#003E97">
 <meta name="apple-mobile-web-app-title" content="Bruder FIC">
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').then(function () {
+            @if (request()->is('login'))
+            return navigator.serviceWorker.ready.then(function (registration) {
+                if (registration.active) {
+                    registration.active.postMessage('clear-private');
+                }
+            });
+            @endif
+        });
+    }
+</script>
