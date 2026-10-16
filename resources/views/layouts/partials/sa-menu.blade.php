@@ -111,6 +111,7 @@
         display: flex;
         flex-direction: column;
         gap: 8px;
+        flex: 1;
         overflow: auto;
     }
 
@@ -135,18 +136,21 @@
     }
 
     .sa-menu-logout {
-        margin-top: 12px;
+        margin-top: auto;
     }
 
     .sa-menu-logout button {
         width: 100%;
-        min-height: 44px;
+        box-sizing: border-box;
+        min-height: 36px;
+        padding: 4px 12px;
         border-radius: 12px;
         border: 1px solid #b91c1c;
         background: #dc2626;
         color: #ffffff;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 800;
+        line-height: 1.2;
         cursor: pointer;
     }
 </style>
