@@ -49,6 +49,13 @@ class AdminDashboardTest extends TestCase
             ->assertSee('Br. Antonius FIC')
             ->assertSee('Monitoring & Ekspor Laporan')
             ->assertSee('Rekapitulasi Agenda & Kalender')
+            ->assertSee('Direktori & Rekam Jejak Bruder')
+            ->assertSee('Rilis Sapaan & Pengumuman Bersama')
+            ->assertSee('Lihat PWA')
+            ->assertSee('aria-label="Buka menu"', false)
+            ->assertSee(route('logout'), false)
+            ->assertDontSee('class="sa-logout"', false)
+            ->assertDontSee('sa-bottom-nav', false)
             ->assertSee('Bimbingan Rohani');
     }
 
@@ -81,5 +88,24 @@ class AdminDashboardTest extends TestCase
         $bruder = User::factory()->create(['role' => 'user']);
 
         $this->actingAs($bruder)->get(route('admin.dashboard'))->assertForbidden();
+    }
+
+    public function test_admin_sees_return_to_tppbm_dashboard_from_pwa(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $this->actingAs($admin)->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Kembali ke Dashboard TPPBM')
+            ->assertSee(route('admin.dashboard'), false);
+    }
+
+    public function test_bruder_does_not_see_tppbm_return_link(): void
+    {
+        $bruder = User::factory()->create(['role' => 'user']);
+
+        $this->actingAs($bruder)->get(route('dashboard'))
+            ->assertOk()
+            ->assertDontSee('Kembali ke Dashboard TPPBM');
     }
 }

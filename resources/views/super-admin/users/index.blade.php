@@ -36,7 +36,7 @@
         .btn { background:#1455C0; color:#fff; min-height:36px; padding:8px 12px; border-radius:10px; font-weight:700; text-decoration:none; font-size:12px; line-height:1; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; text-align:center; white-space:nowrap; }
         .btn-muted { background:#F2F4F7; color:#344054; }
         .btn-danger { background:#B42318; color:#fff; }
-        .fab { position:fixed; right:max(16px, calc(50vw - 224px)); bottom:88px; z-index:90; width:56px; height:56px; border-radius:18px; background:#1455C0; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; line-height:0; padding:0; box-shadow:0 8px 18px rgba(20,85,192,0.35); }
+        .fab { position:fixed; right:max(16px, calc(50vw - 224px)); bottom:24px; z-index:90; width:56px; height:56px; border-radius:18px; background:#1455C0; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; line-height:0; padding:0; box-shadow:0 8px 18px rgba(20,85,192,0.35); }
         .fab svg { display:block; }
         .body { padding-bottom:120px; }
     </style>
@@ -49,6 +49,7 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
                 </a>
                 <div class="badge">{{ auth()->user()->role === 'admin' ? 'DIREKTORI BRUDER' : 'MANAJEMEN BRUDER' }}</div>
+                @include('layouts.partials.sa-menu-toggle')
             </div>
             <h1 class="title">{{ auth()->user()->role === 'admin' ? 'Direktori Bruder Muda' : 'Manajemen Data Bruder' }}</h1>
             <p class="subtitle">{{ auth()->user()->role === 'admin' ? 'Pantau data diri dan capaian pembinaan bruder.' : 'Kelola akun, cari cepat, tambah baru.' }}</p>
@@ -112,7 +113,7 @@
                 </svg>
             </a>
         @endif
-        @include('layouts.partials.sa-bottom-nav')
+        @include('layouts.partials.sa-menu')
     </div>
 </body>
 </html>

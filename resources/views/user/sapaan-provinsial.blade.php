@@ -11,7 +11,7 @@
     @if($message)
         <div style="background: linear-gradient(135deg, var(--fic-dark-blue) 0%, var(--fic-primary) 100%); border-radius: 14px; padding: 24px 16px; text-align: center; color: #ffffff; margin-bottom: 20px;">
             @if($message->image_url)
-                <img src="{{ $message->image_url }}" alt="Foto sapaan" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 12px; margin-bottom: 14px;">
+                <img src="{{ $message->image_url }}" alt="Foto sapaan" style="width: 100%; height: auto; max-height: 640px; object-fit: contain; border-radius: 12px; margin-bottom: 14px; display: block;">
             @else
                 <img src="/images/logo-fic.png" alt="Lambang FIC" width="52" height="52" style="width: 52px; height: 52px; object-fit: contain; margin: 0 auto 12px; display: block;">
             @endif

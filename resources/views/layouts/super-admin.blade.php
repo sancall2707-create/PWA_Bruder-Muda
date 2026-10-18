@@ -34,7 +34,7 @@
             flex-direction: column;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
             position: relative;
-            padding-bottom: 72px;
+            padding-bottom: 24px;
         }
 
         .sa-header {
@@ -68,21 +68,6 @@
             letter-spacing: 0.5px;
         }
 
-        .sa-logout {
-            background: #dc2626;
-            border: 1px solid #b91c1c;
-            color: #ffffff;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .sa-logout:hover {
-            background: #b91c1c;
-        }
-
         .sa-title {
             font-size: 20px;
             font-weight: 800;
@@ -96,7 +81,7 @@
         }
 
         .sa-body {
-            padding: 20px 16px 92px;
+            padding: 20px 16px 28px;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -113,12 +98,7 @@
                 <div class="sa-badge">
                     {{ auth()->user()->role === 'admin' ? 'TIM PENDAMPING TPPBM' : 'SUPER ADMIN' }}
                 </div>
-                <form action="{{ route('logout') }}" method="POST" style="margin:0;">
-                    @csrf
-                    <button type="submit" class="sa-logout">
-                        LOGOUT
-                    </button>
-                </form>
+                @include('layouts.partials.sa-menu-toggle')
             </div>
             <h1 class="sa-title">{{ $headerTitle ?? (auth()->user()->role === 'admin' ? 'Dashboard TPPBM' : 'Dashboard Super Admin') }}</h1>
             <p class="sa-subtitle">{{ $headerSubtitle ?? (auth()->user()->role === 'admin' ? 'Pemantauan formasi rohani & pembinaan bruder muda' : 'Kelola pembinaan, bruder muda, & sapaan') }}</p>
@@ -135,7 +115,7 @@
             @yield('content')
         </div>
 
-        @include('layouts.partials.sa-bottom-nav')
+        @include('layouts.partials.sa-menu')
     </div>
 </body>
 </html>
