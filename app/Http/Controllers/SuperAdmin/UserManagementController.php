@@ -5,9 +5,11 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\SuperAdminOverviewService;
+use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class UserManagementController extends Controller
 {
@@ -74,6 +76,78 @@ class UserManagementController extends Controller
 
         return redirect()->route('superadmin.users.index')
             ->with('success', "Akun Bruder {$user->name} berhasil ditambahkan.");
+    }
+
+    /**
+     * Form kelola email dan kata sandi satu akun bruder.
+     */
+    public function editAccount(User $user): View
+    {
+        abort_unless($user->role === 'user', 404);
+
+        return view('super-admin.users.account', compact('user'));
+    }
+
+    /**
+     * Perbarui email dan, bila diisi, atur ulang kata sandi bruder.
+     * Username dan role tidak diubah dari form ini.
+     */
+    public function updateAccount(Request $request, User $user): RedirectResponse
+    {
+        abort_unless($user->role === 'user', 404);
+
+        $validated = $request->validate([
+            'email' => [
+                'nullable',
+                'email',
+                'max:255',
+                function (string $attribute, mixed $value, Closure $fail) use ($user): void {
+                    if (! is_string($value) || trim($value) === '') {
+                        return;
+                    }
+
+                    $taken = User::withTrashed()
+                        ->where('id', '!=', $user->id)
+                        ->whereRaw('lower(email) = ?', [mb_strtolower(trim($value))])
+                        ->exists();
+
+                    if ($taken) {
+                        $fail('Email ini sudah dipakai akun lain.');
+                    }
+                },
+            ],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+        ], [
+            'email.email' => 'Format email tidak valid.',
+            'email.max' => 'Email terlalu panjang.',
+            'password.min' => 'Kata sandi baru minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi tidak cocok.',
+        ]);
+
+        $password = $validated['password'] ?? null;
+        $confirmation = $request->input('password_confirmation');
+
+        if (blank($password) && filled($confirmation)) {
+            throw ValidationException::withMessages([
+                'password' => 'Isi kata sandi baru beserta konfirmasinya, atau kosongkan keduanya.',
+            ]);
+        }
+
+        $email = $validated['email'] ?? null;
+        $user->email = is_string($email) && trim($email) !== '' ? trim($email) : null;
+
+        if (filled($password)) {
+            $user->password = $password;
+        }
+
+        $user->save();
+
+        $message = filled($password)
+            ? "Email dan kata sandi akun {$user->name} berhasil diperbarui."
+            : "Email akun {$user->name} berhasil diperbarui.";
+
+        return redirect()->route('superadmin.users.index')
+            ->with('success', $message);
     }
 
     /**

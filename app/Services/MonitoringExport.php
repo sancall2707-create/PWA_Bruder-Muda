@@ -39,23 +39,63 @@ class MonitoringExport
             ];
         });
 
-        $xmlRows = collect([$headers])->merge($body)->map(function (array $cells) {
-            $rendered = collect($cells)->map(function ($cell) {
-                $value = htmlspecialchars((string) $cell, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+        $widths = $kind === 'agenda'
+            ? [130, 160, 120, 95, 160, 140, 220, 100]
+            : [140, 160, 120, 160, 100, 260];
 
-                return '<Cell><Data ss:Type="String">'.$value.'</Data></Cell>';
-            })->implode('');
+        $columns = collect($widths)->map(
+            fn (int $width) => '<Column ss:AutoFitWidth="0" ss:Width="'.$width.'"/>'
+        )->implode('');
 
-            return '<Row>'.$rendered.'</Row>';
-        })->implode('');
-
+        $headerRow = $this->excelRow($headers, 'Header', 28);
+        $dataRows = $body->map(fn (array $cells) => $this->excelRow($cells, 'Data'))->implode('');
         $sheet = $kind === 'agenda' ? 'Agenda' : 'Laporan';
 
         return '<?xml version="1.0" encoding="UTF-8"?>'
             .'<?mso-application progid="Excel.Sheet"?>'
             .'<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'
-            .'<Worksheet ss:Name="'.$sheet.'"><Table>'.$xmlRows.'</Table></Worksheet>'
+            .'<Styles>'
+            .'<Style ss:ID="Header">'
+            .'<Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/>'
+            .'<Font ss:Bold="1" ss:Color="#FFFFFF"/>'
+            .'<Interior ss:Color="#1455C0" ss:Pattern="Solid"/>'
+            .'<Borders>'
+            .'<Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#0B3F91"/>'
+            .'<Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#0B3F91"/>'
+            .'<Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#0B3F91"/>'
+            .'<Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#0B3F91"/>'
+            .'</Borders>'
+            .'</Style>'
+            .'<Style ss:ID="Data">'
+            .'<Alignment ss:Vertical="Center" ss:WrapText="1"/>'
+            .'<Borders>'
+            .'<Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>'
+            .'<Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>'
+            .'<Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>'
+            .'<Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>'
+            .'</Borders>'
+            .'</Style>'
+            .'</Styles>'
+            .'<Worksheet ss:Name="'.$sheet.'"><Table>'.$columns.$headerRow.$dataRows.'</Table></Worksheet>'
             .'</Workbook>';
+    }
+
+    /**
+     * @param  array<int, mixed>  $cells
+     */
+    private function excelRow(array $cells, string $styleId, ?int $height = null): string
+    {
+        $rendered = collect($cells)->map(function ($cell) use ($styleId) {
+            $value = htmlspecialchars((string) $cell, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+
+            return '<Cell ss:StyleID="'.$styleId.'"><Data ss:Type="String">'.$value.'</Data></Cell>';
+        })->implode('');
+
+        $size = $height === null
+            ? ' ss:AutoFitHeight="1"'
+            : ' ss:AutoFitHeight="0" ss:Height="'.$height.'"';
+
+        return '<Row'.$size.'>'.$rendered.'</Row>';
     }
 
     /**

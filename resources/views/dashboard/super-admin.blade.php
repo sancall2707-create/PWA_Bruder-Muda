@@ -9,14 +9,18 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f3f4f6;
+            background-color: #e7f0fb;
+            background-image: linear-gradient(180deg, #d5e4f8 0%, #f7f9fc 100%);
             margin: 0;
             padding: 40px 16px;
             display: flex;
             justify-content: center;
         }
         .container {
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.68);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.84);
             border-radius: 8px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             max-width: 500px;

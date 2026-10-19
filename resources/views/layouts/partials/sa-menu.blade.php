@@ -59,8 +59,11 @@
 
     .sa-menu-sheet {
         height: 100%;
-        background: #ffffff;
-        box-shadow: -8px 0 24px rgba(16, 24, 40, 0.12);
+        background: rgba(255, 255, 255, 0.72);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-left: 1px solid rgba(255, 255, 255, 0.84);
+        box-shadow: -8px 0 24px rgba(0, 62, 151, 0.12);
         transform: translateX(110%);
         transition: transform 0.2s ease;
         display: flex;
@@ -98,9 +101,9 @@
     .sa-menu-close {
         width: 36px;
         height: 36px;
-        border: 1px solid #E4E7EC;
+        border: 1px solid rgba(255, 255, 255, 0.84);
         border-radius: 10px;
-        background: #F8F9FC;
+        background: rgba(255, 255, 255, 0.55);
         color: #344054;
         font-size: 18px;
         line-height: 1;
@@ -125,13 +128,13 @@
         color: #101828;
         font-size: 14px;
         font-weight: 700;
-        background: #F8F9FC;
-        border: 1px solid #E4E7EC;
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.8);
     }
 
     .sa-menu-link.active {
-        background: #EFF4FF;
-        border-color: #B2DDFF;
+        background: rgba(239, 244, 255, 0.82);
+        border-color: rgba(178, 221, 255, 0.9);
         color: #1455C0;
     }
 

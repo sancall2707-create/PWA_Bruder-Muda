@@ -16,7 +16,7 @@
 
     <style>
         body {
-            background: linear-gradient(180deg, #EBF3FC 0%, #F6F8FC 100%);
+            background: linear-gradient(180deg, #d5e4f8 0%, #f7f9fc 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -26,10 +26,12 @@
         .login-card {
             width: 100%;
             max-width: 420px;
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.68);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-radius: 20px;
-            box-shadow: 0 12px 32px -4px rgba(16, 24, 40, 0.08), 0 4px 12px -2px rgba(16, 24, 40, 0.04);
-            border: 1px solid #E4E7EC;
+            box-shadow: 0 12px 32px -4px rgba(0, 62, 151, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.84);
             padding: 32px 24px;
             box-sizing: border-box;
             display: flex;
@@ -82,8 +84,10 @@
             text-transform: uppercase;
         }
         .alert-error {
-            background-color: #FEF3F2;
-            border: 1px solid #FECDCA;
+            background-color: rgba(254, 243, 242, 0.84);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(254, 205, 202, 0.9);
             border-radius: 12px;
             padding: 12px 14px;
             color: #B42318;

@@ -10,9 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/fic-pwa.css">
     <style>
-        body { background:#EEF2F6; font-family:'Plus Jakarta Sans','Inter',sans-serif; margin:0; padding:0; min-height:100vh; display:flex; justify-content:center; }
-        .container { width:100%; max-width:480px; background:#F6F8FC; min-height:100vh; display:flex; flex-direction:column; box-shadow:0 0 30px rgba(0,0,0,0.08); padding-bottom:72px; box-sizing:border-box; }
-        .header { background:linear-gradient(135deg,#003E97 0%,#1455C0 100%); color:#fff; padding:20px; border-bottom-left-radius:20px; border-bottom-right-radius:20px; box-shadow:0 4px 16px rgba(0,62,151,0.15); }
+        body { background:#e7f0fb; background-image:linear-gradient(180deg,#d5e4f8 0%,#eef3fb 46%,#f7f9fc 100%); font-family:'Plus Jakarta Sans','Inter',sans-serif; margin:0; padding:0; min-height:100vh; display:flex; justify-content:center; }
+        .container { width:100%; max-width:480px; background:linear-gradient(180deg,rgba(20,85,192,0.1) 0%,rgba(234,243,255,0.55) 180px,rgba(247,249,252,0.88) 100%); min-height:100vh; display:flex; flex-direction:column; box-shadow:0 0 30px rgba(0,62,151,0.08); padding-bottom:72px; box-sizing:border-box; }
+        .header { background:linear-gradient(135deg,rgba(0,62,151,0.9) 0%,rgba(20,85,192,0.78) 100%); color:#fff; padding:20px; border-bottom:1px solid rgba(255,255,255,0.28); border-bottom-left-radius:20px; border-bottom-right-radius:20px; box-shadow:0 8px 20px rgba(0,62,151,0.12); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); }
         .header-nav { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
         .btn-header-back { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; padding:0; line-height:0; background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.3); border-radius:10px; color:#fff; text-decoration:none; transition:transform 0.15s ease; }
         .btn-header-back svg { display:block; }
@@ -22,10 +22,10 @@
         .subtitle { font-size:13px; color:rgba(255,255,255,.85); margin:0; }
         .body { padding:20px 16px 40px; flex:1; display:flex; flex-direction:column; gap:16px; }
         .search-form { display:flex; gap:8px; }
-        .search-form input { flex:1; padding:12px 14px; border-radius:12px; border:1px solid #E4E7EC; background:#fff; font-size:13px; }
+        .search-form input { flex:1; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.84); background:rgba(255,255,255,0.72); backdrop-filter:blur(12px); font-size:13px; }
         .search-form button { background:#1455C0; color:#fff; border:none; padding:12px 20px; border-radius:12px; font-weight:700; cursor:pointer; }
         .list { display:flex; flex-direction:column; gap:10px; }
-        .card { background:#fff; border:1px solid #E4E7EC; border-radius:14px; padding:14px; display:flex; gap:12px; align-items:flex-start; box-shadow:0 2px 6px rgba(16,24,40,0.03); }
+        .card { background:rgba(255,255,255,0.66); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border:1px solid rgba(255,255,255,0.84); border-radius:14px; padding:14px; display:flex; gap:12px; align-items:flex-start; box-shadow:0 8px 24px rgba(0,62,151,0.08); }
         .avatar { width:42px; height:42px; border-radius:50%; background:linear-gradient(135deg,#1455C0,#003E97); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
         .name { font-weight:700; color:#101828; }
         .loc { font-size:12px; color:#667085; margin-top:2px; }
@@ -34,7 +34,8 @@
         .actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:10px; }
         .actions form { margin:0; display:flex; }
         .btn { background:#1455C0; color:#fff; min-height:36px; padding:8px 12px; border-radius:10px; font-weight:700; text-decoration:none; font-size:12px; line-height:1; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; text-align:center; white-space:nowrap; }
-        .btn-muted { background:#F2F4F7; color:#344054; }
+        .btn-account { background:rgba(255,255,255,0.55); color:#003E97; border:1px solid rgba(20,85,192,0.35); }
+        .btn-muted { background:rgba(255,255,255,0.55); color:#344054; }
         .btn-danger { background:#B42318; color:#fff; }
         .fab { position:fixed; right:max(16px, calc(50vw - 224px)); bottom:24px; z-index:90; width:56px; height:56px; border-radius:18px; background:#1455C0; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; line-height:0; padding:0; box-shadow:0 8px 18px rgba(20,85,192,0.35); }
         .fab svg { display:block; }
@@ -85,6 +86,7 @@
                             <div class="actions">
                                 <a href="{{ route('superadmin.users.track-record', $u) }}" class="btn">Track Record</a>
                                 @if(auth()->user()->role === 'super_admin')
+                                    <a href="{{ route('superadmin.users.account.edit', $u) }}" class="btn btn-account">Kelola Akun</a>
                                     <form method="POST" action="{{ route('superadmin.users.status', $u) }}">
                                         @csrf
                                         <button type="submit" class="btn btn-muted">{{ $u->is_active ? 'Nonaktifkan' : 'Aktifkan' }}</button>
