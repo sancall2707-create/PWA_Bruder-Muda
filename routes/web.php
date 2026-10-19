@@ -127,6 +127,8 @@ Route::middleware('auth')->group(function () {
         // Aksi Akun Super Admin
         Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
         Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
+        Route::get('/users/{user}/kelola-akun', [UserManagementController::class, 'editAccount'])->name('users.account.edit');
+        Route::post('/users/{user}/kelola-akun', [UserManagementController::class, 'updateAccount'])->name('users.account.update');
         Route::post('/users/{user}/status', [UserManagementController::class, 'updateStatus'])->name('users.status');
         Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
     });

@@ -52,6 +52,12 @@ class SuperAdminAccountTest extends TestCase
             'username' => 'gelap',
             'password' => 'rahasia-aman',
         ])->assertForbidden();
+        $this->actingAs($bruder)->get(route('superadmin.users.account.edit', $bruder))->assertForbidden();
+        $this->actingAs($bruder)->post(route('superadmin.users.account.update', $bruder), [
+            'email' => 'gelap@fic.test',
+            'password' => 'sandi-baru-aman',
+            'password_confirmation' => 'sandi-baru-aman',
+        ])->assertForbidden();
     }
 
     public function test_super_admin_creates_an_account_that_can_log_in(): void
@@ -130,6 +136,203 @@ class SuperAdminAccountTest extends TestCase
             ->get(route('superadmin.users.index'))
             ->assertSee('dihapus dari daftar')
             ->assertDontSee('@'.$bruder->username);
+    }
+
+    public function test_super_admin_can_change_email_without_touching_password(): void
+    {
+        $admin = User::factory()->create(['role' => 'super_admin']);
+        $bruder = User::factory()->create([
+            'role' => 'user',
+            'name' => 'Br. Email Uji',
+            'username' => 'bruder_email',
+            'email' => 'lama@fic.test',
+            'password' => 'sandi-lama-aman',
+        ]);
+        $hash = $bruder->password;
+
+        $this->actingAs($admin)
+            ->get(route('superadmin.users.index'))
+            ->assertOk()
+            ->assertSee('Kelola Akun');
+
+        $this->actingAs($admin)
+            ->get(route('superadmin.users.account.edit', $bruder))
+            ->assertOk()
+            ->assertSee('Br. Email Uji')
+            ->assertSee('bruder_email')
+            ->assertSee('lama@fic.test')
+            ->assertSee('Kelola Akun Bruder')
+            ->assertDontSee($hash);
+
+        $this->actingAs($admin)
+            ->post(route('superadmin.users.account.update', $bruder), [
+                'email' => 'baru@fic.test',
+                'password' => '',
+                'password_confirmation' => '',
+            ])
+            ->assertRedirect(route('superadmin.users.index'))
+            ->assertSessionHas('success');
+
+        $fresh = $bruder->fresh();
+        $this->assertSame('baru@fic.test', $fresh->email);
+        $this->assertSame($hash, $fresh->password);
+        $this->assertTrue(Hash::check('sandi-lama-aman', $fresh->password));
+        $this->assertSame('bruder_email', $fresh->username);
+        $this->assertSame('Br. Email Uji', $fresh->name);
+        $this->assertSame('user', $fresh->role);
+
+        $this->actingAs($admin)
+            ->post(route('superadmin.users.account.update', $bruder), [
+                'email' => '',
+                'password' => '',
+                'password_confirmation' => '',
+            ])
+            ->assertRedirect(route('superadmin.users.index'));
+
+        $this->assertNull($bruder->fresh()->email);
+        $this->assertSame($hash, $bruder->fresh()->password);
+    }
+
+    public function test_account_update_rejects_email_owned_by_another_account(): void
+    {
+        $admin = User::factory()->create(['role' => 'super_admin']);
+        $owner = User::factory()->create([
+            'role' => 'user',
+            'email' => 'milik@fic.test',
+        ]);
+        $bruder = User::factory()->create([
+            'role' => 'user',
+            'email' => 'sendiri@fic.test',
+            'password' => 'sandi-lama-aman',
+        ]);
+        $hash = $bruder->password;
+
+        $this->actingAs($admin)
+            ->from(route('superadmin.users.account.edit', $bruder))
+            ->post(route('superadmin.users.account.update', $bruder), [
+                'email' => 'Milik@fic.test',
+                'password' => '',
+                'password_confirmation' => '',
+            ])
+            ->assertRedirect(route('superadmin.users.account.edit', $bruder))
+            ->assertSessionHasErrors('email');
+
+        $fresh = $bruder->fresh();
+        $this->assertSame('sendiri@fic.test', $fresh->email);
+        $this->assertSame($hash, $fresh->password);
+        $this->assertSame('milik@fic.test', $owner->fresh()->email);
+
+        $this->actingAs($admin)
+            ->post(route('superadmin.users.account.update', $bruder), [
+                'email' => 'sendiri@fic.test',
+                'username' => 'dicuri',
+                'role' => 'super_admin',
+                'name' => 'Nama Diubah',
+                'password' => '',
+                'password_confirmation' => '',
+            ])
+            ->assertRedirect(route('superadmin.users.index'));
+
+        $kept = $bruder->fresh();
+        $this->assertSame('sendiri@fic.test', $kept->email);
+        $this->assertSame($bruder->username, $kept->username);
+        $this->assertSame('user', $kept->role);
+        $this->assertSame($bruder->name, $kept->name);
+    }
+
+    public function test_password_reset_replaces_the_old_login(): void
+    {
+        $admin = User::factory()->create(['role' => 'super_admin']);
+        $bruder = User::factory()->create([
+            'role' => 'user',
+            'username' => 'bruder_sandi',
+            'email' => 'sandi@fic.test',
+            'password' => 'sandi-lama-aman',
+        ]);
+
+        $this->actingAs($admin)
+            ->from(route('superadmin.users.account.edit', $bruder))
+            ->post(route('superadmin.users.account.update', $bruder), [
+                'email' => 'sandi@fic.test',
+                'password' => 'pendek',
+                'password_confirmation' => 'pendek',
+            ])
+            ->assertRedirect(route('superadmin.users.account.edit', $bruder))
+            ->assertSessionHasErrors('password');
+
+        $this->assertTrue(Hash::check('sandi-lama-aman', $bruder->fresh()->password));
+
+        $this->actingAs($admin)
+            ->from(route('superadmin.users.account.edit', $bruder))
+            ->post(route('superadmin.users.account.update', $bruder), [
+                'email' => 'sandi@fic.test',
+                'password' => 'sandi-baru-aman',
+                'password_confirmation' => 'tidak-sama-aman',
+            ])
+            ->assertRedirect(route('superadmin.users.account.edit', $bruder))
+            ->assertSessionHasErrors('password');
+
+        $this->actingAs($admin)
+            ->post(route('superadmin.users.account.update', $bruder), [
+                'email' => 'sandi.baru@fic.test',
+                'password' => 'sandi-baru-aman',
+                'password_confirmation' => 'sandi-baru-aman',
+            ])
+            ->assertRedirect(route('superadmin.users.index'));
+
+        $fresh = $bruder->fresh();
+        $this->assertSame('sandi.baru@fic.test', $fresh->email);
+        $this->assertFalse(Hash::check('sandi-lama-aman', $fresh->password));
+        $this->assertTrue(Hash::check('sandi-baru-aman', $fresh->password));
+
+        auth()->logout();
+
+        $this->post(route('login.store'), [
+            'username' => 'bruder_sandi',
+            'password' => 'sandi-lama-aman',
+        ])->assertSessionHasErrors('username');
+
+        $this->post(route('login.store'), [
+            'username' => 'bruder_sandi',
+            'password' => 'sandi-baru-aman',
+        ])->assertRedirect('/sapaan-provinsial');
+    }
+
+    public function test_admin_cannot_open_or_submit_account_management(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $bruder = User::factory()->create([
+            'role' => 'user',
+            'email' => 'tetap@fic.test',
+            'password' => 'sandi-lama-aman',
+        ]);
+        $hash = $bruder->password;
+
+        $this->actingAs($admin)
+            ->get(route('superadmin.users.index'))
+            ->assertOk()
+            ->assertDontSee('Kelola Akun');
+
+        $this->actingAs($admin)
+            ->get(route('superadmin.users.account.edit', $bruder))
+            ->assertForbidden();
+
+        $this->actingAs($admin)
+            ->post(route('superadmin.users.account.update', $bruder), [
+                'email' => 'dicuri@fic.test',
+                'password' => 'sandi-baru-aman',
+                'password_confirmation' => 'sandi-baru-aman',
+            ])
+            ->assertForbidden();
+
+        $fresh = $bruder->fresh();
+        $this->assertSame('tetap@fic.test', $fresh->email);
+        $this->assertSame($hash, $fresh->password);
+
+        $super = User::factory()->create(['role' => 'super_admin']);
+        $this->actingAs($super)
+            ->get(route('superadmin.users.account.edit', $admin))
+            ->assertNotFound();
     }
 
     public function test_track_record_shows_every_saved_report_and_rejects_other_roles(): void

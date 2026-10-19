@@ -81,6 +81,14 @@ class AdminDashboardTest extends TestCase
             'username' => 'bruder_baru',
             'password' => 'password123',
         ])->assertForbidden();
+
+        $bruder = User::factory()->create(['role' => 'user']);
+        $this->actingAs($admin)->get(route('superadmin.users.account.edit', $bruder))->assertForbidden();
+        $this->actingAs($admin)->post(route('superadmin.users.account.update', $bruder), [
+            'email' => 'admin-ubah@fic.test',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ])->assertForbidden();
     }
 
     public function test_bruder_cannot_access_admin_dashboard(): void

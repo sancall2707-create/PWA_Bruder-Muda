@@ -34,6 +34,7 @@
         .actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:10px; }
         .actions form { margin:0; display:flex; }
         .btn { background:#1455C0; color:#fff; min-height:36px; padding:8px 12px; border-radius:10px; font-weight:700; text-decoration:none; font-size:12px; line-height:1; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; text-align:center; white-space:nowrap; }
+        .btn-account { background:rgba(255,255,255,0.55); color:#003E97; border:1px solid rgba(20,85,192,0.35); }
         .btn-muted { background:rgba(255,255,255,0.55); color:#344054; }
         .btn-danger { background:#B42318; color:#fff; }
         .fab { position:fixed; right:max(16px, calc(50vw - 224px)); bottom:24px; z-index:90; width:56px; height:56px; border-radius:18px; background:#1455C0; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; line-height:0; padding:0; box-shadow:0 8px 18px rgba(20,85,192,0.35); }
@@ -85,6 +86,7 @@
                             <div class="actions">
                                 <a href="{{ route('superadmin.users.track-record', $u) }}" class="btn">Track Record</a>
                                 @if(auth()->user()->role === 'super_admin')
+                                    <a href="{{ route('superadmin.users.account.edit', $u) }}" class="btn btn-account">Kelola Akun</a>
                                     <form method="POST" action="{{ route('superadmin.users.status', $u) }}">
                                         @csrf
                                         <button type="submit" class="btn btn-muted">{{ $u->is_active ? 'Nonaktifkan' : 'Aktifkan' }}</button>
