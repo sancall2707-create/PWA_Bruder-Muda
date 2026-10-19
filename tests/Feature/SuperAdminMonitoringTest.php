@@ -119,8 +119,13 @@ class SuperAdminMonitoringTest extends TestCase
             'format' => 'excel',
         ]));
         $excel->assertOk();
-        $this->assertStringContainsString('Rm. Mentor Pantau', $excel->getContent());
-        $this->assertStringContainsString('16:00 WIB', $excel->getContent());
+        $sheet = $excel->getContent();
+        $this->assertStringContainsString('Rm. Mentor Pantau', $sheet);
+        $this->assertStringContainsString('16:00 WIB', $sheet);
+        $this->assertStringContainsString('ss:Bold="1"', $sheet);
+        $this->assertStringContainsString('ss:Horizontal="Center"', $sheet);
+        $this->assertStringContainsString('ss:StyleID="Header"', $sheet);
+        $this->assertStringContainsString('<Column ss:AutoFitWidth="0" ss:Width="130"/>', $sheet);
     }
 
     public function test_agenda_calendar_shows_the_selected_day(): void
@@ -173,6 +178,9 @@ class SuperAdminMonitoringTest extends TestCase
         $this->assertStringContainsString('Selesai', $body);
         $this->assertStringNotContainsString('Br. Budi Pantau', $body);
         $this->assertStringContainsString('<Workbook', $body);
+        $this->assertStringContainsString('ss:Bold="1"', $body);
+        $this->assertStringContainsString('ss:Horizontal="Center"', $body);
+        $this->assertStringContainsString('<Column ss:AutoFitWidth="0" ss:Width="140"/>', $body);
     }
 
     public function test_pdf_export_includes_filtered_agenda(): void
