@@ -104,6 +104,11 @@ Route::middleware('auth')->group(function () {
 
     // Fase 2 Routes - Kolaborasi TPPBM & Super Admin
     Route::middleware('role:admin,super_admin')->prefix('super-admin')->name('superadmin.')->group(function () {
+        // Profil & Edit Akun Admin / Super Admin
+        Route::get('/profil', [\App\Http\Controllers\SuperAdmin\ProfileController::class, 'index'])->name('profil');
+        Route::post('/profil', [\App\Http\Controllers\SuperAdmin\ProfileController::class, 'update'])->name('profil.update');
+        Route::post('/profil/kata-sandi', [\App\Http\Controllers\SuperAdmin\ProfileController::class, 'updatePassword'])->name('profil.password');
+
         // Direktori & Track Record Bruder
         Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
         Route::get('/users/{user}/track-record', [UserManagementController::class, 'trackRecord'])->name('users.track-record');

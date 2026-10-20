@@ -102,7 +102,21 @@
                 <div class="sa-badge">
                     {{ auth()->user()->role === 'admin' ? 'TIM PENDAMPING TPPBM' : 'SUPER ADMIN' }}
                 </div>
-                @include('layouts.partials.sa-menu-toggle')
+                <div style="display:flex; align-items:center; gap:8px; margin-left:auto;">
+                    <a href="{{ route('superadmin.profil') }}" title="Profil &amp; Akun Saya" style="display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,0.2); border:1.5px solid rgba(255,255,255,0.4); color:#fff; text-decoration:none; font-size:13px; font-weight:800; overflow:hidden;">
+                        @php
+                            $saUser = auth()->user();
+                            $saWords = explode(' ', trim($saUser->name ?? 'SA'));
+                            $saInitials = strtoupper(substr($saWords[0], 0, 1) . (isset($saWords[1]) ? substr($saWords[1], 0, 1) : ''));
+                        @endphp
+                        @if ($saUser->profile_photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($saUser->profile_photo))
+                            <img src="{{ route('profil.foto') }}" alt="Foto profil" style="width:100%; height:100%; object-fit:cover;">
+                        @else
+                            {{ $saInitials }}
+                        @endif
+                    </a>
+                    @include('layouts.partials.sa-menu-toggle')
+                </div>
             </div>
             <h1 class="sa-title">{{ $headerTitle ?? (auth()->user()->role === 'admin' ? 'Dashboard TPPBM' : 'Dashboard Super Admin') }}</h1>
             <p class="sa-subtitle">{{ $headerSubtitle ?? (auth()->user()->role === 'admin' ? 'Pemantauan formasi rohani & pembinaan bruder muda' : 'Kelola pembinaan, bruder muda, & sapaan') }}</p>
