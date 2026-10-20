@@ -92,5 +92,23 @@ class UserSeeder extends Seeder
         $user2->phone = '081234567893';
         $user2->bio = 'Bruder Muda - Penugasan Asrama Yogyakarta';
         $user2->save();
+
+        // User Demo 3 (Br. Yohanes Sarwono, FIC)
+        $user3 = User::firstOrNew([
+            'username' => 'brunofic',
+        ]);
+        $user3->name = 'Br. Yohanes Sarwono, FIC';
+        $user3->email = 'brunofic@fic.local';
+        $user3->password = '$2y$12$dVWCjL7DtZmSxjI5hucWNeGBlFxUZSxvQTSodIuO6duKN0EwRYtWy';
+        $user3->role = 'user';
+        $user3->is_active = true;
+        $user3->community_location = 'Jakarta';
+        $user3->phone = '021223254';
+        $user3->bio = 'Brudernya ngantukan, maka perlu diperhatikan agar tidak tidur di sembarang tempat';
+        $user3->birth_date = '1945-12-12';
+        $user3->parents_name = 'Mento & Suratmi';
+        $user3->last_education = 'S2 Mbio';
+        $user3->entry_year = 2009;
+        $user3->save();
     }
 }
