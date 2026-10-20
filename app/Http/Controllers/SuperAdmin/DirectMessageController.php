@@ -52,4 +52,21 @@ class DirectMessageController extends Controller
         return redirect()->route('superadmin.users.index')
             ->with('success', "Pesan khusus berhasil dikirimkan ke {$user->name}.");
     }
+
+    /**
+     * Tarik pesan yang salah kirim agar tidak lagi tampil di akun bruder.
+     */
+    public function destroy(User $user, DirectMessage $message): RedirectResponse
+    {
+        abort_unless($message->recipient_id === $user->id, 404);
+
+        $actor = auth()->user();
+        $canRetract = $actor->role === 'super_admin' || $message->sender_id === $actor->id;
+        abort_unless($canRetract, 403);
+
+        $message->delete();
+
+        return redirect()->back()
+            ->with('success', 'Pesan berhasil ditarik. Bruder tidak lagi melihat pesan ini.');
+    }
 }

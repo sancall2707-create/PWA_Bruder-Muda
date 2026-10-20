@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\BruderNote;
 use App\Models\DirectMessage;
 use App\Models\ProvincialMessage;
 use App\Models\User;
@@ -117,6 +116,57 @@ class PenyesuaianTahap1Test extends TestCase
             ->assertSee('Harap hadir di ruang pimpinan');
 
         $this->assertNotNull($message->fresh()->read_at);
+    }
+
+    public function test_sender_can_retract_a_direct_message(): void
+    {
+        $superadmin = User::factory()->create(['role' => 'super_admin']);
+        $admin = User::factory()->create(['role' => 'admin']);
+        $bruder = User::factory()->create(['role' => 'user', 'name' => 'Br. Penerima Pesan']);
+
+        $own = DirectMessage::create([
+            'sender_id' => $superadmin->id,
+            'recipient_id' => $bruder->id,
+            'title' => 'Pesan Salah Kirim',
+            'content' => 'Isi yang harus ditarik sebelum bruder membacanya.',
+        ]);
+        $fromAdmin = DirectMessage::create([
+            'sender_id' => $admin->id,
+            'recipient_id' => $bruder->id,
+            'title' => 'Arahan TPPBM',
+            'content' => 'Pesan dari admin yang hanya super admin atau pengirimnya yang boleh tarik.',
+        ]);
+
+        $this->actingAs($bruder)->delete(route('superadmin.users.messages.destroy', [$bruder, $own]))
+            ->assertForbidden();
+
+        $this->actingAs($admin)->delete(route('superadmin.users.messages.destroy', [$bruder, $own]))
+            ->assertForbidden();
+
+        $this->actingAs($superadmin)->get(route('superadmin.users.messages.create', $bruder))
+            ->assertOk()
+            ->assertSee('Tarik Pesan')
+            ->assertSee('Pesan Salah Kirim');
+
+        $this->actingAs($superadmin)
+            ->delete(route('superadmin.users.messages.destroy', [$bruder, $own]))
+            ->assertRedirect()
+            ->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('direct_messages', ['id' => $own->id]);
+
+        $this->actingAs($bruder)->get(route('pesan.index'))
+            ->assertOk()
+            ->assertDontSee('Pesan Salah Kirim')
+            ->assertSee('Arahan TPPBM');
+
+        $this->actingAs($bruder)->get(route('pesan.show', $own))->assertNotFound();
+
+        $this->actingAs($admin)
+            ->delete(route('superadmin.users.messages.destroy', [$bruder, $fromAdmin]))
+            ->assertRedirect();
+
+        $this->assertDatabaseMissing('direct_messages', ['id' => $fromAdmin->id]);
     }
 
     public function test_super_admin_can_remove_sapaan_photo_on_edit(): void

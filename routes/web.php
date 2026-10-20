@@ -105,9 +105,9 @@ Route::middleware('auth')->group(function () {
     // Fase 2 Routes - Kolaborasi TPPBM & Super Admin
     Route::middleware('role:admin,super_admin')->prefix('super-admin')->name('superadmin.')->group(function () {
         // Profil & Edit Akun Admin / Super Admin
-        Route::get('/profil', [\App\Http\Controllers\SuperAdmin\ProfileController::class, 'index'])->name('profil');
-        Route::post('/profil', [\App\Http\Controllers\SuperAdmin\ProfileController::class, 'update'])->name('profil.update');
-        Route::post('/profil/kata-sandi', [\App\Http\Controllers\SuperAdmin\ProfileController::class, 'updatePassword'])->name('profil.password');
+        Route::get('/profil', [App\Http\Controllers\SuperAdmin\ProfileController::class, 'index'])->name('profil');
+        Route::post('/profil', [App\Http\Controllers\SuperAdmin\ProfileController::class, 'update'])->name('profil.update');
+        Route::post('/profil/kata-sandi', [App\Http\Controllers\SuperAdmin\ProfileController::class, 'updatePassword'])->name('profil.password');
 
         // Direktori & Track Record Bruder
         Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
@@ -120,6 +120,7 @@ Route::middleware('auth')->group(function () {
         // Kirim Pesan Khusus Satu Arah (Poin 2)
         Route::get('/users/{user}/pesan', [DirectMessageController::class, 'create'])->name('users.messages.create');
         Route::post('/users/{user}/pesan', [DirectMessageController::class, 'store'])->name('users.messages.store');
+        Route::delete('/users/{user}/pesan/{message}', [DirectMessageController::class, 'destroy'])->name('users.messages.destroy');
 
         // Monitoring Laporan & Agenda
         Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');

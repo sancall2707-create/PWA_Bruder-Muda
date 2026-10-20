@@ -29,6 +29,7 @@
         .btn-submit-gold:hover { background:linear-gradient(135deg, #8D5D00 0%, #684400 100%); }
         .back-link { display:block; text-align:center; margin-top:8px; color:#475467; text-decoration:none; font-weight:700; font-size:13px; }
         .msg-history-card { background:#fff; border-radius:12px; border:1px solid #E4E7EC; padding:12px 14px; display:flex; flex-direction:column; gap:4px; font-size:13px; }
+        .btn-retract { align-self:flex-start; margin-top:6px; border:1px solid #FECDCA; background:#FEF3F2; color:#B42318; border-radius:8px; padding:6px 10px; font-size:11px; font-weight:800; cursor:pointer; font-family:inherit; }
     </style>
 </head>
 <body>
@@ -43,6 +44,11 @@
         <p class="subtitle">Kepada {{ $user->name }} ({{ '@'.$user->username }})</p>
     </div>
     <div class="body">
+        @if(session('success'))
+            <div style="background:#ECFDF3; border:1px solid #ABEFC6; color:#027A48; padding:12px 14px; border-radius:12px; font-size:13px; font-weight:700;">
+                {{ session('success') }}
+            </div>
+        @endif
         @if ($errors->any())
             <div style="background:#FEF3F2; border:1px solid #FECDCA; border-radius:12px; padding:12px 14px; color:#B42318; font-size:13px;">
                 @foreach ($errors->all() as $error)
@@ -90,6 +96,11 @@
                             <div style="font-size:11px; margin-top:4px; font-weight:700; color: {{ $msg->read_at ? '#027A48' : '#B57900' }};">
                                 {{ $msg->read_at ? 'Dibaca pada ' . $msg->read_at->translatedFormat('d M Y H:i') : 'Belum dibaca' }}
                             </div>
+                            <form method="POST" action="{{ route('superadmin.users.messages.destroy', [$user, $msg]) }}" onsubmit="return confirm('Tarik pesan ini? Bruder tidak akan melihatnya lagi.');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-retract">Tarik Pesan</button>
+                            </form>
                         </div>
                     @endforeach
                 </div>

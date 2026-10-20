@@ -38,6 +38,11 @@
         <p class="subtitle">{{ $user->name }} ({{ '@' . $user->username }})</p>
     </div>
     <div class="body">
+        @if(session('success'))
+            <div style="background:#ECFDF3; border:1px solid #ABEFC6; color:#027A48; padding:12px 14px; border-radius:12px; font-size:13px; font-weight:700;">
+                {{ session('success') }}
+            </div>
+        @endif
         <div class="card">
             <div class="card-title">Identitas & Data Diri</div>
             <div class="detail-row"><span class="detail-label">Tanggal Lahir</span><span class="detail-value">{{ $user->birth_date ? \Carbon\Carbon::parse($user->birth_date)->translatedFormat('d F Y') : '-' }}</span></div>
@@ -90,6 +95,13 @@
                     </div>
                     <div style="font-size:12px; color:#475467; line-height:1.4;">{{ \Illuminate\Support\Str::limit($msg->content, 120) }}</div>
                     <div style="font-size:11px; color:#667085; margin-top:4px;">Dikirim: {{ $msg->created_at->translatedFormat('d M Y, H:i') }} oleh {{ $msg->sender->name ?? 'Admin' }}</div>
+                    @if(auth()->user()->role === 'super_admin' || $msg->sender_id === auth()->id())
+                        <form method="POST" action="{{ route('superadmin.users.messages.destroy', [$user, $msg]) }}" onsubmit="return confirm('Tarik pesan ini? Bruder tidak akan melihatnya lagi.');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="margin-top:8px; border:1px solid #FECDCA; background:#FEF3F2; color:#B42318; border-radius:8px; padding:6px 10px; font-size:11px; font-weight:800; cursor:pointer; font-family:inherit;">Tarik Pesan</button>
+                        </form>
+                    @endif
                 </div>
             @empty
                 <div class="detail-value" style="color:#667085;">Belum ada pesan khusus terkirim.</div>
