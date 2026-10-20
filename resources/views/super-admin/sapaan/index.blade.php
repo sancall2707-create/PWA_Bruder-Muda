@@ -50,7 +50,15 @@
         <input type="file" name="image" accept="image/jpeg,image/png,image/webp">
     </label>
     @if($editing?->image)
-        <img src="{{ route('sapaan-provinsial.foto', $editing) }}" alt="Foto publikasi saat ini" style="width:100%; height:auto; max-height:640px; object-fit:contain; border-radius:12px; display:block;">
+        <div style="background:#F8F9FC; border:1px solid #E4E7EC; border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px;">
+            <div style="font-size:12px; font-weight:700; color:#344054;">Foto Publikasi Saat Ini:</div>
+            <img src="{{ route('sapaan-provinsial.foto', $editing) }}" alt="Foto publikasi saat ini" style="width:100%; height:auto; max-height:320px; object-fit:contain; border-radius:8px; display:block; background:#EEF2F6;">
+            <div style="font-size:11px; color:#667085;">Pilih berkas baru pada formulir foto di atas untuk mengganti foto ini.</div>
+            <label style="display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:#B42318; cursor:pointer; margin-top:4px;">
+                <input type="checkbox" name="remove_image" value="1" {{ old('remove_image') ? 'checked' : '' }}>
+                Hapus foto saat ini (jadikan sapaan tanpa foto lampiran)
+            </label>
+        </div>
     @endif
 
     <div style="display:flex; gap:8px;">

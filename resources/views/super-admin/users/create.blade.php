@@ -58,7 +58,15 @@
                 <div class="section-label">1. Kredensial Akun Login</div>
 
                 <div class="field">
-                    <label for="name">Nama Lengkap &amp; Gelar</label>
+                    <label for="role">Peran (Role) Akses</label>
+                    <select id="role" name="role" required>
+                        <option value="user" {{ old('role', 'user') === 'user' ? 'selected' : '' }}>Bruder Muda (User)</option>
+                        <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin (TPPBM)</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="name">Nama Lengkap</label>
                     <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="Contoh: Br. Fransiskus Xaverius FIC" required>
                 </div>
 
@@ -81,6 +89,11 @@
             <!-- Form Card 2: Data Diri & Keanggotaan Bruder -->
             <div class="form-section" style="margin-top: 14px;">
                 <div class="section-label">2. Data Diri &amp; Keanggotaan Bruder</div>
+
+                <div class="field">
+                    <label for="birth_place">Tempat Lahir</label>
+                    <input type="text" id="birth_place" name="birth_place" value="{{ old('birth_place') }}" placeholder="Contoh: Semarang">
+                </div>
 
                 <div class="field">
                     <label for="birth_date">Tanggal Lahir</label>
@@ -113,8 +126,8 @@
                 </div>
 
                 <div class="field">
-                    <label for="bio">Bio / Catatan Pembinaan</label>
-                    <textarea id="bio" name="bio" rows="3" placeholder="Catatan singkat perihal bruder muda...">{{ old('bio') }}</textarea>
+                    <label for="bio">Catatan Pembinaan Awal</label>
+                    <textarea id="bio" name="bio" rows="3" placeholder="Catatan awal pada saat pembuatan akun bruder...">{{ old('bio') }}</textarea>
                 </div>
             </div>
 

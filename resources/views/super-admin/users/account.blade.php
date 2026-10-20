@@ -68,7 +68,15 @@
                     <input type="text" id="name" value="{{ $user->name }}" readonly tabindex="-1" aria-readonly="true">
                 </div>
 
-                <p class="hint">Username adalah kunci login dan tidak diubah dari halaman ini.</p>
+                <div class="field">
+                    <label for="role">Peran (Role) Akses</label>
+                    <select id="role" name="role" required>
+                        <option value="user" {{ old('role', $user->role) === 'user' ? 'selected' : '' }}>Bruder Muda (User)</option>
+                        <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin (TPPBM)</option>
+                    </select>
+                </div>
+
+                <p class="hint">Peran menentukan hak akses pengguna ke Dashboard Bruder Muda atau Panel TPPBM.</p>
             </div>
 
             <div class="form-section" style="margin-top: 14px;">

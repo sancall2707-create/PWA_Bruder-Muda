@@ -167,6 +167,7 @@
             </div>
             <div class="sa-menu-list">
                 <a class="sa-menu-link {{ request()->routeIs('admin.dashboard') || request()->routeIs('superadmin.dashboard') ? 'active' : '' }}" href="{{ $homeUrl }}">Dashboard</a>
+                <a class="sa-menu-link {{ request()->routeIs('superadmin.profil*') ? 'active' : '' }}" href="{{ route('superadmin.profil') }}">Profil &amp; Edit Akun Saya</a>
                 @if ($isAdmin)
                     <a class="sa-menu-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Lihat PWA</a>
                 @endif

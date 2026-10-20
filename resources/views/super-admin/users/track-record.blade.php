@@ -59,6 +59,44 @@
         </div>
 
         <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin-bottom:6px;">
+                <div class="card-title" style="border:none; padding:0; margin:0;">Catatan Pembinaan (TPPBM)</div>
+                <a href="{{ route('superadmin.users.notes.create', $user) }}" style="font-size:11px; font-weight:800; color:#027A48; text-decoration:none; background:#ECFDF3; border:1px solid #ABEFC6; padding:4px 8px; border-radius:8px;">+ Tambah Catatan</a>
+            </div>
+            @forelse($notes as $note)
+                <div style="padding:10px; background:#F8FAF9; border-left:3px solid #027A48; border-radius:0 8px 8px 0; margin-bottom:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <span style="font-size:11px; font-weight:800; color:#027A48; text-transform:uppercase;">{{ $note->category }}</span>
+                        <span style="font-size:11px; color:#667085;">{{ $note->created_at->translatedFormat('d M Y, H:i') }}</span>
+                    </div>
+                    <div style="font-size:13px; color:#344054; line-height:1.45; white-space:pre-line;">{{ $note->content }}</div>
+                    <div style="font-size:11px; color:#667085; margin-top:4px;">Oleh: {{ $note->author->name ?? 'Admin TPPBM' }}</div>
+                </div>
+            @empty
+                <div class="detail-value" style="color:#667085;">Belum ada catatan pembinaan khusus.</div>
+            @endforelse
+        </div>
+
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin-bottom:6px;">
+                <div class="card-title" style="border:none; padding:0; margin:0;">Pesan Khusus Terkirim</div>
+                <a href="{{ route('superadmin.users.messages.create', $user) }}" style="font-size:11px; font-weight:800; color:#B57900; text-decoration:none; background:#FFF9EB; border:1px solid #FECDCA; padding:4px 8px; border-radius:8px;">+ Kirim Pesan</a>
+            </div>
+            @forelse($messages as $msg)
+                <div style="padding:10px; background:#FDFCF8; border-left:3px solid #B57900; border-radius:0 8px 8px 0; margin-bottom:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <strong style="font-size:13px; color:#101828;">{{ $msg->title }}</strong>
+                        <span style="font-size:11px; font-weight:700; color: {{ $msg->read_at ? '#027A48' : '#B57900' }};">{{ $msg->read_at ? 'Sudah dibaca' : 'Belum dibaca' }}</span>
+                    </div>
+                    <div style="font-size:12px; color:#475467; line-height:1.4;">{{ \Illuminate\Support\Str::limit($msg->content, 120) }}</div>
+                    <div style="font-size:11px; color:#667085; margin-top:4px;">Dikirim: {{ $msg->created_at->translatedFormat('d M Y, H:i') }} oleh {{ $msg->sender->name ?? 'Admin' }}</div>
+                </div>
+            @empty
+                <div class="detail-value" style="color:#667085;">Belum ada pesan khusus terkirim.</div>
+            @endforelse
+        </div>
+
+        <div class="card">
             <div class="card-title">Laporan Terbaru</div>
             @forelse($recentBimbingan as $report)
                 <div class="detail-row"><span class="detail-label">Bimbingan</span><span class="detail-value">{{ $report->mentor_name }}</span></div>

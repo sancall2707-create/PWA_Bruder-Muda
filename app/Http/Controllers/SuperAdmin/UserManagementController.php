@@ -45,12 +45,14 @@ class UserManagementController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
+            'role' => ['nullable', 'string', 'in:user,admin'],
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:50', 'alpha_dash', 'unique:users,username'],
             'email' => ['nullable', 'email', 'max:255'],
             'password' => ['required', 'string', 'min:6'],
             'community_location' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:30'],
+            'birth_place' => ['nullable', 'string', 'max:255'],
             'birth_date' => ['nullable', 'date'],
             'parents_name' => ['nullable', 'string', 'max:255'],
             'last_education' => ['nullable', 'string', 'max:255'],
@@ -63,7 +65,8 @@ class UserManagementController extends Controller
         $user->username = strtolower($validated['username']);
         $user->email = $validated['email'] ?? null;
         $user->password = $validated['password'];
-        $user->role = 'user';
+        $user->role = $validated['role'] ?? 'user';
+        $user->birth_place = $validated['birth_place'] ?? null;
         $user->community_location = $validated['community_location'] ?? null;
         $user->phone = $validated['phone'] ?? null;
         $user->birth_date = $validated['birth_date'] ?? null;
@@ -74,8 +77,10 @@ class UserManagementController extends Controller
         $user->is_active = true;
         $user->save();
 
+        $roleLabel = $user->role === 'admin' ? 'Admin TPPBM' : 'Bruder Muda';
+
         return redirect()->route('superadmin.users.index')
-            ->with('success', "Akun Bruder {$user->name} berhasil ditambahkan.");
+            ->with('success', "Akun {$roleLabel} {$user->name} berhasil ditambahkan.");
     }
 
     /**
@@ -90,7 +95,6 @@ class UserManagementController extends Controller
 
     /**
      * Perbarui email dan, bila diisi, atur ulang kata sandi bruder.
-     * Username dan role tidak diubah dari form ini.
      */
     public function updateAccount(Request $request, User $user): RedirectResponse
     {
@@ -133,6 +137,10 @@ class UserManagementController extends Controller
             ]);
         }
 
+        if ($request->has('role') && in_array($request->input('role'), ['user', 'admin'], true)) {
+            $user->role = $request->input('role');
+        }
+
         $email = $validated['email'] ?? null;
         $user->email = is_string($email) && trim($email) !== '' ? trim($email) : null;
 
@@ -143,8 +151,8 @@ class UserManagementController extends Controller
         $user->save();
 
         $message = filled($password)
-            ? "Email dan kata sandi akun {$user->name} berhasil diperbarui."
-            : "Email akun {$user->name} berhasil diperbarui.";
+            ? "Akun {$user->name} berhasil diperbarui (termasuk kata sandi baru)."
+            : "Data akun {$user->name} berhasil diperbarui.";
 
         return redirect()->route('superadmin.users.index')
             ->with('success', $message);
@@ -162,17 +170,22 @@ class UserManagementController extends Controller
             'wawanhatiReports',
             'selfDevelopmentJournals',
             'personalAgendas',
+            'bruderNotes',
         ]);
 
         $recentBimbingan = $user->spiritualGuidanceReports()->latest('meeting_at')->limit(5)->get();
         $recentWawanhati = $user->wawanhatiReports()->latest('meeting_at')->limit(5)->get();
         $recentJournals = $user->selfDevelopmentJournals()->latest('activity_date')->limit(5)->get();
+        $notes = $user->bruderNotes()->with('author')->latest()->get();
+        $messages = $user->directMessagesReceived()->with('sender')->latest()->limit(5)->get();
 
         return view('super-admin.users.track-record', compact(
             'user',
             'recentBimbingan',
             'recentWawanhati',
             'recentJournals',
+            'notes',
+            'messages',
         ));
     }
 

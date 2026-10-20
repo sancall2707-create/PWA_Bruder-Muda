@@ -10,6 +10,23 @@
     ];
 @endphp
 
+@if(!empty($unreadMessagesCount) && $unreadMessagesCount > 0)
+    <a href="{{ route('pesan.index') }}" class="card" style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; background:linear-gradient(135deg, #FFF9EB 0%, #FEF0C7 100%); border:1px solid #FECDCA; text-decoration:none; color:inherit; margin-bottom:14px; border-radius:16px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:38px; height:38px; border-radius:10px; background:#B57900; color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </div>
+            <div>
+                <div style="font-weight:800; font-size:13px; color:#7A4D00;">Pesan Khusus Baru ({{ $unreadMessagesCount }})</div>
+                <div style="font-size:12px; color:#936000; margin-top:2px;">{{ $latestUnreadMessage->title ?? 'Ada pesan dari Pimpinan/TPPBM' }}</div>
+            </div>
+        </div>
+        <span style="font-size:11px; font-weight:800; color:#B57900; background:#fff; padding:6px 12px; border-radius:999px; box-shadow:0 1px 3px rgba(0,0,0,0.06); white-space:nowrap;">
+            Buka &rarr;
+        </span>
+    </a>
+@endif
+
 <div class="progress-stat-card">
     <div class="stat-header">
         <span class="stat-title">Statistik Pembinaan Bulan Ini</span>
