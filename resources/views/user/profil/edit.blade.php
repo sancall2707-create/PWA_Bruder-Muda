@@ -4,6 +4,7 @@
     $backUrl = route('profil');
     $pageTitle = 'Edit Profil Lengkap';
     $title = 'Edit Profil Lengkap';
+    $hideBottomNav = true;
     $family = $user->family_data ?? [];
     $education = $user->education_data ?? [];
     $formation = $user->formation_data ?? [];
@@ -32,15 +33,31 @@
     @csrf
 
     <!-- SECTION 1: DATA AKUN & PRIBADI -->
-    <div class="card" style="padding:16px;">
-        <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px;">
+    <div class="card" style="padding:20px 16px;">
+        <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 16px; text-align:center;">
             1. Data Pokok &amp; Kontak
         </h3>
 
+        <!-- Avatar & Profil Center -->
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: center; margin-bottom: 10px;">
+                @if ($photoUrl)
+                    <img src="{{ $photoUrl }}" alt="Foto profil saat ini" width="88" height="88" style="width: 88px; height: 88px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; box-shadow: 0 4px 14px rgba(20, 85, 192, 0.25); display: block; margin: 0 auto;">
+                @else
+                    @php
+                        $words = explode(' ', trim($user->name));
+                        $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
+                    @endphp
+                    <div style="width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(135deg, var(--fic-primary) 0%, var(--fic-dark-blue) 100%); color: #ffffff; font-size: 28px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 4px 14px rgba(20, 85, 192, 0.25); border: 3px solid #ffffff;">
+                        {{ $initials }}
+                    </div>
+                @endif
+            </div>
+            <div style="font-size: 15px; font-weight: 800; color: var(--fic-text-primary);">{{ $user->name }}</div>
+            <div style="font-size: 12px; color: var(--fic-text-secondary); margin-top: 2px;">{{ '@' . $user->username }}</div>
+        </div>
+
         <div class="form-group">
-            @if ($photoUrl)
-                <img src="{{ $photoUrl }}" alt="Foto profil saat ini" width="76" height="76" style="width: 76px; height: 76px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; box-shadow: 0 4px 12px rgba(20, 85, 192, 0.25); margin-bottom:8px;">
-            @endif
             <label for="profile_photo" class="file-upload-box">
                 <svg class="file-upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -93,7 +110,7 @@
 
     <!-- SECTION 2: DATA KELUARGA & NARAHUBUNG -->
     <div class="card" style="padding:16px;">
-        <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px;">
+        <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px; text-align:center;">
             2. Data Keluarga &amp; Narahubung
         </h3>
 
@@ -177,7 +194,7 @@
 
     <!-- SECTION 3: RIWAYAT PENDIDIKAN FORMAL -->
     <div class="card" style="padding:16px;">
-        <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px;">
+        <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px; text-align:center;">
             3. Riwayat Pendidikan Formal
         </h3>
 
@@ -277,7 +294,7 @@
 
     <!-- SECTION 4: RIWAYAT FORMASI BRUDER FIC -->
     <div class="card" style="padding:16px;">
-        <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px;">
+        <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px; text-align:center;">
             4. Riwayat Formasi Bruder FIC
         </h3>
 
@@ -371,7 +388,7 @@
 
     <!-- SECTION 5: RIWAYAT PENUGASAN KOMUNITAS -->
     <div class="card" style="padding:16px;">
-        <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px;">
+        <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px; text-align:center;">
             5. Riwayat Komunitas &amp; Penugasan
         </h3>
 
@@ -400,7 +417,7 @@
         @endfor
     </div>
 
-    <div style="margin: 8px 0 24px;">
+    <div style="margin: 12px 0 100px;">
         <button type="submit" class="btn-primary" style="padding:15px; font-size:15px; font-weight:800;">
             SIMPAN SELURUH DATA PROFIL
         </button>

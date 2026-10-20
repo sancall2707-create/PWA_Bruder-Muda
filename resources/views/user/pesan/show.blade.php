@@ -1,8 +1,9 @@
 @extends('layouts.user-app')
 
 @php
+    $backUrl = route('pesan.index');
+    $pageTitle = 'Pesan Khusus';
     $title = $message->title;
-    $headerGreetingLabel = 'Pesan Khusus Pimpinan/TPPBM';
 @endphp
 
 @section('content')
@@ -28,8 +29,8 @@
         {{ $message->content }}
     </div>
 
-    <div style="display: flex; gap: 8px;">
-        <a href="{{ route('pesan.index') }}" class="btn-primary" style="flex: 1; text-align: center; text-decoration: none; padding: 12px 16px; font-size: 13px; font-weight: 700; border-radius: 12px;">
+    <div>
+        <a href="{{ route('pesan.index') }}" class="btn-primary" style="display:block; text-align: center; text-decoration: none; padding: 12px 16px; font-size: 13px; font-weight: 700; border-radius: 12px;">
             ← Kembali ke Kotak Pesan
         </a>
     </div>
