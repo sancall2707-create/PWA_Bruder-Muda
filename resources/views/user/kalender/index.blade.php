@@ -42,7 +42,7 @@
                 $dayDate = $month->copy()->day($day)->toDateString();
                 $isSelected = $selectedDate->day === $day;
             @endphp
-            <a href="{{ route('kalender', ['month' => $monthKey, 'date' => $dayDate]) }}" class="calendar-day {{ $isSelected ? 'selected' : '' }}" style="text-decoration: none; color: inherit;">
+            <a href="{{ route('kalender', ['month' => $monthKey, 'date' => $dayDate]) }}" class="calendar-day {{ $isSelected ? 'selected' : '' }}">
                 <span>{{ $day }}</span>
                 <div class="calendar-dots">
                     @if(!empty($dots['bimbingan'][$day]))

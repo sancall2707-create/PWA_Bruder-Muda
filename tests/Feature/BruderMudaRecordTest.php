@@ -149,6 +149,8 @@ class BruderMudaRecordTest extends TestCase
         $this->actingAs($user)
             ->get(route('kalender', ['date' => $sooner]))
             ->assertOk()
+            ->assertSee('calendar-day selected', false)
+            ->assertDontSee('color: inherit', false)
             ->assertSee('Br. Yohanes Uji, FIC')
             ->assertSee('Br. Piko Uji, FIC')
             ->assertDontSee('Ibadat Komunitas');

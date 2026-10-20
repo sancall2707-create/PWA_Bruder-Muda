@@ -42,7 +42,7 @@
                 @php
                     $dayDate = sprintf('%04d-%02d-%02d', $filters['tahun'], $filters['bulan'], $day);
                 @endphp
-                <a href="{{ route('superadmin.monitoring.agenda', array_merge($switchQuery, ['tampilan' => 'kalender', 'tanggal' => $dayDate])) }}" class="calendar-day {{ $calendar['selected_day'] === $day ? 'selected' : '' }}" style="text-decoration:none;color:inherit;">
+                <a href="{{ route('superadmin.monitoring.agenda', array_merge($switchQuery, ['tampilan' => 'kalender', 'tanggal' => $dayDate])) }}" class="calendar-day {{ $calendar['selected_day'] === $day ? 'selected' : '' }}">
                     <span>{{ $day }}</span>
                     <div class="calendar-dots">
                         @if(!empty($calendar['dots'][$day]['bimbingan']))

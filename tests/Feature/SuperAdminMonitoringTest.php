@@ -148,6 +148,7 @@ class SuperAdminMonitoringTest extends TestCase
                 'tanggal' => '2026-10-15',
             ]))
             ->assertOk()
+            ->assertSee('calendar-day selected', false)
             ->assertSee('Retret Pribadi Pantau')
             ->assertSee('15 Oktober 2026')
             ->assertSee('Selesai');
