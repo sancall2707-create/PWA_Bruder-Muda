@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SuperAdmin\BruderNoteController;
+use App\Http\Controllers\SuperAdmin\DirectMessageController;
 use App\Http\Controllers\SuperAdmin\MonitoringController;
 use App\Http\Controllers\SuperAdmin\ProvincialMessageManagementController;
 use App\Http\Controllers\SuperAdmin\UserManagementController;
@@ -11,6 +13,7 @@ use App\Http\Controllers\User\JournalController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\ProvincialMessageController;
 use App\Http\Controllers\User\SpiritualGuidanceController;
+use App\Http\Controllers\User\UserDirectMessageController;
 use App\Http\Controllers\User\WawanhatiController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -83,6 +86,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/profil', [ProfileController::class, 'update'])->name('profil.update');
         Route::get('/profil/kata-sandi', [ProfileController::class, 'editPassword'])->name('profil.kata-sandi');
         Route::post('/profil/kata-sandi', [ProfileController::class, 'updatePassword'])->name('profil.kata-sandi.update');
+
+        // 16. Pesan Khusus Privat (Satu Arah) dari Pimpinan / TPPBM
+        Route::get('/pesan-khusus', [UserDirectMessageController::class, 'index'])->name('pesan.index');
+        Route::get('/pesan-khusus/{message}', [UserDirectMessageController::class, 'show'])->name('pesan.show');
     });
 
     // Dashboard Admin (admin, super_admin)
@@ -100,6 +107,14 @@ Route::middleware('auth')->group(function () {
         // Direktori & Track Record Bruder
         Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
         Route::get('/users/{user}/track-record', [UserManagementController::class, 'trackRecord'])->name('users.track-record');
+
+        // Catatan Pembinaan Bruder (Poin 5)
+        Route::get('/users/{user}/catatan/tambah', [BruderNoteController::class, 'create'])->name('users.notes.create');
+        Route::post('/users/{user}/catatan', [BruderNoteController::class, 'store'])->name('users.notes.store');
+
+        // Kirim Pesan Khusus Satu Arah (Poin 2)
+        Route::get('/users/{user}/pesan', [DirectMessageController::class, 'create'])->name('users.messages.create');
+        Route::post('/users/{user}/pesan', [DirectMessageController::class, 'store'])->name('users.messages.store');
 
         // Monitoring Laporan & Agenda
         Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');

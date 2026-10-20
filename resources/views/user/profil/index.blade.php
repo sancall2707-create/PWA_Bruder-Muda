@@ -45,6 +45,16 @@
     <!-- Detail List -->
     <div style="margin-top: 24px; text-align: left; border-top: 1px solid var(--fic-border); padding-top: 16px;">
         <div style="display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #F2F4F7;">
+            <span style="color: var(--fic-text-muted); font-weight: 600;">Tempat &amp; Tgl Lahir:</span>
+            <span style="font-weight: 600; color: var(--fic-text-primary); text-align: right;">
+                {{ $user->birth_place ? $user->birth_place . ', ' : '' }}{{ $user->birth_date ? \Carbon\Carbon::parse($user->birth_date)->translatedFormat('d F Y') : 'Belum disetel' }}
+            </span>
+        </div>
+        <div style="display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #F2F4F7;">
+            <span style="color: var(--fic-text-muted); font-weight: 600;">No. Telepon / WA:</span>
+            <span style="font-weight: 600; color: var(--fic-text-primary); text-align: right;">{{ $user->phone ?: 'Belum disetel' }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #F2F4F7;">
             <span style="color: var(--fic-text-muted); font-weight: 600;">Email Terdaftar:</span>
             <span style="font-weight: 600; color: var(--fic-text-primary); text-align: right;">{{ $user->email ?? 'Belum disetel' }}</span>
         </div>
@@ -64,6 +74,18 @@
 </div>
 
 <div class="card" style="display: flex; flex-direction: column; gap: 10px;">
+    <a href="{{ route('pesan.index') }}" class="btn-secondary" style="position:relative;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span>Kotak Pesan Khusus</span>
+        @if(auth()->user()->unreadDirectMessagesCount() > 0)
+            <span style="margin-left:auto; background:#B42318; color:#fff; font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px;">
+                {{ auth()->user()->unreadDirectMessagesCount() }} baru
+            </span>
+        @endif
+    </a>
+
     <a href="{{ route('profil.edit') }}" class="btn-secondary">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>

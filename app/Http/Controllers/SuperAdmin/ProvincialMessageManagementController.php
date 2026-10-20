@@ -51,8 +51,15 @@ class ProvincialMessageManagementController extends Controller
         $validated = $this->validated($request);
         $attributes = $this->attributes($request, $validated, $message);
 
-        if ($request->hasFile('image') && $this->isSapaanImage($message->image)) {
-            Storage::disk('public')->delete($message->image);
+        if ($request->hasFile('image')) {
+            if ($this->isSapaanImage($message->image)) {
+                Storage::disk('public')->delete($message->image);
+            }
+        } elseif ($request->boolean('remove_image')) {
+            if ($this->isSapaanImage($message->image)) {
+                Storage::disk('public')->delete($message->image);
+            }
+            $attributes['image'] = null;
         }
 
         $message->update($attributes);

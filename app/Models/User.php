@@ -31,9 +31,14 @@ class User extends Authenticatable
         'phone',
         'bio',
         'birth_date',
+        'birth_place',
         'parents_name',
         'last_education',
         'entry_year',
+        'family_data',
+        'education_data',
+        'formation_data',
+        'assignment_data',
     ];
 
     /**
@@ -59,6 +64,10 @@ class User extends Authenticatable
             'is_active' => 'boolean',
             'birth_date' => 'date',
             'entry_year' => 'integer',
+            'family_data' => 'array',
+            'education_data' => 'array',
+            'formation_data' => 'array',
+            'assignment_data' => 'array',
         ];
     }
 
@@ -116,6 +125,46 @@ class User extends Authenticatable
     public function selfDevelopmentJournals(): HasMany
     {
         return $this->hasMany(SelfDevelopmentJournal::class);
+    }
+
+    /**
+     * Catatan pembinaan yang dimiliki oleh user (Bruder Muda).
+     */
+    public function bruderNotes(): HasMany
+    {
+        return $this->hasMany(BruderNote::class, 'user_id');
+    }
+
+    /**
+     * Catatan pembinaan yang ditulis oleh user (Super Admin / Admin).
+     */
+    public function authoredBruderNotes(): HasMany
+    {
+        return $this->hasMany(BruderNote::class, 'author_id');
+    }
+
+    /**
+     * Pesan satu arah yang diterima oleh user.
+     */
+    public function directMessagesReceived(): HasMany
+    {
+        return $this->hasMany(DirectMessage::class, 'recipient_id');
+    }
+
+    /**
+     * Pesan satu arah yang dikirimkan oleh user.
+     */
+    public function directMessagesSent(): HasMany
+    {
+        return $this->hasMany(DirectMessage::class, 'sender_id');
+    }
+
+    /**
+     * Jumlah pesan satu arah yang belum dibaca.
+     */
+    public function unreadDirectMessagesCount(): int
+    {
+        return $this->directMessagesReceived()->whereNull('read_at')->count();
     }
 
     /**

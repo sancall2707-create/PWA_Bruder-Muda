@@ -30,7 +30,12 @@ class DashboardController extends Controller
         $sapaan = ProvincialMessage::currentSapaan();
         $announcements = ProvincialMessage::currentAnnouncements();
 
-        return view('dashboard.user', compact('user', 'stats', 'upcomingSchedules', 'sapaan', 'announcements'));
+        $unreadMessagesCount = $user->unreadDirectMessagesCount();
+        $latestUnreadMessage = $unreadMessagesCount > 0
+            ? $user->directMessagesReceived()->whereNull('read_at')->latest()->first()
+            : null;
+
+        return view('dashboard.user', compact('user', 'stats', 'upcomingSchedules', 'sapaan', 'announcements', 'unreadMessagesCount', 'latestUnreadMessage'));
     }
 
     /**
