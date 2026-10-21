@@ -76,7 +76,7 @@
                     </select>
                 </div>
 
-                <p class="hint">Peran menentukan hak akses pengguna ke Dashboard Bruder Muda atau Panel TPPBM.</p>
+                <p class="hint">Peran menentukan hak akses pengguna ke Beranda Bruder Muda atau Panel TPPBM.</p>
             </div>
 
             <div class="form-section" style="margin-top: 14px;">

@@ -43,7 +43,7 @@ class AdminDashboardTest extends TestCase
         $response = $this->actingAs($admin)->get(route('admin.dashboard'));
 
         $response->assertOk()
-            ->assertSee('Dashboard TPPBM')
+            ->assertSee('Beranda TPPBM')
             ->assertSee('TIM PENDAMPING TPPBM')
             ->assertSee('Br. Pendamping FIC')
             ->assertSee('Br. Antonius FIC')
@@ -104,7 +104,7 @@ class AdminDashboardTest extends TestCase
 
         $this->actingAs($admin)->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('Kembali ke Dashboard TPPBM')
+            ->assertSee('Kembali ke Beranda TPPBM')
             ->assertSee(route('admin.dashboard'), false);
     }
 
@@ -114,6 +114,6 @@ class AdminDashboardTest extends TestCase
 
         $this->actingAs($bruder)->get(route('dashboard'))
             ->assertOk()
-            ->assertDontSee('Kembali ke Dashboard TPPBM');
+            ->assertDontSee('Kembali ke Beranda TPPBM');
     }
 }

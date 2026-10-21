@@ -1,8 +1,8 @@
 @extends('layouts.super-admin')
 
 @php
-    $title = 'Dashboard TPPBM';
-    $headerTitle = 'Dashboard TPPBM';
+    $title = 'Beranda TPPBM';
+    $headerTitle = 'Beranda TPPBM';
     $headerSubtitle = 'Tim Pendamping Pembinaan Bruder Muda';
 @endphp
 

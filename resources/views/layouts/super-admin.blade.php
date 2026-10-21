@@ -118,7 +118,7 @@
                     @include('layouts.partials.sa-menu-toggle')
                 </div>
             </div>
-            <h1 class="sa-title">{{ $headerTitle ?? (auth()->user()->role === 'admin' ? 'Dashboard TPPBM' : 'Dashboard Super Admin') }}</h1>
+            <h1 class="sa-title">{{ $headerTitle ?? (auth()->user()->role === 'admin' ? 'Beranda TPPBM' : 'Beranda Super Admin') }}</h1>
             <p class="sa-subtitle">{{ $headerSubtitle ?? (auth()->user()->role === 'admin' ? 'Pemantauan formasi rohani & pembinaan bruder muda' : 'Kelola pembinaan, bruder muda, & sapaan') }}</p>
         </div>
 

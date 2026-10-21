@@ -55,7 +55,7 @@
                     </a>
                 </div>
                 <div class="header-greeting">
-                    <span class="header-greeting-label">{{ $headerGreetingLabel ?? 'Dashboard Bruder Muda' }}</span>
+                    <span class="header-greeting-label">{{ $headerGreetingLabel ?? 'Beranda Bruder Muda' }}</span>
                     <h1 class="header-greeting-name">{{ auth()->user()->name ?? 'Bruder' }}</h1>
                 </div>
             </header>
@@ -66,14 +66,14 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
-                Kembali ke Dashboard TPPBM
+                Kembali ke Beranda TPPBM
             </a>
         @elseif(auth()->user()?->role === 'super_admin')
             <a href="{{ route('superadmin.dashboard') }}" class="tppbm-return">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
-                Kembali ke Dashboard Super Admin
+                Kembali ke Beranda Super Admin
             </a>
         @endif
 

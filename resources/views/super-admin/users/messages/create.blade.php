@@ -72,7 +72,7 @@
                 </div>
 
                 <p style="margin:0; font-size:12px; color:#667085; line-height:1.45;">
-                    Pesan ini dikirimkan secara privat dan langsung tampil pada Dashboard aplikasi bruder yang bersangkutan.
+                    Pesan ini dikirimkan secara privat dan langsung tampil pada Beranda aplikasi bruder yang bersangkutan.
                 </p>
             </div>
 

@@ -48,7 +48,7 @@
     <div class="container">
         <div class="header">
             <div class="header-nav">
-                <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('superadmin.dashboard') }}" class="btn-header-back" aria-label="Kembali ke Dashboard">
+                <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('superadmin.dashboard') }}" class="btn-header-back" aria-label="Kembali ke Beranda">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
                 </a>
                 <div class="badge">{{ auth()->user()->role === 'admin' ? 'DIREKTORI BRUDER' : 'MANAJEMEN BRUDER' }}</div>
