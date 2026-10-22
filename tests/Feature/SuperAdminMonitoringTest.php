@@ -250,7 +250,7 @@ class SuperAdminMonitoringTest extends TestCase
         $bruder = User::factory()->create(['role' => 'user', 'name' => 'Br. Renungan FIC']);
 
         // Buat jadwal bimbingan
-        \App\Models\SpiritualGuidanceSchedule::create([
+        SpiritualGuidanceSchedule::create([
             'user_id' => $bruder->id,
             'mentor_name' => 'Br. Pembimbing FIC',
             'scheduled_at' => '2026-10-20 10:00:00',
@@ -325,6 +325,9 @@ class SuperAdminMonitoringTest extends TestCase
             ->assertSee('Monika Maria Goretti')
             ->assertSee('SD Kanisius Babadan')
             ->assertSee('Postulat')
+            ->assertSee('5 Frater')
+            ->assertDontSee('Frater/Bruder')
+            ->assertDontSee('page-break-after: always')
             ->assertSee('Br. F.A. Galih Sih Hartanta, FIC')
             ->assertSee('Br. Andrias Purwanto, FIC');
     }
