@@ -148,6 +148,63 @@ class UserManagementController extends Controller
             $user->password = $password;
         }
 
+        // Perbarui biodata lengkap jika dikirimkan oleh Super Admin
+        if ($request->boolean('update_biodata') || $request->has('family_data') || $request->has('education_data')) {
+            if ($request->filled('name')) {
+                $user->name = $request->input('name');
+            }
+            if ($request->exists('birth_place')) {
+                $user->birth_place = $request->input('birth_place');
+            }
+            if ($request->exists('birth_date')) {
+                $user->birth_date = $request->input('birth_date');
+            }
+            if ($request->exists('phone')) {
+                $user->phone = $request->input('phone');
+            }
+            if ($request->exists('community_location')) {
+                $user->community_location = $request->input('community_location');
+            }
+            if ($request->exists('bio')) {
+                $user->bio = $request->input('bio');
+            }
+
+            if ($request->has('family_data')) {
+                $fam = $request->input('family_data');
+                $user->family_data = is_array($fam) ? $fam : [];
+                $father = $fam['father_name'] ?? '';
+                $mother = $fam['mother_name'] ?? '';
+                if ($father || $mother) {
+                    $user->parents_name = trim(($father ? "Bpk. {$father}" : '') . ($father && $mother ? ' & ' : '') . ($mother ? "Ibu {$mother}" : ''));
+                }
+            }
+
+            if ($request->has('education_data')) {
+                $edu = $request->input('education_data');
+                $user->education_data = is_array($edu) ? $edu : [];
+                if (! empty($edu['s2_name'])) {
+                    $user->last_education = 'S2 ' . ($edu['s2_major'] ?? '');
+                } elseif (! empty($edu['s1_name'])) {
+                    $user->last_education = 'S1 ' . ($edu['s1_major'] ?? '');
+                } elseif (! empty($edu['sma_name'])) {
+                    $user->last_education = 'SMA/SMK ' . ($edu['sma_name'] ?? '');
+                }
+            }
+
+            if ($request->has('formation_data')) {
+                $form = $request->input('formation_data');
+                $user->formation_data = is_array($form) ? $form : [];
+                if (! empty($form['postulat_in'])) {
+                    $user->entry_year = (int) $form['postulat_in'];
+                }
+            }
+
+            if ($request->has('assignment_data')) {
+                $asg = $request->input('assignment_data');
+                $user->assignment_data = is_array($asg) ? $asg : [];
+            }
+        }
+
         $user->save();
 
         $message = filled($password)

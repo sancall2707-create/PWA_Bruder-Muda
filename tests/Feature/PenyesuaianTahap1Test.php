@@ -259,4 +259,39 @@ class PenyesuaianTahap1Test extends TestCase
         $this->assertSame('2015', $user->formation_data['postulat_in']);
         $this->assertSame('Komunitas Ambarawa', $user->assignment_data[1]['community']);
     }
+
+    public function test_super_admin_can_update_complete_user_biodata_in_account_management(): void
+    {
+        $superadmin = User::factory()->create(['role' => 'super_admin']);
+        $bruder = User::factory()->create(['role' => 'user', 'name' => 'Br. Awal FIC']);
+
+        $response = $this->actingAs($superadmin)->post(route('superadmin.users.account.update', $bruder), [
+            'update_biodata' => '1',
+            'name' => 'Br. Terupdate FIC',
+            'email' => 'terupdate@fic.test',
+            'birth_place' => 'Yogyakarta',
+            'birth_date' => '1992-04-12',
+            'phone' => '089988776655',
+            'community_location' => 'Komunitas Surakarta',
+            'family_data' => [
+                'father_name' => 'Yosef',
+                'mother_name' => 'Theresia',
+            ],
+            'education_data' => [
+                's1_name' => 'Universitas Sanata Dharma',
+                's1_major' => 'Teologi',
+            ],
+        ]);
+
+        $response->assertRedirect(route('superadmin.users.index'));
+
+        $fresh = $bruder->fresh();
+        $this->assertSame('Br. Terupdate FIC', $fresh->name);
+        $this->assertSame('terupdate@fic.test', $fresh->email);
+        $this->assertSame('Yogyakarta', $fresh->birth_place);
+        $this->assertSame('089988776655', $fresh->phone);
+        $this->assertSame('Komunitas Surakarta', $fresh->community_location);
+        $this->assertSame('Yosef', $fresh->family_data['father_name']);
+        $this->assertSame('Universitas Sanata Dharma', $fresh->education_data['s1_name']);
+    }
 }
