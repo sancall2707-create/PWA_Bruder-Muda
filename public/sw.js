@@ -10,6 +10,7 @@ const IMAGE_CACHE_LIMIT = 80;
 const PRECACHE_URLS = [
     '/css/fic-pwa.css',
     '/images/logo-fic.png',
+    '/images/logo-tppbm.png',
     '/images/icons/favicon-32.png',
     '/images/icons/icon-192.png',
     '/images/icons/icon-512.png',

@@ -251,16 +251,16 @@
     <div id="raportContainer" class="raport-sheet">
 
         <!-- KOP RESMI DOKUMEN -->
-        <div style="display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:10px;">
-            <img src="/images/logo-fic.png" alt="Logo FIC" style="width:58px; height:58px; object-fit:contain;">
-            <div style="text-align:center;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px;">
+            <img src="/images/logo-fic.png" alt="Logo FIC" style="width:58px; height:58px; object-fit:contain; flex-shrink:0;">
+            <div style="text-align:center; flex:1;">
                 <div style="font-size:16px; font-weight:800; color:#0E3366; letter-spacing:0.8px; line-height:1.2; text-transform:uppercase;">
                     RAPORT PENDAMPINGAN BRUDER MUDA
                 </div>
                 <div style="font-size:12px; font-weight:700; color:#1F2937; margin-top:2px;">Kongregasi Bruder FIC Indonesia</div>
                 <div style="font-size:10.5px; color:#6B7280;">Tim Pemantap Panggilan Bruder Muda (TPPBM)</div>
             </div>
-            <div style="width:58px;"></div>
+            <img src="/images/logo-tppbm.png" alt="Logo TPPBM" style="width:58px; height:58px; object-fit:contain; flex-shrink:0;">
         </div>
 
         <!-- GARIS GANDA PEMISAH KOP -->
