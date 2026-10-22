@@ -42,13 +42,14 @@
         <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-bottom: 16px;">
             <div style="display: flex; justify-content: center; margin-bottom: 10px;">
                 @if ($photoUrl)
-                    <img src="{{ $photoUrl }}" alt="Foto profil saat ini" width="88" height="88" style="width: 88px; height: 88px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; box-shadow: 0 4px 14px rgba(20, 85, 192, 0.25); display: block; margin: 0 auto;">
+                    <img id="userAvatarPreviewImg" src="{{ $photoUrl }}" alt="Foto profil saat ini" width="88" height="88" style="width: 88px; height: 88px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; box-shadow: 0 4px 14px rgba(20, 85, 192, 0.25); display: block; margin: 0 auto;">
                 @else
                     @php
                         $words = explode(' ', trim($user->name));
                         $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
                     @endphp
-                    <div style="width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(135deg, var(--fic-primary) 0%, var(--fic-dark-blue) 100%); color: #ffffff; font-size: 28px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 4px 14px rgba(20, 85, 192, 0.25); border: 3px solid #ffffff;">
+                    <img id="userAvatarPreviewImg" src="" alt="Foto" width="88" height="88" style="width: 88px; height: 88px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; box-shadow: 0 4px 14px rgba(20, 85, 192, 0.25); display: none; margin: 0 auto;">
+                    <div id="userAvatarInitials" style="width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(135deg, var(--fic-primary) 0%, var(--fic-dark-blue) 100%); color: #ffffff; font-size: 28px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto; box-shadow: 0 4px 14px rgba(20, 85, 192, 0.25); border: 3px solid #ffffff;">
                         {{ $initials }}
                     </div>
                 @endif
@@ -430,21 +431,68 @@
 
 @push('scripts')
 <script>
-    var photoInput = document.getElementById('profile_photo');
-    if (photoInput) {
+    (function () {
+        var photoInput = document.getElementById('profile_photo');
+        if (!photoInput) return;
+
         photoInput.addEventListener('change', function () {
-            var nameEl = document.getElementById('profilePhotoName');
             var file = this.files && this.files[0];
+            var nameEl = document.getElementById('profilePhotoName');
+            var previewImg = document.getElementById('userAvatarPreviewImg');
+            var initialsDiv = document.getElementById('userAvatarInitials');
 
             if (!file) {
-                nameEl.hidden = true;
-                nameEl.textContent = '';
+                if (nameEl) { nameEl.hidden = true; nameEl.textContent = ''; }
                 return;
             }
 
-            nameEl.hidden = false;
-            nameEl.textContent = file.name;
+            var reader = new FileReader();
+            reader.onload = function (evt) {
+                var img = new Image();
+                img.onload = function () {
+                    var MAX = 1200;
+                    var w = img.width;
+                    var h = img.height;
+                    if (w > h && w > MAX) {
+                        h = Math.round((h * MAX) / w);
+                        w = MAX;
+                    } else if (h > MAX) {
+                        w = Math.round((w * MAX) / h);
+                        h = MAX;
+                    }
+
+                    var canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+                    canvas.toBlob(function (blob) {
+                        if (blob && window.DataTransfer) {
+                            var newFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+                                type: 'image/jpeg',
+                                lastModified: Date.now()
+                            });
+                            var dt = new DataTransfer();
+                            dt.items.add(newFile);
+                            photoInput.files = dt.files;
+                        }
+
+                        if (previewImg) {
+                            previewImg.src = canvas.toDataURL('image/jpeg', 0.85);
+                            previewImg.style.display = 'block';
+                            if (initialsDiv) initialsDiv.style.display = 'none';
+                        }
+
+                        if (nameEl) {
+                            nameEl.hidden = false;
+                            nameEl.textContent = 'Foto siap: ' + file.name + ' (' + Math.round((blob ? blob.size : file.size) / 1024) + ' KB)';
+                        }
+                    }, 'image/jpeg', 0.85);
+                };
+                img.src = evt.target.result;
+            };
+            reader.readAsDataURL(file);
         });
-    }
+    })();
 </script>
 @endpush

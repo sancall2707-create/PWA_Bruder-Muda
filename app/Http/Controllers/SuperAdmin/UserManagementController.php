@@ -9,7 +9,9 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class UserManagementController extends Controller
 {
@@ -206,6 +208,31 @@ class UserManagementController extends Controller
             }
         }
 
+        // Upload / Hapus Foto Profil Pengguna
+        if ($request->hasFile('profile_photo')) {
+            $request->validate([
+                'profile_photo' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+            ], [
+                'profile_photo.file' => 'Foto profil harus berupa berkas gambar.',
+                'profile_photo.mimes' => 'Format foto harus JPG, JPEG, PNG, atau WEBP.',
+                'profile_photo.max' => 'Ukuran foto maksimal 10 MB.',
+            ]);
+
+            $stored = $request->file('profile_photo')->store('profil', 'public');
+            if (is_string($stored)) {
+                $oldPhoto = $user->profile_photo;
+                $user->profile_photo = $stored;
+                if ($oldPhoto && Storage::disk('public')->exists($oldPhoto)) {
+                    Storage::disk('public')->delete($oldPhoto);
+                }
+            }
+        } elseif ($request->boolean('remove_photo')) {
+            if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
+                Storage::disk('public')->delete($user->profile_photo);
+            }
+            $user->profile_photo = null;
+        }
+
         $user->save();
 
         $message = filled($password)
@@ -275,5 +302,18 @@ class UserManagementController extends Controller
 
         return redirect()->route('superadmin.users.index')
             ->with('success', "Akun {$name} dihapus dari daftar.");
+    }
+
+    /**
+     * Layani foto profil pengguna tertentu secara aman.
+     */
+    public function photo(User $user): StreamedResponse
+    {
+        $path = $user->profile_photo;
+        abort_unless(is_string($path) && str_starts_with($path, 'profil/') && Storage::disk('public')->exists($path), 404);
+
+        return Storage::disk('public')->response($path, null, [
+            'Cache-Control' => 'private, no-store',
+        ]);
     }
 }

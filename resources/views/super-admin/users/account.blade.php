@@ -58,13 +58,52 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('superadmin.users.account.update', $user) }}" style="display:flex; flex-direction:column; gap:14px;">
+        <form method="POST" action="{{ route('superadmin.users.account.update', $user) }}" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:14px;">
             @csrf
             <input type="hidden" name="update_biodata" value="1">
 
             <!-- SEKSI 1: IDENTITAS & AKSES AKUN -->
             <div class="form-section">
-                <div class="section-label">1. Identitas &amp; Akses Akun</div>
+                <div class="section-label">1. Identitas, Foto &amp; Akses Akun</div>
+
+                <!-- Avatar & Foto Profil -->
+                @php
+                    $words = explode(' ', trim($user->name));
+                    $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
+                    $hasPhoto = $user->profile_photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->profile_photo);
+                @endphp
+                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; margin-bottom:12px;">
+                    <div style="width:84px; height:84px; border-radius:50%; overflow:hidden; border:3px solid #fff; box-shadow:0 4px 14px rgba(20,85,192,0.2); margin-bottom:8px; background:#1455C0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:26px; font-weight:800;">
+                        @if($hasPhoto)
+                            <img id="avatarPreviewImg" src="{{ route('superadmin.users.photo', $user) }}" alt="Foto {{ $user->name }}" style="width:100%; height:100%; object-fit:cover;">
+                        @else
+                            <img id="avatarPreviewImg" src="" alt="Foto" style="width:100%; height:100%; object-fit:cover; display:none;">
+                            <span id="avatarInitials">{{ $initials }}</span>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Foto Profil</label>
+                    <label for="profile_photo" style="background:rgba(255,255,255,0.7); border:1.5px dashed #B2DDFF; border-radius:12px; padding:14px; text-align:center; cursor:pointer; display:block;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#1455C0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px; height:24px; margin:0 auto 4px; display:block;">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <div style="font-size:13px; font-weight:700; color:#1455C0;">{{ $hasPhoto ? 'Ganti Foto Profil' : 'Pilih Foto Profil Baru' }}</div>
+                        <div style="font-size:11px; color:#667085; margin-top:2px;">Format JPG, PNG, atau WEBP. Otomatis dikompresi.</div>
+                        <div id="accountPhotoName" style="font-size:12px; font-weight:700; color:#027A48; margin-top:4px;" hidden></div>
+                        <input type="file" id="profile_photo" name="profile_photo" accept="image/jpeg,image/png,image/webp" style="display:none;">
+                    </label>
+
+                    @if($hasPhoto)
+                        <label style="display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:#B42318; margin-top:6px; cursor:pointer;">
+                            <input type="checkbox" name="remove_photo" value="1">
+                            Hapus foto saat ini (kembalikan ke inisial)
+                        </label>
+                    @endif
+                </div>
 
                 <div class="field">
                     <label for="username">Username Akses (Permanen)</label>
@@ -380,5 +419,68 @@
     </div>
     @include('layouts.partials.sa-menu')
 </div>
+
+<script>
+    (function() {
+        const input = document.getElementById('profile_photo');
+        if (!input) return;
+
+        input.addEventListener('change', function(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+
+            const nameEl = document.getElementById('accountPhotoName');
+            const previewImg = document.getElementById('avatarPreviewImg');
+            const initialsSpan = document.getElementById('avatarInitials');
+
+            // Baca & kompres via Canvas bila perlu
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const img = new Image();
+                img.onload = function() {
+                    const MAX = 1200;
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > h && w > MAX) {
+                        h = Math.round((h * MAX) / w);
+                        w = MAX;
+                    } else if (h > MAX) {
+                        w = Math.round((w * MAX) / h);
+                        h = MAX;
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+                    canvas.toBlob(function(blob) {
+                        if (blob && window.DataTransfer) {
+                            const newFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+                                type: 'image/jpeg',
+                                lastModified: Date.now()
+                            });
+                            const dt = new DataTransfer();
+                            dt.items.add(newFile);
+                            input.files = dt.files;
+                        }
+
+                        if (previewImg) {
+                            previewImg.src = canvas.toDataURL('image/jpeg', 0.85);
+                            previewImg.style.display = 'block';
+                            if (initialsSpan) initialsSpan.style.display = 'none';
+                        }
+                        if (nameEl) {
+                            nameEl.hidden = false;
+                            nameEl.textContent = 'Foto siap: ' + file.name + ' (' + Math.round((blob ? blob.size : file.size) / 1024) + ' KB)';
+                        }
+                    }, 'image/jpeg', 0.85);
+                };
+                img.src = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    })();
+</script>
 </body>
 </html>

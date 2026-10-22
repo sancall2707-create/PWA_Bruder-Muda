@@ -46,7 +46,7 @@ class ProfileController extends Controller
             'phone' => ['nullable', 'string', 'max:30'],
             'community_location' => ['nullable', 'string', 'max:255'],
             'bio' => ['nullable', 'string', 'max:1000'],
-            'profile_photo' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'profile_photo' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
         ], [
             'name.required' => 'Nama lengkap wajib diisi.',
             'name.max' => 'Nama lengkap maksimal 255 karakter.',
@@ -54,7 +54,7 @@ class ProfileController extends Controller
             'email.unique' => 'Email sudah digunakan oleh akun lain.',
             'profile_photo.file' => 'Foto profil harus berupa berkas gambar.',
             'profile_photo.mimes' => 'Format foto harus JPG, JPEG, PNG, atau WEBP.',
-            'profile_photo.max' => 'Ukuran foto maksimal 5 MB.',
+            'profile_photo.max' => 'Ukuran foto maksimal 10 MB.',
         ]);
 
         $user->name = $validated['name'];

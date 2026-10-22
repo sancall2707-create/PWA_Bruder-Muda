@@ -73,7 +73,7 @@ class ProfileController extends Controller
                 'max:255',
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
-            'profile_photo' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'profile_photo' => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
         ], [
             'name.required' => 'Nama wajib diisi.',
             'name.max' => 'Nama maksimal 255 karakter.',
@@ -83,7 +83,7 @@ class ProfileController extends Controller
             'email.unique' => 'Email sudah digunakan akun lain.',
             'profile_photo.file' => 'Foto profil harus berupa berkas gambar.',
             'profile_photo.mimes' => 'Foto profil harus berformat JPG, JPEG, PNG, atau WEBP.',
-            'profile_photo.max' => 'Ukuran foto profil maksimal 5 MB.',
+            'profile_photo.max' => 'Ukuran foto profil maksimal 10 MB.',
         ]);
 
         $user->name = $validated['name'];

@@ -78,7 +78,11 @@
                         $isStaffOrAdmin = in_array($u->role, ['admin', 'admin_ketua_tppbm', 'super_admin'], true);
                     @endphp
                     <article class="card">
-                        <div class="avatar" aria-hidden="true">{{ $initials }}</div>
+                        @if ($u->profile_photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($u->profile_photo))
+                            <img src="{{ route('superadmin.users.photo', $u) }}" alt="Foto {{ $u->name }}" class="avatar" style="object-fit:cover; padding:0; width:44px; height:44px; border-radius:50%;">
+                        @else
+                            <div class="avatar" aria-hidden="true">{{ $initials }}</div>
+                        @endif
                         <div style="flex:1;">
                             <div class="name">{{ $u->name }}</div>
                             <div class="loc">{{ '@'.$u->username }} · {{ $u->community_location ?? 'Komunitas belum diset' }}</div>

@@ -17,9 +17,10 @@
 <div class="card" style="padding: 24px 18px; text-align: center; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(14px); border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.85); box-shadow: 0 8px 24px rgba(0, 62, 151, 0.08);">
     <div style="display: flex; justify-content: center; margin-bottom: 12px;">
         @if ($hasPhoto)
-            <img src="{{ route('profil.foto') }}" alt="Foto profil {{ $user->name }}" width="92" height="92" style="width: 92px; height: 92px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; box-shadow: 0 4px 16px rgba(20, 85, 192, 0.25); display: block;">
+            <img id="saAvatarPreviewImg" src="{{ route('profil.foto') }}" alt="Foto profil {{ $user->name }}" width="92" height="92" style="width: 92px; height: 92px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; box-shadow: 0 4px 16px rgba(20, 85, 192, 0.25); display: block;">
         @else
-            <div style="width: 92px; height: 92px; border-radius: 50%; background: linear-gradient(135deg, #1455C0 0%, #003E97 100%); color: #ffffff; font-size: 30px; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(20, 85, 192, 0.25); border: 3px solid #ffffff;">
+            <img id="saAvatarPreviewImg" src="" alt="Foto" width="92" height="92" style="width: 92px; height: 92px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; box-shadow: 0 4px 16px rgba(20, 85, 192, 0.25); display: none;">
+            <div id="saAvatarInitials" style="width: 92px; height: 92px; border-radius: 50%; background: linear-gradient(135deg, #1455C0 0%, #003E97 100%); color: #ffffff; font-size: 30px; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(20, 85, 192, 0.25); border: 3px solid #ffffff;">
                 {{ $initials }}
             </div>
         @endif
@@ -142,19 +143,68 @@
 </div>
 
 <script>
-    var fileInput = document.getElementById('profile_photo');
-    if (fileInput) {
+    (function () {
+        var fileInput = document.getElementById('profile_photo');
+        if (!fileInput) return;
+
         fileInput.addEventListener('change', function () {
-            var nameEl = document.getElementById('saPhotoName');
             var file = this.files && this.files[0];
+            var nameEl = document.getElementById('saPhotoName');
+            var previewImg = document.getElementById('saAvatarPreviewImg');
+            var initialsDiv = document.getElementById('saAvatarInitials');
+
             if (!file) {
-                nameEl.hidden = true;
-                nameEl.textContent = '';
+                if (nameEl) { nameEl.hidden = true; nameEl.textContent = ''; }
                 return;
             }
-            nameEl.hidden = false;
-            nameEl.textContent = 'Berkas dipilih: ' + file.name;
+
+            var reader = new FileReader();
+            reader.onload = function (evt) {
+                var img = new Image();
+                img.onload = function () {
+                    var MAX = 1200;
+                    var w = img.width;
+                    var h = img.height;
+                    if (w > h && w > MAX) {
+                        h = Math.round((h * MAX) / w);
+                        w = MAX;
+                    } else if (h > MAX) {
+                        w = Math.round((w * MAX) / h);
+                        h = MAX;
+                    }
+
+                    var canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+                    canvas.toBlob(function (blob) {
+                        if (blob && window.DataTransfer) {
+                            var newFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+                                type: 'image/jpeg',
+                                lastModified: Date.now()
+                            });
+                            var dt = new DataTransfer();
+                            dt.items.add(newFile);
+                            fileInput.files = dt.files;
+                        }
+
+                        if (previewImg) {
+                            previewImg.src = canvas.toDataURL('image/jpeg', 0.85);
+                            previewImg.style.display = 'block';
+                            if (initialsDiv) initialsDiv.style.display = 'none';
+                        }
+
+                        if (nameEl) {
+                            nameEl.hidden = false;
+                            nameEl.textContent = 'Foto siap: ' + file.name + ' (' + Math.round((blob ? blob.size : file.size) / 1024) + ' KB)';
+                        }
+                    }, 'image/jpeg', 0.85);
+                };
+                img.src = evt.target.result;
+            };
+            reader.readAsDataURL(file);
         });
-    }
+    })();
 </script>
 @endsection

@@ -5,7 +5,9 @@ namespace Tests\Feature;
 use App\Models\SelfDevelopmentJournal;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class SuperAdminAccountTest extends TestCase
@@ -354,6 +356,41 @@ class SuperAdminAccountTest extends TestCase
         // Track record untuk admin harus 404
         $this->actingAs($super)->get(route('superadmin.users.track-record', $ketua))->assertNotFound();
         $this->actingAs($super)->get(route('superadmin.users.track-record', $admin))->assertNotFound();
+    }
+
+    public function test_super_admin_can_upload_and_delete_user_photo_in_account_management(): void
+    {
+        Storage::fake('public');
+
+        $super = User::factory()->create(['role' => 'super_admin']);
+        $bruder = User::factory()->create(['role' => 'user', 'name' => 'Br. Uji Foto']);
+
+        $photo = UploadedFile::fake()->image('bruder_foto.jpg', 600, 600);
+
+        $response = $this->actingAs($super)->post(route('superadmin.users.account.update', $bruder), [
+            'name' => 'Br. Uji Foto',
+            'profile_photo' => $photo,
+        ]);
+
+        $response->assertRedirect(route('superadmin.users.index'));
+
+        $bruder->refresh();
+        $this->assertNotNull($bruder->profile_photo);
+        $this->assertStringStartsWith('profil/', $bruder->profile_photo);
+        Storage::disk('public')->assertExists($bruder->profile_photo);
+
+        // Akses route foto
+        $photoResp = $this->actingAs($super)->get(route('superadmin.users.photo', $bruder));
+        $photoResp->assertOk();
+
+        // Hapus foto
+        $this->actingAs($super)->post(route('superadmin.users.account.update', $bruder), [
+            'name' => 'Br. Uji Foto',
+            'remove_photo' => '1',
+        ])->assertRedirect(route('superadmin.users.index'));
+
+        $bruder->refresh();
+        $this->assertNull($bruder->profile_photo);
     }
 
     public function test_track_record_shows_every_saved_report_and_rejects_other_roles(): void

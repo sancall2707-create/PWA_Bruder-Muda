@@ -111,6 +111,7 @@ Route::middleware('auth')->group(function () {
 
         // Direktori & Track Record Bruder
         Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
+        Route::get('/users/{user}/foto', [UserManagementController::class, 'photo'])->name('users.photo');
         Route::get('/users/{user}/track-record', [UserManagementController::class, 'trackRecord'])->name('users.track-record');
 
         // Catatan Pembinaan Bruder (Poin 5 & Fitur Tarik/Edit Catatan)
