@@ -1,5 +1,5 @@
 @php
-    $isAdmin = auth()->user()->role === 'admin';
+    $isAdmin = in_array(auth()->user()->role, ['admin', 'admin_ketua_tppbm']);
     $homeUrl = $isAdmin ? route('admin.dashboard') : route('superadmin.dashboard');
 @endphp
 <style>

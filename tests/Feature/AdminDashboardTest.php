@@ -71,6 +71,21 @@ class AdminDashboardTest extends TestCase
         $this->actingAs($admin)->get(route('superadmin.users.track-record', $bruder))->assertOk();
     }
 
+    public function test_admin_ketua_tppbm_can_access_admin_dashboard(): void
+    {
+        $ketua = User::factory()->create([
+            'role' => 'admin_ketua_tppbm',
+            'name' => 'Br. F.A. Galih Sih Hartanta, FIC',
+        ]);
+
+        $this->actingAs($ketua)->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertSee('Beranda TPPBM')
+            ->assertSee('KETUA TPPBM');
+
+        $this->actingAs($ketua)->get(route('superadmin.monitoring.raport'))->assertOk();
+    }
+
     public function test_admin_cannot_access_super_admin_account_creation(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);

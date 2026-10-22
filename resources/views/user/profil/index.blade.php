@@ -38,7 +38,7 @@
 
     <div>
         <span class="badge badge-scheduled" style="font-size: 12px; padding: 6px 14px;">
-            {{ $user->role === 'super_admin' ? 'Super Admin' : ($user->role === 'admin' ? 'Administrator' : 'Bruder Muda') }}
+            {{ $user->role === 'super_admin' ? 'Super Admin' : ($user->role === 'admin_ketua_tppbm' ? 'Admin Ketua TPPBM' : ($user->role === 'admin' ? 'Administrator' : 'Bruder Muda')) }}
         </span>
     </div>
 

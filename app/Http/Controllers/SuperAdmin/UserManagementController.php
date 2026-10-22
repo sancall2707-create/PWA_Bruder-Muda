@@ -45,7 +45,7 @@ class UserManagementController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'role' => ['nullable', 'string', 'in:user,admin'],
+            'role' => ['nullable', 'string', 'in:user,admin,admin_ketua_tppbm'],
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:50', 'alpha_dash', 'unique:users,username'],
             'email' => ['nullable', 'email', 'max:255'],
@@ -77,7 +77,11 @@ class UserManagementController extends Controller
         $user->is_active = true;
         $user->save();
 
-        $roleLabel = $user->role === 'admin' ? 'Admin TPPBM' : 'Bruder Muda';
+        $roleLabel = match ($user->role) {
+            'admin_ketua_tppbm' => 'Admin Ketua TPPBM',
+            'admin' => 'Admin TPPBM',
+            default => 'Bruder Muda',
+        };
 
         return redirect()->route('superadmin.users.index')
             ->with('success', "Akun {$roleLabel} {$user->name} berhasil ditambahkan.");
@@ -88,7 +92,7 @@ class UserManagementController extends Controller
      */
     public function editAccount(User $user): View
     {
-        abort_unless($user->role === 'user', 404);
+        abort_unless(in_array($user->role, ['user', 'admin_ketua_tppbm'], true), 404);
 
         return view('super-admin.users.account', compact('user'));
     }
@@ -98,7 +102,7 @@ class UserManagementController extends Controller
      */
     public function updateAccount(Request $request, User $user): RedirectResponse
     {
-        abort_unless($user->role === 'user', 404);
+        abort_unless(in_array($user->role, ['user', 'admin', 'admin_ketua_tppbm'], true), 404);
 
         $validated = $request->validate([
             'email' => [
@@ -137,7 +141,7 @@ class UserManagementController extends Controller
             ]);
         }
 
-        if ($request->has('role') && in_array($request->input('role'), ['user', 'admin'], true)) {
+        if ($request->has('role') && in_array($request->input('role'), ['user', 'admin', 'admin_ketua_tppbm'], true)) {
             $user->role = $request->input('role');
         }
 

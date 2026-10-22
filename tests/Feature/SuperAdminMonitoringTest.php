@@ -279,7 +279,10 @@ class SuperAdminMonitoringTest extends TestCase
 
     public function test_super_admin_can_view_raport_pendampingan_bruder_muda(): void
     {
-        $admin = User::factory()->create(['role' => 'super_admin']);
+        $admin = User::factory()->create([
+            'role' => 'super_admin',
+            'name' => 'Br. Andrias Purwanto, FIC',
+        ]);
         $bruder = User::factory()->create([
             'role' => 'user',
             'name' => 'Br. Yohanes Subagio, FIC, S.Pd.',
@@ -324,6 +327,27 @@ class SuperAdminMonitoringTest extends TestCase
             ->assertSee('Postulat')
             ->assertSee('Br. F.A. Galih Sih Hartanta, FIC')
             ->assertSee('Br. Andrias Purwanto, FIC');
+    }
+
+    public function test_raport_shows_dynamic_signatures_for_ketua_tppbm_and_super_admin(): void
+    {
+        $superadmin = User::factory()->create([
+            'role' => 'super_admin',
+            'name' => 'Br. Andrias Purwanto, FIC (Admin Data)',
+        ]);
+        $ketua = User::factory()->create([
+            'role' => 'admin_ketua_tppbm',
+            'name' => 'Br. F.A. Galih Sih Hartanta, FIC (Ketua TPPBM)',
+        ]);
+        $bruder = User::factory()->create(['role' => 'user', 'name' => 'Br. Antonius FIC']);
+
+        $response = $this->actingAs($superadmin)->get(route('superadmin.monitoring.raport', [
+            'bruder' => $bruder->id,
+        ]));
+
+        $response->assertOk()
+            ->assertSee('Br. F.A. Galih Sih Hartanta, FIC (Ketua TPPBM)')
+            ->assertSee('Br. Andrias Purwanto, FIC (Admin Data)');
     }
 
     private function journal(User $user, string $name, string $date, string $status): void

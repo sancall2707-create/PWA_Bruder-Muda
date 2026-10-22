@@ -110,5 +110,24 @@ class UserSeeder extends Seeder
         $user3->last_education = 'S2 Mbio';
         $user3->entry_year = 2009;
         $user3->save();
+
+        // Admin Ketua TPPBM (Br. F.A. Galih Sih Hartanta, FIC)
+        $ketua = User::firstOrNew([
+            'username' => 'galihsih',
+        ]);
+        $ketua->name = 'Br. F.A. Galih Sih Hartanta, FIC';
+        $ketua->email = 'fagsh08@gmail.com';
+        if (! $ketua->exists) {
+            $ketua->password = Hash::make('Ketua#FIC2026');
+        }
+        $ketua->role = 'admin_ketua_tppbm';
+        $ketua->is_active = true;
+        $ketua->community_location = 'Muntilan';
+        $ketua->phone = '087832139199';
+        $ketua->bio = 'Ketua Tim Pemantap Panggilan Bruder Muda (TPPBM)';
+        $ketua->birth_date = '1985-03-09';
+        $ketua->last_education = 'S2 Arsitektur';
+        $ketua->entry_year = 2003;
+        $ketua->save();
     }
 }

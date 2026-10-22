@@ -12,6 +12,7 @@ use App\Services\MonitoringExport;
 use App\Services\MonitoringQuery;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
@@ -321,6 +322,18 @@ class MonitoringController extends Controller
             'triprasetia' => $notes->where('category', 'Catatan Hidup Triprasetia')->pluck('content')->all(),
         ];
 
+        // 10. Penandatangan Raport (Ketua TPPBM & Administrator Data)
+        $ketuaTppbm = User::where('role', 'admin_ketua_tppbm')->first()
+            ?? User::where('username', 'galihsih')->first();
+        $adminData = (auth()->check() && auth()->user()->role === 'super_admin')
+            ? auth()->user()
+            : User::where('role', 'super_admin')->first();
+
+        $penandatangan = [
+            'ketua_tppbm' => $ketuaTppbm?->name ?? 'Br. F.A. Galih Sih Hartanta, FIC',
+            'admin_data' => $adminData?->name ?? 'Br. Andrias Purwanto, FIC',
+        ];
+
         return [
             'data_diri' => $dataDiri,
             'keluarga' => $dataKeluarga,
@@ -331,6 +344,7 @@ class MonitoringController extends Controller
             'wawanhati_bulan' => $wawanhatiBulan,
             'pengembangan_diri' => $pengembanganDiri,
             'catatan_tppbm' => $catatanTppbm,
+            'penandatangan' => $penandatangan,
         ];
     }
 

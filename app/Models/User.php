@@ -184,11 +184,19 @@ class User extends Authenticatable
     }
 
     /**
-     * Cek apakah user adalah Admin.
+     * Cek apakah user adalah Admin (Admin biasa atau Admin Ketua TPPBM).
      */
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return in_array($this->role, ['admin', 'admin_ketua_tppbm'], true);
+    }
+
+    /**
+     * Cek apakah user adalah Admin Ketua TPPBM.
+     */
+    public function isKetuaTppbm(): bool
+    {
+        return $this->role === 'admin_ketua_tppbm';
     }
 
     /**

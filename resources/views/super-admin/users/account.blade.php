@@ -77,6 +77,10 @@
                     <select id="role" name="role" required>
                         <option value="user" {{ old('role', $user->role) === 'user' ? 'selected' : '' }}>Bruder Muda (User)</option>
                         <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin (TPPBM)</option>
+                        <option value="admin_ketua_tppbm" {{ old('role', $user->role) === 'admin_ketua_tppbm' ? 'selected' : '' }}>Admin Ketua TPPBM</option>
+                        @if($user->role === 'super_admin')
+                            <option value="super_admin" selected>Super Admin</option>
+                        @endif
                     </select>
                 </div>
 

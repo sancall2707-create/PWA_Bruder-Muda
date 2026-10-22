@@ -672,13 +672,13 @@
                         Mengetahui/Mengesahkan,<br>
                         <strong>Ketua TPPBM</strong>
                         <div style="height:60px;"></div>
-                        <span style="font-weight:800; text-decoration:underline;">Br. F.A. Galih Sih Hartanta, FIC</span>
+                        <span style="font-weight:800; text-decoration:underline;">{{ $raport['penandatangan']['ketua_tppbm'] ?? 'Br. F.A. Galih Sih Hartanta, FIC' }}</span>
                     </div>
                     <div style="text-align:center; width:220px;">
                         Semarang, {{ now()->locale('id')->translatedFormat('d F Y') }}<br>
                         <strong>Administrator Data</strong>
                         <div style="height:60px;"></div>
-                        <span style="font-weight:800; text-decoration:underline;">Br. Andrias Purwanto, FIC</span>
+                        <span style="font-weight:800; text-decoration:underline;">{{ $raport['penandatangan']['admin_data'] ?? 'Br. Andrias Purwanto, FIC' }}</span>
                     </div>
                 </div>
             </div>

@@ -62,6 +62,7 @@
                     <select id="role" name="role" required>
                         <option value="user" {{ old('role', 'user') === 'user' ? 'selected' : '' }}>Bruder Muda (User)</option>
                         <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin (TPPBM)</option>
+                        <option value="admin_ketua_tppbm" {{ old('role') === 'admin_ketua_tppbm' ? 'selected' : '' }}>Admin Ketua TPPBM</option>
                     </select>
                 </div>
 

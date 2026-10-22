@@ -56,6 +56,36 @@ class PenyesuaianTahap1Test extends TestCase
         ]);
     }
 
+    public function test_super_admin_can_create_and_assign_admin_ketua_tppbm_role(): void
+    {
+        $superadmin = User::factory()->create(['role' => 'super_admin']);
+
+        $response = $this->actingAs($superadmin)->post(route('superadmin.users.store'), [
+            'role' => 'admin_ketua_tppbm',
+            'name' => 'Br. Ketua Baru FIC',
+            'username' => 'ketua_baru',
+            'password' => 'secret123',
+        ]);
+
+        $response->assertRedirect(route('superadmin.users.index'));
+        $this->assertDatabaseHas('users', [
+            'username' => 'ketua_baru',
+            'role' => 'admin_ketua_tppbm',
+        ]);
+
+        $user = User::where('username', 'ketua_baru')->first();
+        $this->assertTrue($user->isKetuaTppbm());
+        $this->assertTrue($user->isAdmin());
+
+        // Update via kelola akun
+        $bruder = User::factory()->create(['role' => 'user']);
+        $this->actingAs($superadmin)->post(route('superadmin.users.account.update', $bruder), [
+            'role' => 'admin_ketua_tppbm',
+        ])->assertRedirect(route('superadmin.users.index'));
+
+        $this->assertSame('admin_ketua_tppbm', $bruder->fresh()->role);
+    }
+
     public function test_admin_and_super_admin_can_add_bruder_note(): void
     {
         $admin = User::factory()->create(['role' => 'admin']);

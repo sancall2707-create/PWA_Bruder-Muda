@@ -27,7 +27,7 @@ class SuperAdminOverviewService
         $activeIds = User::where('role', 'user')->where('is_active', true)->pluck('id');
         $activeBruders = $activeIds->count();
         $inactiveBruders = User::where('role', 'user')->where('is_active', false)->count();
-        $admins = User::whereIn('role', ['admin', 'super_admin'])->count();
+        $admins = User::whereIn('role', ['admin', 'admin_ketua_tppbm', 'super_admin'])->count();
 
         $bimbinganSubmitted = SpiritualGuidanceReport::whereIn('user_id', $activeIds)
             ->whereBetween('meeting_at', [$start, $end])

@@ -16,7 +16,7 @@ class DirectMessageController extends Controller
      */
     public function create(User $user): View
     {
-        abort_unless(in_array($user->role, ['user', 'admin'], true), 404);
+        abort_unless(in_array($user->role, ['user', 'admin', 'admin_ketua_tppbm'], true), 404);
 
         $sentMessages = DirectMessage::where('recipient_id', $user->id)
             ->where('sender_id', auth()->id())
@@ -32,7 +32,7 @@ class DirectMessageController extends Controller
      */
     public function store(Request $request, User $user): RedirectResponse
     {
-        abort_unless(in_array($user->role, ['user', 'admin'], true), 404);
+        abort_unless(in_array($user->role, ['user', 'admin', 'admin_ketua_tppbm'], true), 404);
 
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],

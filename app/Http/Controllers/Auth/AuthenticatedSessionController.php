@@ -108,7 +108,7 @@ class AuthenticatedSessionController extends Controller
     {
         return match ($role) {
             'super_admin' => redirect('/super-admin'),
-            'admin' => redirect('/admin'),
+            'admin', 'admin_ketua_tppbm' => redirect('/admin'),
             'user' => redirect('/sapaan-provinsial'),
             default => redirect('/dashboard'),
         };

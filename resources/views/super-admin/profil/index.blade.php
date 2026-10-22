@@ -30,7 +30,7 @@
 
     <div>
         <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 12px; border-radius: 999px; background: rgba(20, 85, 192, 0.12); color: #1455C0; border: 1px solid rgba(20, 85, 192, 0.25);">
-            {{ $user->role === 'super_admin' ? 'Super Admin FIC' : 'Admin TPPBM' }}
+            {{ $user->role === 'super_admin' ? 'Super Admin FIC' : ($user->role === 'admin_ketua_tppbm' ? 'Admin Ketua TPPBM' : 'Admin TPPBM') }}
         </span>
     </div>
 </div>

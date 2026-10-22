@@ -134,6 +134,7 @@
         }
 
         .role-super_admin { background: #FEF3F2; color: #B42318; border: 1px solid #FECDCA; }
+        .role-admin_ketua_tppbm { background: #FDF2FA; color: #C11574; border: 1px solid #FCCEEE; }
         .role-admin { background: #F0F9FF; color: #026AA2; border: 1px solid #B9E6FE; }
         .role-user { background: #ECFDF3; color: #027A48; border: 1px solid #ABEFC6; }
 
