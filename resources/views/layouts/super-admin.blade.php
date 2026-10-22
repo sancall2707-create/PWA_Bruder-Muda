@@ -35,7 +35,7 @@
             flex-direction: column;
             box-shadow: 0 0 30px rgba(0, 62, 151, 0.08);
             position: relative;
-            padding-bottom: 24px;
+            padding-bottom: 76px;
         }
 
         .sa-header {
@@ -119,7 +119,7 @@
                 box-shadow: none !important;
                 background: transparent !important;
             }
-            .sa-header, .sa-menu-toggle, .sa-menu, .no-print, header, nav {
+            .sa-header, .sa-bottom-nav, .sa-menu-toggle, .sa-menu, .no-print, header, nav {
                 display: none !important;
             }
             .sa-body {
@@ -170,6 +170,10 @@
 
             @yield('content')
         </div>
+
+        @if(empty($hideBottomNav))
+            @include('layouts.partials.sa-bottom-nav')
+        @endif
 
         @include('layouts.partials.sa-menu')
     </div>

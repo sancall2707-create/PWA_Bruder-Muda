@@ -36,10 +36,10 @@
         .btn { background:#1455C0; color:#fff; min-height:36px; padding:8px 12px; border-radius:10px; font-weight:700; text-decoration:none; font-size:12px; line-height:1; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; text-align:center; white-space:nowrap; }
         .btn-success { background:#027A48; color:#fff; }
         .btn-msg { background:#B57900; color:#fff; }
-        .btn-account { background:rgba(255,255,255,0.55); color:#003E97; border:1px solid rgba(20,85,192,0.35); }
-        .btn-muted { background:rgba(255,255,255,0.55); color:#344054; }
+        .btn { background:#1455C0; color:#fff; min-height:36px; padding:8px 12px; border-radius:10px; font-weight:700; text-decoration:none; font-size:12px; line-height:1; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; text-align:center; white-space:nowrap; }
+        .btn-muted { background:#F2F4F7; color:#344054; }
         .btn-danger { background:#B42318; color:#fff; }
-        .fab { position:fixed; right:max(16px, calc(50vw - 224px)); bottom:24px; z-index:90; width:56px; height:56px; border-radius:18px; background:#1455C0; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; line-height:0; padding:0; box-shadow:0 8px 18px rgba(20,85,192,0.35); }
+        .fab { position:fixed; right:max(16px, calc(50vw - 224px)); bottom:80px; z-index:90; width:56px; height:56px; border-radius:18px; background:#1455C0; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; line-height:0; padding:0; box-shadow:0 8px 18px rgba(20,85,192,0.35); }
         .fab svg { display:block; }
         .body { padding-bottom:120px; }
     </style>
@@ -138,6 +138,7 @@
                 </svg>
             </a>
         @endif
+        @include('layouts.partials.sa-bottom-nav')
         @include('layouts.partials.sa-menu')
     </div>
 </body>

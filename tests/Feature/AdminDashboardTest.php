@@ -55,7 +55,7 @@ class AdminDashboardTest extends TestCase
             ->assertSee('aria-label="Buka menu"', false)
             ->assertSee(route('logout'), false)
             ->assertDontSee('class="sa-logout"', false)
-            ->assertDontSee('sa-bottom-nav', false)
+            ->assertSee('sa-bottom-nav', false)
             ->assertSee('Bimbingan Rohani');
     }
 

@@ -39,7 +39,7 @@ class SuperAdminAccountTest extends TestCase
             ->assertSee('Buat Sapaan Provinsial')
             ->assertSee('aria-label="Buka menu"', false)
             ->assertSee(route('logout'), false)
-            ->assertDontSee('sa-bottom-nav', false);
+            ->assertSee('sa-bottom-nav', false);
     }
 
     public function test_bruder_and_guest_cannot_open_account_management(): void
