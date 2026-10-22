@@ -13,8 +13,9 @@ class BruderNote extends Model
     public const CATEGORIES = [
         'Catatan Hidup Pribadi',
         'Catatan Hidup Rohani/Doa',
-        'Catatan Hidup Triprasetia',
+        'Catatan Hidup Komunitas',
         'Catatan Hidup Kerasulan',
+        'Catatan Hidup Triprasetia',
     ];
 
     protected $fillable = [

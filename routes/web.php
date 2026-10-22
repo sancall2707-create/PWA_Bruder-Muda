@@ -122,7 +122,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/users/{user}/pesan', [DirectMessageController::class, 'store'])->name('users.messages.store');
         Route::delete('/users/{user}/pesan/{message}', [DirectMessageController::class, 'destroy'])->name('users.messages.destroy');
 
-        // Monitoring Laporan & Agenda
+        // Monitoring Laporan & Raport
+        Route::get('/monitoring/raport', [MonitoringController::class, 'raport'])->name('monitoring.raport');
         Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
         Route::get('/monitoring/agenda', [MonitoringController::class, 'agenda'])->name('monitoring.agenda');
         Route::get('/monitoring/export', [MonitoringController::class, 'export'])->name('monitoring.export');

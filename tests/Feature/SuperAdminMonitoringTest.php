@@ -277,6 +277,55 @@ class SuperAdminMonitoringTest extends TestCase
             ->assertSee('Selesai');
     }
 
+    public function test_super_admin_can_view_raport_pendampingan_bruder_muda(): void
+    {
+        $admin = User::factory()->create(['role' => 'super_admin']);
+        $bruder = User::factory()->create([
+            'role' => 'user',
+            'name' => 'Br. Yohanes Subagio, FIC, S.Pd.',
+            'username' => 'yohanes_subagio',
+            'birth_place' => 'Sleman, D.I. Yogyakarta',
+            'family_data' => [
+                'parish_origin' => 'Paroki St. Petrus & Paulus, Babadan',
+                'father_name' => 'Antonius Sudarsono Lelono',
+                'mother_name' => 'Monika Maria Goretti',
+                'older_siblings_count' => '1',
+                'younger_siblings_count' => '2',
+            ],
+            'education_data' => [
+                'sd_name' => 'SD Kanisius Babadan',
+                'sd_year' => '2010',
+            ],
+            'formation_data' => [
+                'postulat_in' => '2021',
+                'postulat_count' => '5',
+                'postulat_magister' => 'Br. Agus, FIC (Magister)',
+            ],
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('superadmin.monitoring.raport', [
+            'bruder' => $bruder->id,
+            'bulan' => 8,
+            'bulan_akhir' => 10,
+            'tahun' => 2026,
+        ]));
+
+        $response->assertOk()
+            ->assertSee('RAPORT PENDAMPINGAN BRUDER MUDA')
+            ->assertSee('Kongregasi Bruder FIC Indonesia')
+            ->assertSee('Tim Pemantap Panggilan Bruder Muda (TPPBM)')
+            ->assertSee('Br. Yohanes Subagio, FIC, S.Pd.')
+            ->assertSee('yohanes_subagio')
+            ->assertSee('Sleman, D.I. Yogyakarta')
+            ->assertSee('Paroki St. Petrus & Paulus, Babadan')
+            ->assertSee('Antonius Sudarsono Lelono')
+            ->assertSee('Monika Maria Goretti')
+            ->assertSee('SD Kanisius Babadan')
+            ->assertSee('Postulat')
+            ->assertSee('Br. F.A. Galih Sih Hartanta, FIC')
+            ->assertSee('Br. Andrias Purwanto, FIC');
+    }
+
     private function journal(User $user, string $name, string $date, string $status): void
     {
         SelfDevelopmentJournal::query()->create([

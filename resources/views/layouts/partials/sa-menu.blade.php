@@ -172,6 +172,7 @@
                     <a class="sa-menu-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Lihat PWA</a>
                 @endif
                 <a class="sa-menu-link {{ request()->routeIs('superadmin.users*') ? 'active' : '' }}" href="{{ route('superadmin.users.index') }}">{{ $isAdmin ? 'Direktori & Rekam Jejak Bruder' : 'Kelola Data Bruder' }}</a>
+                <a class="sa-menu-link {{ request()->routeIs('superadmin.monitoring.raport') ? 'active' : '' }}" href="{{ route('superadmin.monitoring.raport') }}">Raport Pendampingan Bruder</a>
                 <a class="sa-menu-link {{ request()->routeIs('superadmin.monitoring.index') ? 'active' : '' }}" href="{{ route('superadmin.monitoring.index') }}">{{ $isAdmin ? 'Monitoring & Ekspor Laporan' : 'Monitoring & Ekspor Data' }}</a>
                 <a class="sa-menu-link {{ request()->routeIs('superadmin.monitoring.agenda') ? 'active' : '' }}" href="{{ route('superadmin.monitoring.agenda') }}">Rekapitulasi Agenda &amp; Kalender</a>
                 <a class="sa-menu-link {{ request()->routeIs('superadmin.sapaan*') ? 'active' : '' }}" href="{{ route('superadmin.sapaan.index') }}">{{ $isAdmin ? 'Rilis Sapaan & Pengumuman Bersama' : 'Buat Sapaan Provinsial' }}</a>
