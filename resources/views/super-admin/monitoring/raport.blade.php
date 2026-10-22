@@ -232,6 +232,11 @@
 </style>
 
 <div class="no-print">
+    @if(session('error'))
+        <div style="background:#FEF3F2; border:1px solid #FECDCA; color:#B42318; padding:12px 14px; border-radius:12px; font-size:13px; font-weight:700; margin-bottom:12px;">
+            {{ session('error') }}
+        </div>
+    @endif
     @include('super-admin.monitoring._toolbar', ['exportKind' => 'raport'])
 
     <div style="margin-top: 12px; display: flex; justify-content: flex-end;">

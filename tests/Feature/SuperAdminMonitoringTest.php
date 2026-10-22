@@ -353,6 +353,36 @@ class SuperAdminMonitoringTest extends TestCase
             ->assertSee('Br. Andrias Purwanto, FIC (Admin Data)');
     }
 
+    public function test_raport_pdf_downloads_the_selected_bruder_report(): void
+    {
+        $admin = User::factory()->create(['role' => 'super_admin']);
+        $bruder = User::factory()->create(['role' => 'user', 'name' => 'Br. Yohanes Subagio PDF']);
+
+        $response = $this->actingAs($admin)->get(route('superadmin.monitoring.export', [
+            'bruder' => $bruder->id,
+            'bulan' => 1,
+            'bulan_akhir' => 2,
+            'tahun' => 2026,
+            'jenis' => 'raport',
+            'format' => 'pdf',
+        ]));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringStartsWith('%PDF', $response->getContent());
+        $this->assertStringContainsString(
+            'raport-br-yohanes-subagio-pdf-2026-01-02.pdf',
+            (string) $response->headers->get('content-disposition')
+        );
+
+        $this->actingAs($admin)->get(route('superadmin.monitoring.export', [
+            'jenis' => 'raport',
+            'format' => 'pdf',
+            'bulan' => 1,
+            'tahun' => 2026,
+        ]))->assertRedirect()->assertSessionHas('error');
+    }
+
     private function journal(User $user, string $name, string $date, string $status): void
     {
         SelfDevelopmentJournal::query()->create([

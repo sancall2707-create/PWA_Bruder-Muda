@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\MonitoringExport;
 use App\Services\MonitoringQuery;
+use App\Services\RaportPdfPrinter;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,6 +21,7 @@ class MonitoringController extends Controller
     public function __construct(
         private readonly MonitoringQuery $monitoring,
         private readonly MonitoringExport $exporter,
+        private readonly RaportPdfPrinter $raportPdf,
     ) {}
 
     public function index(Request $request): View
@@ -50,8 +54,12 @@ class MonitoringController extends Controller
         ]);
     }
 
-    public function export(Request $request): Response
+    public function export(Request $request): Response|RedirectResponse
     {
+        if ($request->input('jenis') === 'raport' && $request->input('format') === 'pdf') {
+            return $this->downloadRaport($request);
+        }
+
         $filters = $this->monitoring->filters($request);
         $kind = $request->input('jenis') === 'agenda' ? 'agenda' : 'laporan';
         $format = $request->input('format') === 'pdf' ? 'pdf' : 'excel';
@@ -81,6 +89,9 @@ class MonitoringController extends Controller
 
         $selectedBruderId = $filters['bruder'] ?: optional($bruders->first())->id;
         $selectedBruder = $selectedBruderId ? User::find($selectedBruderId) : null;
+        if ($selectedBruder) {
+            $filters['bruder'] = $selectedBruder->id;
+        }
 
         $raport = $selectedBruder ? $this->buildRaportData($selectedBruder, $filters) : null;
 
@@ -91,6 +102,39 @@ class MonitoringController extends Controller
             'raport' => $raport,
             'headerTitle' => 'Raport Pendampingan',
             'headerSubtitle' => $selectedBruder ? $selectedBruder->name : 'Pilih Bruder Muda',
+        ]);
+    }
+
+    private function downloadRaport(Request $request): Response|RedirectResponse
+    {
+        $filters = $this->monitoring->filters($request);
+        $bruder = $filters['bruder'] ? User::find($filters['bruder']) : null;
+
+        if (! $bruder) {
+            return redirect()->route('superadmin.monitoring.raport', $request->except('jenis', 'format'))
+                ->with('error', 'Pilih satu bruder untuk mengunduh raport.');
+        }
+
+        $html = view('super-admin.monitoring.raport', [
+            'filters' => $filters,
+            'bruders' => $this->bruders(),
+            'selectedBruder' => $bruder,
+            'raport' => $this->buildRaportData($bruder, $filters),
+            'headerTitle' => 'Raport Pendampingan',
+            'headerSubtitle' => $bruder->name,
+        ])->render();
+
+        $filename = sprintf(
+            'raport-%s-%04d-%02d-%02d.pdf',
+            Str::slug($bruder->name) ?: 'bruder',
+            $filters['tahun'],
+            $filters['bulan'],
+            $filters['bulan_akhir'] ?? $filters['bulan']
+        );
+
+        return response($this->raportPdf->print($html), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ]);
     }
 
