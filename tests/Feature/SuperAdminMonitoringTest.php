@@ -314,6 +314,7 @@ class SuperAdminMonitoringTest extends TestCase
         ]));
 
         $response->assertOk()
+            ->assertSee('Periode Agustus - Oktober 2026')
             ->assertSee('RAPORT PENDAMPINGAN BRUDER MUDA')
             ->assertSee('Kongregasi Bruder FIC Indonesia')
             ->assertSee('Tim Pemantap Panggilan Bruder Muda (TPPBM)')

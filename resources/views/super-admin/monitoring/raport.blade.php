@@ -259,6 +259,11 @@
     @php
         $namaBruder = $raport['data_diri']['nama'];
         $namaFooter = addcslashes($namaBruder, "\\\"\n\r");
+        $periodeAwal = \Carbon\Carbon::create($filters['tahun'], $filters['bulan'], 1)->locale('id')->translatedFormat('F');
+        $periodeAkhir = \Carbon\Carbon::create($filters['tahun'], $filters['bulan_akhir'], 1)->locale('id')->translatedFormat('F');
+        $periodeLabel = $filters['bulan'] === $filters['bulan_akhir']
+            ? $periodeAwal.' '.$filters['tahun']
+            : $periodeAwal.' - '.$periodeAkhir.' '.$filters['tahun'];
         $bimbinganAll = $raport['bimbingan_bulan'];
         $wawanhatiAll = $raport['wawanhati_bulan'];
         $pengembanganAll = $raport['pengembangan_diri'];
@@ -281,6 +286,8 @@
 
                 <!-- GARIS GANDA PEMISAH KOP -->
                 <div style="border-top: 2.5px solid #0E3366; border-bottom: 0.8px solid #0E3366; height: 2px; margin-bottom: 10px;"></div>
+
+                <div style="text-align:center; font-size:12px; font-weight:700; color:#0E3366; margin:2px 0 10px;">Periode {{ $periodeLabel }}</div>
 
                 <!-- A. DATA DIRI -->
                 <div class="raport-section-title" style="margin-top:0;">A. DATA DIRI</div>
