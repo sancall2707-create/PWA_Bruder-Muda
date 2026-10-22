@@ -78,9 +78,14 @@
         <textarea name="content" rows="6" required style="padding:12px 14px; border-radius:12px; border:1px solid #D0D5DD; font-size:14px; font-family:inherit;">{{ old('content', $editing->content ?? '') }}</textarea>
     </label>
 
-    <button type="submit" style="border:none; border-radius:14px; padding:15px; font-weight:800; font-size:15px; background:#1455C0; color:#fff; cursor:pointer;">
-        {{ $editing ? 'Simpan & Publikasikan' : 'Publikasikan' }}
-    </button>
+    <div style="display:flex; gap:10px;">
+        <button type="submit" style="flex:1; border:none; border-radius:14px; padding:15px; font-weight:800; font-size:15px; background:#1455C0; color:#fff; cursor:pointer;">
+            {{ $editing ? 'Simpan & Publikasikan' : 'Publikasikan' }}
+        </button>
+        @if($editing)
+            <a href="{{ route('superadmin.sapaan.index') }}" style="padding:15px 20px; border-radius:14px; border:1px solid #D0D5DD; background:#fff; color:#475467; font-weight:700; font-size:14px; text-decoration:none; text-align:center; display:flex; align-items:center; justify-content:center;">Batal</a>
+        @endif
+    </div>
 </form>
 
 <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
@@ -103,11 +108,18 @@
                 </span>
             </div>
             <div style="display:flex; gap:8px; margin-top:12px;">
-                <a href="{{ route('superadmin.sapaan.edit', $item) }}" style="flex:1; text-align:center; padding:10px; border-radius:10px; background:#EFF8FF; color:#1455C0; font-weight:700; font-size:13px; text-decoration:none;">Ubah</a>
+                <a href="{{ route('superadmin.sapaan.edit', $item) }}" style="flex:1; text-align:center; padding:10px; border-radius:10px; background:#EFF8FF; color:#1455C0; font-weight:700; font-size:13px; text-decoration:none; display:flex; align-items:center; justify-content:center;">Ubah</a>
                 <form method="POST" action="{{ route('superadmin.sapaan.status', $item) }}" style="flex:1; margin:0;">
                     @csrf
                     <button type="submit" style="width:100%; padding:10px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; color:#344054; font-weight:700; font-size:13px; cursor:pointer;">
                         {{ $item->is_active ? 'Tarik' : 'Tayangkan' }}
+                    </button>
+                </form>
+                <form method="POST" action="{{ route('superadmin.sapaan.destroy', $item) }}" onsubmit="return confirm('Hapus publikasi ini secara permanen?');" style="flex:1; margin:0;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" style="width:100%; padding:10px; border-radius:10px; border:1px solid #FECDCA; background:#FEF3F2; color:#B42318; font-weight:700; font-size:13px; cursor:pointer;">
+                        Hapus
                     </button>
                 </form>
             </div>

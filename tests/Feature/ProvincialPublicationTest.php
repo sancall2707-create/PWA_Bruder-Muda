@@ -175,6 +175,32 @@ class ProvincialPublicationTest extends TestCase
         $this->assertSame(0, ProvincialMessage::query()->count());
     }
 
+    public function test_super_admin_and_admin_can_delete_a_publication(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $bruder = User::factory()->create(['role' => 'user']);
+
+        $this->publish($admin, [
+            'kind' => 'pengumuman',
+            'title' => 'Pengumuman Dihapus Uji',
+            'content' => 'Pengumuman yang akan dihapus dari sistem.',
+        ]);
+
+        $message = ProvincialMessage::query()->where('title', 'Pengumuman Dihapus Uji')->first();
+        $this->assertNotNull($message);
+
+        // Bruder tidak bisa menghapus
+        $this->actingAs($bruder)->delete(route('superadmin.sapaan.destroy', $message))
+            ->assertForbidden();
+
+        // Admin bisa menghapus
+        $this->actingAs($admin)->delete(route('superadmin.sapaan.destroy', $message))
+            ->assertRedirect(route('superadmin.sapaan.index'))
+            ->assertSessionHas('success', 'Pengumuman berhasil dihapus.');
+
+        $this->assertSoftDeleted('provincial_messages', ['id' => $message->id]);
+    }
+
     /**
      * @param  array<string, string>  $overrides
      */

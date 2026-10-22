@@ -150,6 +150,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/sapaan/{message}/edit', [ProvincialMessageManagementController::class, 'edit'])->name('sapaan.edit');
         Route::put('/sapaan/{message}', [ProvincialMessageManagementController::class, 'update'])->name('sapaan.update');
         Route::post('/sapaan/{message}/status', [ProvincialMessageManagementController::class, 'updateStatus'])->name('sapaan.status');
+        Route::delete('/sapaan/{message}', [ProvincialMessageManagementController::class, 'destroy'])->name('sapaan.destroy');
     });
 
     // Modul Khusus Super Admin (Akses Sistem & Akun)

@@ -82,6 +82,20 @@ class ProvincialMessageManagementController extends Controller
             ->with('success', $message->is_active ? 'Publikasi ditayangkan kembali.' : 'Publikasi ditarik dari bruder muda.');
     }
 
+    public function destroy(ProvincialMessage $message): RedirectResponse
+    {
+        $kindLabel = $message->kind === 'pengumuman' ? 'Pengumuman' : 'Sapaan';
+
+        if ($this->isSapaanImage($message->image)) {
+            Storage::disk('public')->delete($message->image);
+        }
+
+        $message->delete();
+
+        return redirect()->route('superadmin.sapaan.index')
+            ->with('success', "{$kindLabel} berhasil dihapus.");
+    }
+
     /**
      * @return array<string, mixed>
      */
