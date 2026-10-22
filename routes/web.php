@@ -70,6 +70,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/agenda/wawanhati/tambah', [AgendaController::class, 'createWawanhati'])->name('agenda.wawanhati.create');
         Route::get('/agenda/lainnya/tambah', [AgendaController::class, 'createLainnya'])->name('agenda.lainnya.create');
         Route::post('/agenda', [AgendaController::class, 'store'])->name('agenda.store');
+        Route::get('/agenda/{type}/{schedule}/edit', [AgendaController::class, 'edit'])
+            ->whereIn('type', ['bimbingan', 'wawanhati', 'lainnya'])
+            ->name('agenda.edit');
+        Route::put('/agenda/{type}/{schedule}', [AgendaController::class, 'update'])
+            ->whereIn('type', ['bimbingan', 'wawanhati', 'lainnya'])
+            ->name('agenda.update');
+        Route::delete('/agenda/{type}/{schedule}', [AgendaController::class, 'destroy'])
+            ->whereIn('type', ['bimbingan', 'wawanhati', 'lainnya'])
+            ->name('agenda.destroy');
 
         // 12 & 13. Jurnal Pengembangan Diri & Input Jurnal
         Route::get('/jurnal', [JournalController::class, 'index'])->name('jurnal.index');

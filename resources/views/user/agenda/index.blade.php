@@ -113,6 +113,17 @@
                     {{ $agenda->notes }}
                 </div>
             @endif
+
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <a href="{{ route('agenda.edit', ['type' => $agenda->category, 'schedule' => $agenda->id]) }}" class="btn-secondary" style="flex: 1; min-height: 40px; padding: 8px 12px; font-size: 13px;">
+                    Edit
+                </a>
+                <form method="POST" action="{{ route('agenda.destroy', ['type' => $agenda->category, 'schedule' => $agenda->id]) }}" onsubmit="return confirm('Hapus agenda ini dari jadwal Anda?');" style="flex: 1; margin: 0;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn-danger" style="min-height: 40px; padding: 8px 12px; font-size: 13px;">Hapus</button>
+                </form>
+            </div>
         </div>
     @empty
         <x-empty-state
