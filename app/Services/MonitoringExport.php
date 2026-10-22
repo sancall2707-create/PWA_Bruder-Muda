@@ -135,6 +135,13 @@ class MonitoringExport
         $slug = $kind === 'agenda' ? 'rekap-agenda' : 'rekap-laporan';
         $extension = $format === 'pdf' ? 'pdf' : 'xls';
 
-        return sprintf('%s-%04d-%02d.%s', $slug, $filters['tahun'], $filters['bulan'], $extension);
+        $bulanAwal = (int) $filters['bulan'];
+        $bulanAkhir = (int) ($filters['bulan_akhir'] ?? $bulanAwal);
+
+        if ($bulanAwal === $bulanAkhir) {
+            return sprintf('%s-%04d-%02d.%s', $slug, $filters['tahun'], $bulanAwal, $extension);
+        }
+
+        return sprintf('%s-%04d-%02d_sd_%02d.%s', $slug, $filters['tahun'], $bulanAwal, $bulanAkhir, $extension);
     }
 }

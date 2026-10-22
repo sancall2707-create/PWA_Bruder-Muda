@@ -1,6 +1,7 @@
 @php
     $queryBase = array_filter([
         'bulan' => $filters['bulan'],
+        'bulan_akhir' => $filters['bulan_akhir'] ?? $filters['bulan'],
         'tahun' => $filters['tahun'],
         'bruder' => $filters['bruder'],
     ], fn ($value) => $value !== null && $value !== '');
@@ -20,19 +21,35 @@
     @if(!empty($tampilan))
         <input type="hidden" name="tampilan" value="{{ $tampilan }}">
     @endif
-    <div style="display:flex; gap:8px;">
-        <select name="bulan" onchange="this.form.submit()" aria-label="Bulan" style="flex:1; padding:10px 12px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; font-size:13px;">
-            @for($month = 1; $month <= 12; $month++)
-                <option value="{{ $month }}" {{ (int) $filters['bulan'] === $month ? 'selected' : '' }}>
-                    {{ \Carbon\Carbon::create(null, $month, 1)->locale('id')->translatedFormat('F') }}
-                </option>
-            @endfor
-        </select>
-        <select name="tahun" onchange="this.form.submit()" aria-label="Tahun" style="width:96px; padding:10px 12px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; font-size:13px;">
-            @foreach(range(now()->year - 1, now()->year + 1) as $year)
-                <option value="{{ $year }}" {{ (int) $filters['tahun'] === $year ? 'selected' : '' }}>{{ $year }}</option>
-            @endforeach
-        </select>
+    <div style="display:flex; gap:6px; align-items:center;">
+        <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+            <label style="font-size:10px; font-weight:700; color:#667085; text-transform:uppercase;">Dari Bulan</label>
+            <select name="bulan" onchange="this.form.submit()" aria-label="Bulan Awal" style="width:100%; padding:9px 8px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; font-size:12px; font-weight:600;">
+                @for($month = 1; $month <= 12; $month++)
+                    <option value="{{ $month }}" {{ (int) $filters['bulan'] === $month ? 'selected' : '' }}>
+                        {{ \Carbon\Carbon::create(null, $month, 1)->locale('id')->translatedFormat('F') }}
+                    </option>
+                @endfor
+            </select>
+        </div>
+        <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+            <label style="font-size:10px; font-weight:700; color:#667085; text-transform:uppercase;">Sampai Bulan</label>
+            <select name="bulan_akhir" onchange="this.form.submit()" aria-label="Bulan Akhir" style="width:100%; padding:9px 8px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; font-size:12px; font-weight:600;">
+                @for($month = 1; $month <= 12; $month++)
+                    <option value="{{ $month }}" {{ (int) ($filters['bulan_akhir'] ?? $filters['bulan']) === $month ? 'selected' : '' }}>
+                        {{ \Carbon\Carbon::create(null, $month, 1)->locale('id')->translatedFormat('F') }}
+                    </option>
+                @endfor
+            </select>
+        </div>
+        <div style="width:84px; display:flex; flex-direction:column; gap:4px;">
+            <label style="font-size:10px; font-weight:700; color:#667085; text-transform:uppercase;">Tahun</label>
+            <select name="tahun" onchange="this.form.submit()" aria-label="Tahun" style="width:100%; padding:9px 8px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; font-size:12px; font-weight:600;">
+                @foreach(range(now()->year - 1, now()->year + 1) as $year)
+                    <option value="{{ $year }}" {{ (int) $filters['tahun'] === $year ? 'selected' : '' }}>{{ $year }}</option>
+                @endforeach
+            </select>
+        </div>
     </div>
     <select name="bruder" onchange="this.form.submit()" aria-label="Bruder" style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; font-size:13px;">
         <option value="">Semua Bruder</option>

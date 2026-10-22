@@ -22,7 +22,7 @@ class SuperAdminMonitoringTest extends TestCase
         $budi = User::factory()->create(['role' => 'user', 'name' => 'Br. Budi Pantau']);
 
         $this->journal($anton, 'Lokakarya Pantau', '2026-10-15', 'published');
-        $this->bimbingan($budi, '2026-10-16 09:00:00', 'submitted');
+        $this->bimbingan($budi, '2026-10-16 09:00:00', 'draft');
 
         $this->actingAs($admin)
             ->get(route('superadmin.monitoring.index', ['bulan' => 10, 'tahun' => 2026]))
@@ -218,6 +218,63 @@ class SuperAdminMonitoringTest extends TestCase
         $this->actingAs($bruder)->get(route('superadmin.monitoring.index'))->assertForbidden();
         $this->actingAs($bruder)->get(route('superadmin.monitoring.agenda'))->assertForbidden();
         $this->actingAs($bruder)->get(route('superadmin.monitoring.export'))->assertForbidden();
+    }
+
+    public function test_monitoring_supports_month_range_filter(): void
+    {
+        $admin = User::factory()->create(['role' => 'super_admin']);
+        $anton = User::factory()->create(['role' => 'user', 'name' => 'Br. Anton Pantau']);
+
+        $this->journal($anton, 'Jurnal Januari', '2026-01-10', 'published');
+        $this->journal($anton, 'Jurnal April', '2026-04-15', 'published');
+        $this->journal($anton, 'Jurnal Agustus', '2026-08-20', 'published');
+        $this->journal($anton, 'Jurnal Desember', '2026-12-05', 'published');
+
+        $response = $this->actingAs($admin)->get(route('superadmin.monitoring.index', [
+            'bulan' => 1,
+            'bulan_akhir' => 8,
+            'tahun' => 2026,
+        ]));
+
+        $response->assertOk()
+            ->assertSee('Januari – Agustus 2026')
+            ->assertSee('Jurnal Januari')
+            ->assertSee('Jurnal April')
+            ->assertSee('Jurnal Agustus')
+            ->assertDontSee('Jurnal Desember');
+    }
+
+    public function test_agenda_status_automatically_done_when_report_is_submitted(): void
+    {
+        $admin = User::factory()->create(['role' => 'super_admin']);
+        $bruder = User::factory()->create(['role' => 'user', 'name' => 'Br. Renungan FIC']);
+
+        // Buat jadwal bimbingan
+        \App\Models\SpiritualGuidanceSchedule::create([
+            'user_id' => $bruder->id,
+            'mentor_name' => 'Br. Pembimbing FIC',
+            'scheduled_at' => '2026-10-20 10:00:00',
+            'location' => 'Ruang Bimbingan',
+            'status' => 'scheduled',
+        ]);
+
+        // Sebelum laporan dikirim, agenda berstatus Menunggu
+        $this->actingAs($admin)->get(route('superadmin.monitoring.agenda', ['bulan' => 10, 'tahun' => 2026]))
+            ->assertOk()
+            ->assertSee('Menunggu');
+
+        // Bruder mengirimkan renungan / laporan
+        $this->actingAs($bruder)->post(route('bimbingan.store'), [
+            'meeting_date' => '2026-10-20',
+            'mentor_name' => 'Br. Pembimbing FIC',
+            'location' => 'Ruang Bimbingan',
+            'report_content' => str_repeat('Refleksi bimbingan rohani yang mendalam untuk pembinaan bruder muda FIC. ', 5),
+        ])->assertRedirect(route('bimbingan.index'));
+
+        // Setelah renungan terkirim, agenda otomatis berstatus Selesai
+        $response = $this->actingAs($admin)->get(route('superadmin.monitoring.agenda', ['bulan' => 10, 'tahun' => 2026]));
+        $response->assertOk()
+            ->assertSee('Selesai');
     }
 
     private function journal(User $user, string $name, string $date, string $status): void

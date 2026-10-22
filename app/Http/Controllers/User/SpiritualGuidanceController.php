@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\SpiritualGuidanceReport;
+use App\Models\SpiritualGuidanceSchedule;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -64,8 +65,26 @@ class SpiritualGuidanceController extends Controller
             $proofPath = $request->file('proof_file')->store('logbooks/bimbingan', 'local');
         }
 
+        // Otomatis tandai jadwal bimbingan rohani yang bersangkutan menjadi selesai (completed)
+        $schedule = SpiritualGuidanceSchedule::where('user_id', auth()->id())
+            ->whereDate('scheduled_at', $validated['meeting_date'])
+            ->where('status', '!=', 'cancelled')
+            ->first();
+
+        if (! $schedule) {
+            $schedule = SpiritualGuidanceSchedule::where('user_id', auth()->id())
+                ->where('mentor_name', $validated['mentor_name'])
+                ->where('status', 'scheduled')
+                ->first();
+        }
+
+        if ($schedule) {
+            $schedule->update(['status' => 'completed']);
+        }
+
         SpiritualGuidanceReport::create([
             'user_id' => auth()->id(),
+            'schedule_id' => $schedule?->id,
             'mentor_name' => $validated['mentor_name'],
             'meeting_at' => $validated['meeting_date'],
             'location' => $validated['location'],

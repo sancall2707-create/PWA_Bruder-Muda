@@ -18,16 +18,25 @@ use Illuminate\Support\Str;
 class MonitoringQuery
 {
     /**
-     * @return array{bulan: int, tahun: int, bruder: int|null, period_label: string}
+     * @return array{bulan: int, bulan_akhir: int, tahun: int, bruder: int|null, period_label: string}
      */
     public function filters(Request $request): array
     {
         $now = now();
-        $bulan = (int) $request->input('bulan', $now->month);
+        $bulanAwal = (int) $request->input('bulan', $now->month);
+        $bulanAkhir = (int) $request->input('bulan_akhir', $bulanAwal);
         $tahun = (int) $request->input('tahun', $now->year);
 
-        if ($bulan < 1 || $bulan > 12) {
-            $bulan = (int) $now->month;
+        if ($bulanAwal < 1 || $bulanAwal > 12) {
+            $bulanAwal = (int) $now->month;
+        }
+
+        if ($bulanAkhir < 1 || $bulanAkhir > 12) {
+            $bulanAkhir = $bulanAwal;
+        }
+
+        if ($bulanAwal > $bulanAkhir) {
+            [$bulanAwal, $bulanAkhir] = [$bulanAkhir, $bulanAwal];
         }
 
         if ($tahun < 2000 || $tahun > 2100) {
@@ -40,13 +49,19 @@ class MonitoringQuery
             $bruder = null;
         }
 
-        $period = Carbon::create($tahun, $bulan, 1)->locale('id');
+        $periodStart = Carbon::create($tahun, $bulanAwal, 1)->locale('id');
+        $periodEnd = Carbon::create($tahun, $bulanAkhir, 1)->locale('id');
+
+        $periodLabel = $bulanAwal === $bulanAkhir
+            ? $periodStart->translatedFormat('F Y')
+            : $periodStart->translatedFormat('F') . ' – ' . $periodEnd->translatedFormat('F Y');
 
         return [
-            'bulan' => $bulan,
+            'bulan' => $bulanAwal,
+            'bulan_akhir' => $bulanAkhir,
             'tahun' => $tahun,
             'bruder' => $bruder,
-            'period_label' => $period->translatedFormat('F Y'),
+            'period_label' => $periodLabel,
         ];
     }
 
@@ -117,31 +132,49 @@ class MonitoringQuery
             SpiritualGuidanceSchedule::query()->with(['user' => fn ($query) => $query->withTrashed()])->where('status', '!=', 'cancelled'),
             $filters,
             'scheduled_at',
-        )->get()->map(fn (SpiritualGuidanceSchedule $schedule) => $this->row(
-            bruder: $this->bruderName($schedule->user),
-            type: 'Bimbingan Rohani',
-            category: 'bimbingan',
-            at: $schedule->scheduled_at,
-            status: (string) $schedule->status,
-            counterpart: (string) $schedule->mentor_name,
-            location: $schedule->location,
-            summary: (string) ($schedule->topic_notes ?? ''),
-        ));
+        )->get()->map(function (SpiritualGuidanceSchedule $schedule) {
+            $hasReport = $schedule->status === 'completed'
+                || SpiritualGuidanceReport::where('user_id', $schedule->user_id)
+                    ->whereDate('meeting_at', $schedule->scheduled_at->toDateString())
+                    ->exists();
+
+            $status = $hasReport ? 'completed' : $schedule->status;
+
+            return $this->row(
+                bruder: $this->bruderName($schedule->user),
+                type: 'Bimbingan Rohani',
+                category: 'bimbingan',
+                at: $schedule->scheduled_at,
+                status: (string) $status,
+                counterpart: (string) $schedule->mentor_name,
+                location: $schedule->location,
+                summary: (string) ($schedule->topic_notes ?? ''),
+            );
+        });
 
         $wawanhati = $this->applyOwner(
             WawanhatiSchedule::query()->with(['user' => fn ($query) => $query->withTrashed()])->where('status', '!=', 'cancelled'),
             $filters,
             'scheduled_at',
-        )->get()->map(fn (WawanhatiSchedule $schedule) => $this->row(
-            bruder: $this->bruderName($schedule->user),
-            type: 'Wawanhati Pilok',
-            category: 'wawanhati',
-            at: $schedule->scheduled_at,
-            status: (string) $schedule->status,
-            counterpart: (string) $schedule->local_leader_name,
-            location: $schedule->location,
-            summary: (string) ($schedule->topic_notes ?? ''),
-        ));
+        )->get()->map(function (WawanhatiSchedule $schedule) {
+            $hasReport = $schedule->status === 'completed'
+                || WawanhatiReport::where('user_id', $schedule->user_id)
+                    ->whereDate('meeting_at', $schedule->scheduled_at->toDateString())
+                    ->exists();
+
+            $status = $hasReport ? 'completed' : $schedule->status;
+
+            return $this->row(
+                bruder: $this->bruderName($schedule->user),
+                type: 'Wawanhati Pilok',
+                category: 'wawanhati',
+                at: $schedule->scheduled_at,
+                status: (string) $status,
+                counterpart: (string) $schedule->local_leader_name,
+                location: $schedule->location,
+                summary: (string) ($schedule->topic_notes ?? ''),
+            );
+        });
 
         $personal = $this->applyOwner(
             PersonalAgenda::query()->with(['user' => fn ($query) => $query->withTrashed()])->where('status', '!=', 'cancelled'),
@@ -219,9 +252,18 @@ class MonitoringQuery
 
     private function applyOwner(Builder $query, array $filters, string $column): Builder
     {
+        $bulanAwal = (int) ($filters['bulan'] ?? 1);
+        $bulanAkhir = (int) ($filters['bulan_akhir'] ?? $bulanAwal);
+        $tahun = (int) ($filters['tahun'] ?? now()->year);
+
+        $start = Carbon::create($tahun, $bulanAwal, 1)->locale('id')->startOfMonth();
+        $end = Carbon::create($tahun, $bulanAkhir, 1)->locale('id')->endOfMonth();
+
+        $startVal = str_contains($column, 'date') ? $start->toDateString() : $start->toDateTimeString();
+        $endVal = str_contains($column, 'date') ? $end->toDateString() : $end->toDateTimeString();
+
         return $query
-            ->whereYear($column, $filters['tahun'])
-            ->whereMonth($column, $filters['bulan'])
+            ->whereBetween($column, [$startVal, $endVal])
             ->when($filters['bruder'], fn ($builder) => $builder->where('user_id', $filters['bruder']));
     }
 
@@ -241,7 +283,7 @@ class MonitoringQuery
         string $summary,
     ): object {
         $at = $at->copy()->locale('id');
-        $done = in_array($status, ['completed', 'approved', 'published'], true);
+        $done = in_array(strtolower($status), ['completed', 'approved', 'published', 'submitted', 'selesai', 'done'], true);
         $summary = trim(preg_replace('/\s+/', ' ', strip_tags($summary)) ?? '');
 
         return (object) [

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\WawanhatiReport;
+use App\Models\WawanhatiSchedule;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -64,8 +65,26 @@ class WawanhatiController extends Controller
             $proofPath = $request->file('proof_file')->store('logbooks/wawanhati', 'local');
         }
 
+        // Otomatis tandai jadwal wawanhati yang bersangkutan menjadi selesai (completed)
+        $schedule = WawanhatiSchedule::where('user_id', auth()->id())
+            ->whereDate('scheduled_at', $validated['meeting_date'])
+            ->where('status', '!=', 'cancelled')
+            ->first();
+
+        if (! $schedule) {
+            $schedule = WawanhatiSchedule::where('user_id', auth()->id())
+                ->where('local_leader_name', $validated['local_leader_name'])
+                ->where('status', 'scheduled')
+                ->first();
+        }
+
+        if ($schedule) {
+            $schedule->update(['status' => 'completed']);
+        }
+
         WawanhatiReport::create([
             'user_id' => auth()->id(),
+            'schedule_id' => $schedule?->id,
             'local_leader_name' => $validated['local_leader_name'],
             'meeting_at' => $validated['meeting_date'],
             'location' => $validated['location'],
