@@ -323,11 +323,16 @@ class MonitoringController extends Controller
         ];
 
         // 10. Penandatangan Raport (Ketua TPPBM & Administrator Data)
-        $ketuaTppbm = User::where('role', 'admin_ketua_tppbm')->first()
-            ?? User::where('username', 'galihsih')->first();
-        $adminData = (auth()->check() && auth()->user()->role === 'super_admin')
-            ? auth()->user()
-            : User::where('role', 'super_admin')->first();
+        $ketuaTppbm = (Auth::check() && Auth::user()->role === 'admin_ketua_tppbm')
+            ? Auth::user()
+            : (User::where('role', 'admin_ketua_tppbm')->where('is_active', true)->latest('id')->first()
+                ?? User::where('role', 'admin_ketua_tppbm')->latest('id')->first()
+                ?? User::where('username', 'galihsih')->first());
+
+        $adminData = (Auth::check() && Auth::user()->role === 'super_admin')
+            ? Auth::user()
+            : (User::where('role', 'super_admin')->where('is_active', true)->first()
+                ?? User::where('role', 'super_admin')->first());
 
         $penandatangan = [
             'ketua_tppbm' => $ketuaTppbm?->name ?? 'Br. F.A. Galih Sih Hartanta, FIC',
