@@ -113,9 +113,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
         Route::get('/users/{user}/track-record', [UserManagementController::class, 'trackRecord'])->name('users.track-record');
 
-        // Catatan Pembinaan Bruder (Poin 5)
+        // Catatan Pembinaan Bruder (Poin 5 & Fitur Tarik/Edit Catatan)
         Route::get('/users/{user}/catatan/tambah', [BruderNoteController::class, 'create'])->name('users.notes.create');
         Route::post('/users/{user}/catatan', [BruderNoteController::class, 'store'])->name('users.notes.store');
+        Route::get('/users/{user}/catatan/{note}/edit', [BruderNoteController::class, 'edit'])->name('users.notes.edit');
+        Route::put('/users/{user}/catatan/{note}', [BruderNoteController::class, 'update'])->name('users.notes.update');
+        Route::delete('/users/{user}/catatan/{note}', [BruderNoteController::class, 'destroy'])->name('users.notes.destroy');
 
         // Kirim Pesan Khusus Satu Arah (Poin 2)
         Route::get('/users/{user}/pesan', [DirectMessageController::class, 'create'])->name('users.messages.create');

@@ -66,8 +66,8 @@ class PenyesuaianTahap1Test extends TestCase
             'content' => 'Bruder menunjukkan kematangan pribadi dan semangat persaudaraan yang tinggi.',
         ]);
 
-        $response->assertRedirect(route('superadmin.users.index'))
-            ->assertSessionHas('success', 'Catatan berhasil ditambahkan!');
+        $response->assertRedirect(route('superadmin.users.notes.create', $bruder))
+            ->assertSessionHas('success', 'Catatan pembinaan berhasil ditambahkan!');
 
         $this->assertDatabaseHas('bruder_notes', [
             'user_id' => $bruder->id,
@@ -79,6 +79,43 @@ class PenyesuaianTahap1Test extends TestCase
         $trackRecord->assertOk()
             ->assertSee('Catatan Hidup Pribadi')
             ->assertSee('kematangan pribadi dan semangat persaudaraan');
+    }
+
+    public function test_admin_can_edit_and_retract_bruder_note(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $bruder = User::factory()->create(['role' => 'user']);
+        $note = \App\Models\BruderNote::create([
+            'user_id' => $bruder->id,
+            'author_id' => $admin->id,
+            'category' => 'Catatan Hidup Pribadi',
+            'content' => 'Catatan sebelum diubah',
+        ]);
+
+        // Edit form
+        $this->actingAs($admin)
+            ->get(route('superadmin.users.notes.edit', [$bruder, $note]))
+            ->assertOk()
+            ->assertSee('Catatan sebelum diubah');
+
+        // Update note
+        $this->actingAs($admin)
+            ->put(route('superadmin.users.notes.update', [$bruder, $note]), [
+                'category' => 'Catatan Hidup Komunitas',
+                'content' => 'Catatan setelah diperbarui oleh TPPBM',
+            ])
+            ->assertRedirect(route('superadmin.users.notes.create', $bruder))
+            ->assertSessionHas('success');
+
+        $this->assertSame('Catatan Hidup Komunitas', $note->fresh()->category);
+        $this->assertSame('Catatan setelah diperbarui oleh TPPBM', $note->fresh()->content);
+
+        // Delete / Retract note
+        $this->actingAs($admin)
+            ->delete(route('superadmin.users.notes.destroy', [$bruder, $note]))
+            ->assertRedirect();
+
+        $this->assertDatabaseMissing('bruder_notes', ['id' => $note->id]);
     }
 
     public function test_admin_can_send_direct_message_and_bruder_reads_it(): void

@@ -75,7 +75,17 @@
                         <span style="font-size:11px; color:#667085;">{{ $note->created_at->translatedFormat('d M Y, H:i') }}</span>
                     </div>
                     <div style="font-size:13px; color:#344054; line-height:1.45; white-space:pre-line;">{{ $note->content }}</div>
-                    <div style="font-size:11px; color:#667085; margin-top:4px;">Oleh: {{ $note->author->name ?? 'Admin TPPBM' }}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px; font-size:11px; color:#667085;">
+                        <div>Oleh: {{ $note->author->name ?? 'Admin TPPBM' }}</div>
+                        <div style="display:flex; gap:6px;">
+                            <a href="{{ route('superadmin.users.notes.edit', [$user, $note]) }}" style="background:#FFF9EB; border:1px solid #FCD34D; color:#B45309; padding:2px 8px; border-radius:6px; font-weight:700; text-decoration:none; font-size:11px;">Edit</a>
+                            <form method="POST" action="{{ route('superadmin.users.notes.destroy', [$user, $note]) }}" onsubmit="return confirm('Tarik / hapus catatan ini?');" style="margin:0;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" style="background:#FEF3F2; border:1px solid #FECDCA; color:#B42318; padding:2px 8px; border-radius:6px; font-weight:700; cursor:pointer; font-size:11px; font-family:inherit;">Tarik</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             @empty
                 <div class="detail-value" style="color:#667085;">Belum ada catatan pembinaan khusus.</div>

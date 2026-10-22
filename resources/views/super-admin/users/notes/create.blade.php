@@ -72,9 +72,53 @@
 
             <div style="margin-top: 16px;">
                 <button type="submit" class="btn-submit-green">SIMPAN CATATAN</button>
-                <a href="{{ route('superadmin.users.index') }}" class="back-link">Batal</a>
+                <a href="{{ route('superadmin.users.index') }}" class="back-link">← Kembali ke Direktori Bruder</a>
             </div>
         </form>
+
+        <!-- DAFTAR CATATAN PEMBINAAN YANG SUDAH TERCATAT -->
+        <div style="margin-top: 24px;">
+            <div style="font-size: 13px; font-weight: 800; color: #101828; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 10px;">
+                Riwayat Catatan Pembinaan ({{ count($notes ?? []) }})
+            </div>
+
+            @forelse($notes ?? [] as $nt)
+                <div style="background: rgba(255,255,255,0.72); border-radius: 14px; border: 1px solid rgba(255,255,255,0.85); border-left: 4px solid #027A48; padding: 14px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,62,151,0.04);">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom: 6px;">
+                        <span style="font-size: 11px; font-weight: 800; color: #027A48; text-transform: uppercase;">
+                            {{ $nt->category }}
+                        </span>
+                        <span style="font-size: 11px; color: #667085;">
+                            {{ $nt->created_at->translatedFormat('d M Y, H:i') }}
+                        </span>
+                    </div>
+
+                    <div style="font-size: 13px; color: #1F2937; line-height: 1.45; white-space: pre-line; margin-bottom: 8px;">
+                        {{ $nt->content }}
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-top: 1px solid #E5E7EB; padding-top: 8px; font-size: 11px; color: #6B7280;">
+                        <div>Oleh: {{ $nt->author->name ?? 'Admin TPPBM' }}</div>
+                        <div style="display:flex; gap: 6px;">
+                            <a href="{{ route('superadmin.users.notes.edit', [$user, $nt]) }}" style="background:#FFF9EB; border:1px solid #FCD34D; color:#B45309; padding:4px 8px; border-radius:8px; font-weight:700; text-decoration:none; font-size:11px;">
+                                Edit
+                            </a>
+                            <form method="POST" action="{{ route('superadmin.users.notes.destroy', [$user, $nt]) }}" onsubmit="return confirm('Tarik / hapus catatan ini? Catatan tidak akan tampil lagi di raport maupun pembinaan.');" style="margin:0;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" style="background:#FEF3F2; border:1px solid #FECDCA; color:#B42318; padding:4px 8px; border-radius:8px; font-weight:700; cursor:pointer; font-size:11px; font-family:inherit;">
+                                    Tarik
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div style="background: rgba(255,255,255,0.5); border-radius: 12px; border: 1px dashed #D0D5DD; padding: 16px; text-align: center; color: #667085; font-size: 12px;">
+                    Belum ada catatan pembinaan yang tersimpan untuk bruder ini.
+                </div>
+            @endforelse
+        </div>
     </div>
     @include('layouts.partials.sa-menu')
 </div>
