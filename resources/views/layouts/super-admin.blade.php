@@ -92,6 +92,44 @@
             gap: 16px;
         }
 
+        @if(!empty($wideLayout))
+            @media (min-width: 860px) {
+                .sa-container {
+                    max-width: 880px;
+                }
+            }
+        @endif
+
+        @media print {
+            html, body {
+                background: #ffffff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            .sa-container {
+                max-width: 100% !important;
+                width: 100% !important;
+                min-height: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                background: transparent !important;
+            }
+            .sa-header, .sa-menu-toggle, .sa-menu, .no-print, header, nav {
+                display: none !important;
+            }
+            .sa-body {
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                gap: 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
