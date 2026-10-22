@@ -68,15 +68,18 @@ class SuperAdminOverviewService
     }
 
     /**
-     * Daftar bruder muda beserta capaian laporan bulan berjalan.
+     * Daftar bruder muda dan admin beserta capaian laporan bulan berjalan.
      */
-    public function bruderDirectory(?string $search = null)
+    public function bruderDirectory(?string $search = null, bool $includeAdmins = true)
     {
         $start = now()->startOfMonth();
         $end = now()->endOfMonth();
         $counted = ['submitted', 'published', 'completed', 'approved'];
 
-        $query = User::query()->where('role', 'user');
+        $query = User::query();
+        if (! $includeAdmins) {
+            $query->where('role', 'user');
+        }
 
         $search = trim((string) $search);
         if ($search !== '') {
@@ -106,6 +109,6 @@ class SuperAdminOverviewService
      */
     public function bruderCards(int $limit = 8)
     {
-        return $this->bruderDirectory()->limit($limit)->get();
+        return $this->bruderDirectory(includeAdmins: false)->limit($limit)->get();
     }
 }

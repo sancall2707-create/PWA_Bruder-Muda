@@ -88,21 +88,18 @@ class UserManagementController extends Controller
     }
 
     /**
-     * Form kelola email dan kata sandi satu akun bruder.
+     * Form kelola email, peran, dan biodata satu akun bruder atau admin.
      */
     public function editAccount(User $user): View
     {
-        abort_unless(in_array($user->role, ['user', 'admin_ketua_tppbm'], true), 404);
-
         return view('super-admin.users.account', compact('user'));
     }
 
     /**
-     * Perbarui email dan, bila diisi, atur ulang kata sandi bruder.
+     * Perbarui email, peran, dan biodata akun.
      */
     public function updateAccount(Request $request, User $user): RedirectResponse
     {
-        abort_unless(in_array($user->role, ['user', 'admin', 'admin_ketua_tppbm'], true), 404);
 
         $validated = $request->validate([
             'email' => [
@@ -251,11 +248,11 @@ class UserManagementController extends Controller
     }
 
     /**
-     * Aktifkan atau nonaktifkan akun bruder muda.
+     * Aktifkan atau nonaktifkan akun pengguna (bruder muda maupun admin).
      */
-    public function updateStatus(User $user): RedirectResponse
+    public function updateStatus(Request $request, User $user): RedirectResponse
     {
-        abort_unless($user->role === 'user', 404);
+        abort_if($user->is($request->user()), 403);
 
         $user->is_active = ! $user->is_active;
         $user->save();
@@ -267,17 +264,16 @@ class UserManagementController extends Controller
     }
 
     /**
-     * Hapus akun bruder muda tanpa menghapus riwayat laporannya.
+     * Hapus akun pengguna tanpa menghapus riwayat laporannya.
      */
     public function destroy(Request $request, User $user): RedirectResponse
     {
-        abort_unless($user->role === 'user', 404);
         abort_if($user->is($request->user()), 403);
 
         $name = $user->name;
         $user->delete();
 
         return redirect()->route('superadmin.users.index')
-            ->with('success', "Akun {$name} dihapus dari daftar bruder muda.");
+            ->with('success', "Akun {$name} dihapus dari daftar.");
     }
 }

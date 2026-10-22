@@ -332,7 +332,28 @@ class SuperAdminAccountTest extends TestCase
         $super = User::factory()->create(['role' => 'super_admin']);
         $this->actingAs($super)
             ->get(route('superadmin.users.account.edit', $admin))
-            ->assertNotFound();
+            ->assertOk();
+    }
+
+    public function test_super_admin_sees_admins_in_user_directory_without_track_record(): void
+    {
+        $super = User::factory()->create(['role' => 'super_admin', 'name' => 'Super Admin Uji']);
+        $ketua = User::factory()->create(['role' => 'admin_ketua_tppbm', 'name' => 'Br. Ketua TPPBM Uji']);
+        $admin = User::factory()->create(['role' => 'admin', 'name' => 'Admin Biasa Uji']);
+        $bruder = User::factory()->create(['role' => 'user', 'name' => 'Bruder Muda Uji']);
+
+        $response = $this->actingAs($super)->get(route('superadmin.users.index'));
+        $response->assertOk()
+            ->assertSee('Br. Ketua TPPBM Uji')
+            ->assertSee('Admin Biasa Uji')
+            ->assertSee('Bruder Muda Uji')
+            ->assertSee('Admin Ketua TPPBM')
+            ->assertSee('Admin TPPBM')
+            ->assertSee('Track Record'); // Untuk bruder muda ada Track Record
+
+        // Track record untuk admin harus 404
+        $this->actingAs($super)->get(route('superadmin.users.track-record', $ketua))->assertNotFound();
+        $this->actingAs($super)->get(route('superadmin.users.track-record', $admin))->assertNotFound();
     }
 
     public function test_track_record_shows_every_saved_report_and_rejects_other_roles(): void
