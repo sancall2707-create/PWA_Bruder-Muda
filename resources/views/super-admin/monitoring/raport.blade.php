@@ -153,15 +153,13 @@
     /* FOOTER DOKUMEN */
     .raport-doc-footer {
         border-top: 1px solid #D1D5DB;
-        padding-top: 8px;
+        padding-top: 6px;
         margin-top: 24px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         font-size: 9.5px;
         color: #6B7280;
-        page-break-inside: avoid;
-        break-inside: avoid;
     }
 
     .raport-signatures {
@@ -177,7 +175,7 @@
     @media print {
         @page {
             size: A4 portrait;
-            margin: 1.5cm 1.5cm 1.5cm 2cm;
+            margin: 1.5cm 1.5cm 1.8cm 2cm;
         }
 
         html, body {
@@ -216,9 +214,35 @@
             border: none !important;
             box-shadow: none !important;
             padding: 0 !important;
+            padding-bottom: 24px !important;
             margin: 0 !important;
             width: 100% !important;
             max-width: 100% !important;
+        }
+
+        /* Running footer garis di setiap halaman raport saat dicetak */
+        .raport-doc-footer {
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            border-top: 1px solid #D1D5DB !important;
+            padding-top: 4px !important;
+            margin-top: 0 !important;
+            background: #ffffff !important;
+            z-index: 9999 !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            font-size: 9.5px !important;
+            color: #6B7280 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .print-page-num::after {
+            content: " | Halaman " counter(page);
         }
 
         .raport-table th {
@@ -615,7 +639,7 @@
         <!-- FOOTER DOKUMEN -->
         <div class="raport-doc-footer">
             <div>Raport Pendampingan - {{ $raport['data_diri']['nama'] }}</div>
-            <div>Tim Pemantap Panggilan Bruder Muda (TPPBM)</div>
+            <div>Tim Pemantap Panggilan Bruder Muda (TPPBM)<span class="print-page-num"></span></div>
         </div>
 
     </div>
