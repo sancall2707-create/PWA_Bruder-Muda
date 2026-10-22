@@ -63,6 +63,8 @@
 </form>
 
 <div style="display:flex; gap:8px; margin-top:12px;">
-    <a href="{{ route('superadmin.monitoring.export', array_merge($queryBase, ['jenis' => $exportKind, 'format' => 'excel'])) }}" style="flex:1; text-align:center; padding:12px 8px; background:#B57900; color:#fff; border-radius:12px; font-weight:700; font-size:13px; text-decoration:none;">Excel</a>
+    @if($exportKind !== 'raport')
+        <a href="{{ route('superadmin.monitoring.export', array_merge($queryBase, ['jenis' => $exportKind, 'format' => 'excel'])) }}" style="flex:1; text-align:center; padding:12px 8px; background:#B57900; color:#fff; border-radius:12px; font-weight:700; font-size:13px; text-decoration:none;">Excel</a>
+    @endif
     <a href="{{ route('superadmin.monitoring.export', array_merge($queryBase, ['jenis' => $exportKind, 'format' => 'pdf'])) }}" style="flex:1; text-align:center; padding:12px 8px; background:#1455C0; color:#fff; border-radius:12px; font-weight:700; font-size:13px; text-decoration:none;">PDF</a>
 </div>

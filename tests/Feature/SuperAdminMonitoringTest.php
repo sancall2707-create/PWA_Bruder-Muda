@@ -250,7 +250,7 @@ class SuperAdminMonitoringTest extends TestCase
         $bruder = User::factory()->create(['role' => 'user', 'name' => 'Br. Renungan FIC']);
 
         // Buat jadwal bimbingan
-        \App\Models\SpiritualGuidanceSchedule::create([
+        SpiritualGuidanceSchedule::create([
             'user_id' => $bruder->id,
             'mentor_name' => 'Br. Pembimbing FIC',
             'scheduled_at' => '2026-10-20 10:00:00',
@@ -314,6 +314,7 @@ class SuperAdminMonitoringTest extends TestCase
         ]));
 
         $response->assertOk()
+            ->assertSee('Periode Agustus - Oktober 2026')
             ->assertSee('RAPORT PENDAMPINGAN BRUDER MUDA')
             ->assertSee('Kongregasi Bruder FIC Indonesia')
             ->assertSee('Tim Pemantap Panggilan Bruder Muda (TPPBM)')
@@ -325,6 +326,9 @@ class SuperAdminMonitoringTest extends TestCase
             ->assertSee('Monika Maria Goretti')
             ->assertSee('SD Kanisius Babadan')
             ->assertSee('Postulat')
+            ->assertSee('5 Frater')
+            ->assertDontSee('Frater/Bruder')
+            ->assertDontSee('page-break-after: always')
             ->assertSee('Br. F.A. Galih Sih Hartanta, FIC')
             ->assertSee('Br. Andrias Purwanto, FIC');
     }
@@ -348,6 +352,36 @@ class SuperAdminMonitoringTest extends TestCase
         $response->assertOk()
             ->assertSee('Br. F.A. Galih Sih Hartanta, FIC (Ketua TPPBM)')
             ->assertSee('Br. Andrias Purwanto, FIC (Admin Data)');
+    }
+
+    public function test_raport_pdf_downloads_the_selected_bruder_report(): void
+    {
+        $admin = User::factory()->create(['role' => 'super_admin']);
+        $bruder = User::factory()->create(['role' => 'user', 'name' => 'Br. Yohanes Subagio PDF']);
+
+        $response = $this->actingAs($admin)->get(route('superadmin.monitoring.export', [
+            'bruder' => $bruder->id,
+            'bulan' => 1,
+            'bulan_akhir' => 2,
+            'tahun' => 2026,
+            'jenis' => 'raport',
+            'format' => 'pdf',
+        ]));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringStartsWith('%PDF', $response->getContent());
+        $this->assertStringContainsString(
+            'raport-br-yohanes-subagio-pdf-2026-01-02.pdf',
+            (string) $response->headers->get('content-disposition')
+        );
+
+        $this->actingAs($admin)->get(route('superadmin.monitoring.export', [
+            'jenis' => 'raport',
+            'format' => 'pdf',
+            'bulan' => 1,
+            'tahun' => 2026,
+        ]))->assertRedirect()->assertSessionHas('error');
     }
 
     private function journal(User $user, string $name, string $date, string $status): void

@@ -3,17 +3,16 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
-use App\Models\BruderNote;
-use App\Models\SelfDevelopmentJournal;
-use App\Models\SpiritualGuidanceReport;
 use App\Models\User;
-use App\Models\WawanhatiReport;
 use App\Services\MonitoringExport;
 use App\Services\MonitoringQuery;
+use App\Services\RaportPdfPrinter;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,6 +21,7 @@ class MonitoringController extends Controller
     public function __construct(
         private readonly MonitoringQuery $monitoring,
         private readonly MonitoringExport $exporter,
+        private readonly RaportPdfPrinter $raportPdf,
     ) {}
 
     public function index(Request $request): View
@@ -54,8 +54,12 @@ class MonitoringController extends Controller
         ]);
     }
 
-    public function export(Request $request): Response
+    public function export(Request $request): Response|RedirectResponse
     {
+        if ($request->input('jenis') === 'raport' && $request->input('format') === 'pdf') {
+            return $this->downloadRaport($request);
+        }
+
         $filters = $this->monitoring->filters($request);
         $kind = $request->input('jenis') === 'agenda' ? 'agenda' : 'laporan';
         $format = $request->input('format') === 'pdf' ? 'pdf' : 'excel';
@@ -85,6 +89,9 @@ class MonitoringController extends Controller
 
         $selectedBruderId = $filters['bruder'] ?: optional($bruders->first())->id;
         $selectedBruder = $selectedBruderId ? User::find($selectedBruderId) : null;
+        if ($selectedBruder) {
+            $filters['bruder'] = $selectedBruder->id;
+        }
 
         $raport = $selectedBruder ? $this->buildRaportData($selectedBruder, $filters) : null;
 
@@ -95,6 +102,39 @@ class MonitoringController extends Controller
             'raport' => $raport,
             'headerTitle' => 'Raport Pendampingan',
             'headerSubtitle' => $selectedBruder ? $selectedBruder->name : 'Pilih Bruder Muda',
+        ]);
+    }
+
+    private function downloadRaport(Request $request): Response|RedirectResponse
+    {
+        $filters = $this->monitoring->filters($request);
+        $bruder = $filters['bruder'] ? User::find($filters['bruder']) : null;
+
+        if (! $bruder) {
+            return redirect()->route('superadmin.monitoring.raport', $request->except('jenis', 'format'))
+                ->with('error', 'Pilih satu bruder untuk mengunduh raport.');
+        }
+
+        $html = view('super-admin.monitoring.raport', [
+            'filters' => $filters,
+            'bruders' => $this->bruders(),
+            'selectedBruder' => $bruder,
+            'raport' => $this->buildRaportData($bruder, $filters),
+            'headerTitle' => 'Raport Pendampingan',
+            'headerSubtitle' => $bruder->name,
+        ])->render();
+
+        $filename = sprintf(
+            'raport-%s-%04d-%02d-%02d.pdf',
+            Str::slug($bruder->name) ?: 'bruder',
+            $filters['tahun'],
+            $filters['bulan'],
+            $filters['bulan_akhir'] ?? $filters['bulan']
+        );
+
+        return response($this->raportPdf->print($html), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ]);
     }
 
@@ -147,31 +187,31 @@ class MonitoringController extends Controller
                 'jenjang' => 'SD',
                 'nama' => $edu['sd_name'] ?? '-',
                 'jurusan' => '-',
-                'tahun' => ! empty($edu['sd_year']) ? 'Lulus ' . $edu['sd_year'] : '-',
+                'tahun' => ! empty($edu['sd_year']) ? 'Lulus '.$edu['sd_year'] : '-',
             ],
             [
                 'jenjang' => 'SMP',
                 'nama' => $edu['smp_name'] ?? '-',
                 'jurusan' => '-',
-                'tahun' => ! empty($edu['smp_year']) ? 'Lulus ' . $edu['smp_year'] : '-',
+                'tahun' => ! empty($edu['smp_year']) ? 'Lulus '.$edu['smp_year'] : '-',
             ],
             [
                 'jenjang' => 'SMA/K',
                 'nama' => $edu['sma_name'] ?? '-',
-                'jurusan' => ! empty($edu['sma_major']) ? '(' . $edu['sma_major'] . ')' : '-',
-                'tahun' => ! empty($edu['sma_year']) ? 'Lulus ' . $edu['sma_year'] : '-',
+                'jurusan' => ! empty($edu['sma_major']) ? '('.$edu['sma_major'].')' : '-',
+                'tahun' => ! empty($edu['sma_year']) ? 'Lulus '.$edu['sma_year'] : '-',
             ],
             [
                 'jenjang' => 'S1',
                 'nama' => $edu['s1_name'] ?? 'Belum menempuh',
                 'jurusan' => $edu['s1_major'] ?? '-',
-                'tahun' => ! empty($edu['s1_in']) ? 'Masuk: ' . $edu['s1_in'] . (! empty($edu['s1_out']) ? ' | Lulus: ' . $edu['s1_out'] : (! empty($edu['s1_target']) ? ' | Target: ' . $edu['s1_target'] : '')) : '-',
+                'tahun' => ! empty($edu['s1_in']) ? 'Masuk: '.$edu['s1_in'].(! empty($edu['s1_out']) ? ' | Lulus: '.$edu['s1_out'] : (! empty($edu['s1_target']) ? ' | Target: '.$edu['s1_target'] : '')) : '-',
             ],
             [
                 'jenjang' => 'S2',
                 'nama' => $edu['s2_name'] ?? 'Belum menempuh',
                 'jurusan' => $edu['s2_major'] ?? '-',
-                'tahun' => ! empty($edu['s2_in']) ? 'Masuk: ' . $edu['s2_in'] . (! empty($edu['s2_out']) ? ' | Lulus: ' . $edu['s2_out'] : (! empty($edu['s2_target']) ? ' | Target: ' . $edu['s2_target'] : '')) : '-',
+                'tahun' => ! empty($edu['s2_in']) ? 'Masuk: '.$edu['s2_in'].(! empty($edu['s2_out']) ? ' | Lulus: '.$edu['s2_out'] : (! empty($edu['s2_target']) ? ' | Target: '.$edu['s2_target'] : '')) : '-',
             ],
         ];
 
@@ -181,25 +221,25 @@ class MonitoringController extends Controller
             [
                 'tahapan' => 'Postulat',
                 'tahun' => $form['postulat_in'] ?? '-',
-                'angkatan' => ! empty($form['postulat_count']) ? $form['postulat_count'] . ' Frater/Bruder' : '-',
+                'angkatan' => ! empty($form['postulat_count']) ? $form['postulat_count'].' Frater' : '-',
                 'magister' => $form['postulat_magister'] ?? '-',
             ],
             [
                 'tahapan' => 'Novisiat Kanonik',
                 'tahun' => $form['kanonik_in'] ?? '-',
-                'angkatan' => ! empty($form['kanonik_count']) ? $form['kanonik_count'] . ' Frater/Bruder' : '-',
+                'angkatan' => ! empty($form['kanonik_count']) ? $form['kanonik_count'].' Frater' : '-',
                 'magister' => $form['kanonik_magister'] ?? '-',
             ],
             [
                 'tahapan' => 'Novisiat Apostolik',
                 'tahun' => $form['apostolik_in'] ?? '-',
-                'angkatan' => ! empty($form['apostolik_count']) ? $form['apostolik_count'] . ' Frater/Bruder' : '-',
+                'angkatan' => ! empty($form['apostolik_count']) ? $form['apostolik_count'].' Frater' : '-',
                 'magister' => $form['apostolik_magister'] ?? '-',
             ],
             [
                 'tahapan' => 'Prasetia Pertama',
                 'tahun' => $form['prasetia_1_year'] ?? '-',
-                'angkatan' => ! empty($form['prasetia_1_count']) ? $form['prasetia_1_count'] . ' Bruder' : '-',
+                'angkatan' => ! empty($form['prasetia_1_count']) ? $form['prasetia_1_count'].' Bruder' : '-',
                 'magister' => $form['prasetia_1_provincial'] ?? '-',
             ],
         ];
@@ -211,9 +251,9 @@ class MonitoringController extends Controller
             if (! empty($pemData['year'])) {
                 $hasPembaruan = true;
                 $formasi[] = [
-                    'tahapan' => 'Pembaruan ' . $pembaruanKe[$p],
+                    'tahapan' => 'Pembaruan '.$pembaruanKe[$p],
                     'tahun' => $pemData['year'],
-                    'angkatan' => ! empty($pemData['count']) ? $pemData['count'] . ' Bruder' : '-',
+                    'angkatan' => ! empty($pemData['count']) ? $pemData['count'].' Bruder' : '-',
                     'magister' => $pemData['provincial'] ?? '-',
                 ];
             }
@@ -234,7 +274,7 @@ class MonitoringController extends Controller
         for ($t = 1; $t <= 6; $t++) {
             $tData = $asg[$t] ?? [];
             if (! empty($tData['community'])) {
-                $masa = trim(($tData['start_year'] ?? '') . ' - ' . ($tData['end_year'] ?? 'Sekarang'));
+                $masa = trim(($tData['start_year'] ?? '').' - '.($tData['end_year'] ?? 'Sekarang'));
                 $perutusan[] = [
                     'tugas_ke' => $tugasKe[$t],
                     'komunitas' => $tData['community'],

@@ -6,11 +6,6 @@
 
 @section('content')
 <style>
-    @page {
-        size: A4 portrait;
-        margin: 1.5cm 1.5cm 1.5cm 2cm;
-    }
-
     /* KONTEN PREVIEW LAYAR & PRINT */
     .raport-sheet {
         background: #ffffff;
@@ -27,19 +22,9 @@
         width: 100%;
     }
 
-    /* WADAH HALAMAN PRESISI A4: KONTEN PADAT ALAMI, FOOTER TERKUNCI DI DASAR KERTAS */
-    .raport-page {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        box-sizing: border-box;
-        margin-bottom: 24px;
-        min-height: 25.8cm;
+    /* ISI MENGALIR TERUS. FOOTER TIDAK MEMOTONG DOKUMEN MENJADI KERTAS KOSONG. */
+    .raport-flow {
         background: #ffffff;
-    }
-
-    .raport-page-body {
-        flex: 1;
     }
 
     .raport-section-title {
@@ -154,12 +139,11 @@
         border: 1px solid #BAE6FD !important;
     }
 
-    /* FOOTER RESMI DI SETIAP HALAMAN - SELALU TERKUNCI DI DASAR KERTAS (TIDAK NAIK KE ATAS) */
+    /* FOOTER RESMI: DI LAYAR ADA DI AKHIR DOKUMEN, SAAT CETAK MENGULANG DI DASAR SETIAP KERTAS */
     .raport-page-footer {
-        flex-shrink: 0;
         border-top: 1px solid #D1D5DB;
         padding-top: 6px;
-        margin-top: 14px;
+        margin-top: 18px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -167,6 +151,10 @@
         color: #6B7280;
         background: #ffffff;
         box-sizing: border-box;
+    }
+
+    .raport-page-no::after {
+        content: "1";
     }
 
     .raport-signatures {
@@ -178,11 +166,6 @@
 
     /* PRINT RULES */
     @media print {
-        @page {
-            size: A4 portrait;
-            margin: 1.5cm 1.5cm 1.5cm 2cm;
-        }
-
         html, body {
             background: #ffffff !important;
             margin: 0 !important;
@@ -224,28 +207,21 @@
             max-width: 100% !important;
         }
 
-        .raport-page {
-            min-height: 25.8cm !important;
-            height: 25.8cm !important;
-            margin-bottom: 0 !important;
-            page-break-after: always !important;
-            break-after: page !important;
-            display: flex !important;
-            flex-direction: column !important;
-            justify-content: space-between !important;
-            box-sizing: border-box !important;
+        .raport-flow {
+            page-break-before: auto !important;
+            break-before: auto !important;
         }
 
-        .raport-page:last-child {
-            page-break-after: auto !important;
-            break-after: auto !important;
+        .raport-log-card,
+        .raport-card-box,
+        .raport-signatures,
+        .raport-table tr {
+            break-inside: avoid;
+            page-break-inside: avoid;
         }
 
         .raport-page-footer {
-            border-top: 1px solid #D1D5DB !important;
-            background: #ffffff !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
+            display: none !important;
         }
 
         .raport-table th {
@@ -256,6 +232,11 @@
 </style>
 
 <div class="no-print">
+    @if(session('error'))
+        <div style="background:#FEF3F2; border:1px solid #FECDCA; color:#B42318; padding:12px 14px; border-radius:12px; font-size:13px; font-weight:700; margin-bottom:12px;">
+            {{ session('error') }}
+        </div>
+    @endif
     @include('super-admin.monitoring._toolbar', ['exportKind' => 'raport'])
 
     <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
@@ -277,16 +258,19 @@
 @else
     @php
         $namaBruder = $raport['data_diri']['nama'];
+        $namaFooter = addcslashes($namaBruder, "\\\"\n\r");
+        $periodeAwal = \Carbon\Carbon::create($filters['tahun'], $filters['bulan'], 1)->locale('id')->translatedFormat('F');
+        $periodeAkhir = \Carbon\Carbon::create($filters['tahun'], $filters['bulan_akhir'], 1)->locale('id')->translatedFormat('F');
+        $periodeLabel = $filters['bulan'] === $filters['bulan_akhir']
+            ? $periodeAwal.' '.$filters['tahun']
+            : $periodeAwal.' - '.$periodeAkhir.' '.$filters['tahun'];
         $bimbinganAll = $raport['bimbingan_bulan'];
         $wawanhatiAll = $raport['wawanhati_bulan'];
         $pengembanganAll = $raport['pengembangan_diri'];
     @endphp
 
     <div id="raportContainer" class="raport-sheet">
-
-        {{-- ==================== HALAMAN 1: KOP, A, B, C, D (PADAT BERSAMBUNG PENUH, TIDAK ADA RUANG KOSONG) ==================== --}}
-        <div class="raport-page">
-            <div class="raport-page-body">
+        <div class="raport-flow">
                 <!-- KOP RESMI DOKUMEN -->
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;">
                     <img src="/images/logo-fic.png" alt="Logo FIC" style="width:52px; height:52px; object-fit:contain; flex-shrink:0;">
@@ -302,6 +286,8 @@
 
                 <!-- GARIS GANDA PEMISAH KOP -->
                 <div style="border-top: 2.5px solid #0E3366; border-bottom: 0.8px solid #0E3366; height: 2px; margin-bottom: 10px;"></div>
+
+                <div style="text-align:center; font-size:12px; font-weight:700; color:#0E3366; margin:2px 0 10px;">Periode {{ $periodeLabel }}</div>
 
                 <!-- A. DATA DIRI -->
                 <div class="raport-section-title" style="margin-top:0;">A. DATA DIRI</div>
@@ -443,20 +429,9 @@
                         @endforeach
                     </tbody>
                 </table>
-            </div>
 
-            <!-- FOOTER RESMI HALAMAN 1 -->
-            <div class="raport-page-footer">
-                <div style="font-weight:700;">Raport Bruder Muda - {{ $namaBruder }}</div>
-                <div style="font-weight:700;">Halaman 1</div>
-            </div>
-        </div>
-
-        {{-- ==================== HALAMAN 2: E (PERUTUSAN) & F (BIMBINGAN ROHANI PENUH SAMPAI BULAN TERAKHIR) ==================== --}}
-        <div class="raport-page">
-            <div class="raport-page-body">
                 <!-- E. KOMUNITAS TINGGAL & PERUTUSAN -->
-                <div class="raport-section-title" style="margin-top:0;">E. KOMUNITAS TINGGAL &amp; PERUTUSAN</div>
+                <div class="raport-section-title">E. KOMUNITAS TINGGAL &amp; PERUTUSAN</div>
                 <div class="raport-card-box" style="padding: 6px 12px; margin-bottom: 12px;">
                     @foreach($raport['perutusan'] as $p)
                         <div style="display:flex; gap:16px; padding:5px 0; {{ !$loop->last ? 'border-bottom:1px dotted #D1D5DB;' : '' }}">
@@ -498,20 +473,9 @@
                         </div>
                     </div>
                 @endforeach
-            </div>
 
-            <!-- FOOTER RESMI HALAMAN 2 -->
-            <div class="raport-page-footer">
-                <div style="font-weight:700;">Raport Bruder Muda - {{ $namaBruder }}</div>
-                <div style="font-weight:700;">Halaman 2</div>
-            </div>
-        </div>
-
-        {{-- ==================== HALAMAN 3: G (WAWANHATI PILOK PENUH) & H (PENGEMBANGAN DIRI) ==================== --}}
-        <div class="raport-page">
-            <div class="raport-page-body">
                 <!-- G. LAPORAN WAWANHATI PIMPINAN LOKAL -->
-                <div class="raport-section-title" style="margin-top:0;">G. LAPORAN WAWANHATI PIMPINAN LOKAL</div>
+                <div class="raport-section-title">G. LAPORAN WAWANHATI PIMPINAN LOKAL</div>
                 @foreach($wawanhatiAll as $w)
                     <div class="raport-log-card" style="border-left: 4px solid {{ $w['done'] ? '#0E3366' : '#DC2626' }};">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
@@ -567,20 +531,9 @@
                         Belum ada kegiatan pengembangan diri yang dilaporkan pada periode ini.
                     </div>
                 @endforelse
-            </div>
 
-            <!-- FOOTER RESMI HALAMAN 3 -->
-            <div class="raport-page-footer">
-                <div style="font-weight:700;">Raport Bruder Muda - {{ $namaBruder }}</div>
-                <div style="font-weight:700;">Halaman 3</div>
-            </div>
-        </div>
-
-        {{-- ==================== HALAMAN 4: I (CATATAN TPPBM) & TANDA TANGAN PENGESAHAN (FOOTER SELALU DI DASAR KERTAS) ==================== --}}
-        <div class="raport-page">
-            <div class="raport-page-body">
                 <!-- I. CATATAN PENDAMPING BRUDER MUDA (TPPBM) -->
-                <div class="raport-section-title" style="border-bottom: 1.5px solid #0E3366; padding-bottom: 4px; margin-top:0;">
+                <div class="raport-section-title" style="border-bottom: 1.5px solid #0E3366; padding-bottom: 4px;">
                     I. CATATAN PENDAMPING BRUDER MUDA (TPPBM)
                 </div>
 
@@ -681,15 +634,30 @@
                         <span style="font-weight:800; text-decoration:underline;">{{ $raport['penandatangan']['admin_data'] ?? 'Br. Andrias Purwanto, FIC' }}</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- FOOTER RESMI HALAMAN 4 (SELALU DI DASAR KERTAS A4, TIDAK NAIK KE ATAS) -->
-            <div class="raport-page-footer">
-                <div style="font-weight:700;">Raport Bruder Muda - {{ $namaBruder }}</div>
-                <div style="font-weight:700;">Halaman 4</div>
-            </div>
         </div>
 
+        <div class="raport-page-footer">
+            <div style="font-weight:700;">Raport Bruder Muda - {{ $namaBruder }}</div>
+            <div style="font-weight:700;">Halaman <span class="raport-page-no"></span></div>
+        </div>
+        <style>
+            @page {
+                size: A4 portrait;
+                margin: 1.5cm 1.5cm 1.8cm 2cm;
+                @bottom-left {
+                    content: "Raport Bruder Muda - {{ $namaFooter }}";
+                    font-size: 9.5px;
+                    color: #6B7280;
+                    font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+                }
+                @bottom-right {
+                    content: "Halaman " counter(page);
+                    font-size: 9.5px;
+                    color: #6B7280;
+                    font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+                }
+            }
+        </style>
     </div>
 @endif
 @endsection
