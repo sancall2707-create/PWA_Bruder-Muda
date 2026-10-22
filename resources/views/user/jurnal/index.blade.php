@@ -69,6 +69,17 @@
                     {{ $journal->reflection }}
                 </div>
             @endif
+
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <a href="{{ route('jurnal.edit', $journal) }}" class="btn-secondary" style="flex: 1; min-height: 40px; padding: 8px 12px; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
+                    Edit
+                </a>
+                <form method="POST" action="{{ route('jurnal.destroy', $journal) }}" onsubmit="return confirm('Hapus jurnal ini?');" style="flex: 1; margin: 0;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn-danger" style="width: 100%; min-height: 40px; padding: 8px 12px; font-size: 13px;">Hapus</button>
+                </form>
+            </div>
         </div>
     @empty
         <x-empty-state

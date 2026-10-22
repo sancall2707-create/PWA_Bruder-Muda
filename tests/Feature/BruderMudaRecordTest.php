@@ -316,6 +316,81 @@ class BruderMudaRecordTest extends TestCase
             ->assertSee('33%');
     }
 
+    public function test_owner_can_edit_and_delete_journal(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $journal = SelfDevelopmentJournal::create([
+            'user_id' => $user->id,
+            'activity_date' => now()->toDateString(),
+            'activity_name' => 'Retret Awal',
+            'organizer' => 'Provinsi FIC',
+            'speaker' => 'Rm. Robert',
+            'description' => 'Materi awal retret.',
+            'reflection' => $this->narrative(250),
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        // Form edit
+        $this->actingAs($user)->get(route('jurnal.edit', $journal))
+            ->assertOk()
+            ->assertSee('Edit Jurnal Pengembangan Diri')
+            ->assertSee('Retret Awal');
+
+        // Orang lain tidak bisa akses form edit
+        $this->actingAs($otherUser)->get(route('jurnal.edit', $journal))
+            ->assertNotFound();
+
+        // Update jurnal
+        $newReflection = $this->narrative(280);
+        $this->actingAs($user)->put(route('jurnal.update', $journal), [
+            'activity_date' => now()->addDay()->toDateString(),
+            'activity_name' => 'Retret Diperbarui',
+            'organizer' => 'Provinsi FIC Indonesia',
+            'speaker' => 'Rm. Thomas',
+            'description' => 'Materi baru retret.',
+            'reflection' => $newReflection,
+        ])->assertRedirect(route('jurnal.index'))
+          ->assertSessionHas('success', 'Jurnal pengembangan diri berhasil diperbarui.');
+
+        $this->assertSame('Retret Diperbarui', $journal->fresh()->activity_name);
+        $this->assertSame('Rm. Thomas', $journal->fresh()->speaker);
+
+        // Orang lain tidak bisa update
+        $this->actingAs($otherUser)->put(route('jurnal.update', $journal), [
+            'activity_date' => now()->toDateString(),
+            'activity_name' => 'Retret Bajakan',
+            'organizer' => 'Provinsi FIC',
+            'speaker' => 'Rm. Lain',
+            'description' => 'Deskripsi',
+            'reflection' => $newReflection,
+        ])->assertNotFound();
+
+        // Hapus jurnal
+        $this->actingAs($user)->delete(route('jurnal.destroy', $journal))
+            ->assertRedirect(route('jurnal.index'))
+            ->assertSessionHas('success', 'Jurnal pengembangan diri berhasil dihapus.');
+
+        $this->assertSoftDeleted('self_development_journals', ['id' => $journal->id]);
+
+        // Orang lain tidak bisa hapus
+        $otherJournal = SelfDevelopmentJournal::create([
+            'user_id' => $user->id,
+            'activity_date' => now()->toDateString(),
+            'activity_name' => 'Jurnal Kedua',
+            'organizer' => 'Provinsi FIC',
+            'speaker' => 'Rm. Robert',
+            'description' => 'Materi',
+            'reflection' => $this->narrative(220),
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        $this->actingAs($otherUser)->delete(route('jurnal.destroy', $otherJournal))
+            ->assertNotFound();
+    }
+
     private function narrative(int $length = 220): string
     {
         return mb_substr(str_repeat('Refleksi pembinaan bruder muda tetap ditulis utuh. ', 20), 0, $length);

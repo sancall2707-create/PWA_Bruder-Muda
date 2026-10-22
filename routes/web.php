@@ -84,6 +84,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/jurnal', [JournalController::class, 'index'])->name('jurnal.index');
         Route::get('/jurnal/tambah', [JournalController::class, 'create'])->name('jurnal.create');
         Route::post('/jurnal', [JournalController::class, 'store'])->name('jurnal.store');
+        Route::get('/jurnal/{journal}/edit', [JournalController::class, 'edit'])->name('jurnal.edit');
+        Route::put('/jurnal/{journal}', [JournalController::class, 'update'])->name('jurnal.update');
+        Route::delete('/jurnal/{journal}', [JournalController::class, 'destroy'])->name('jurnal.destroy');
 
         // 14. Kalender Kegiatan
         Route::get('/kalender', [CalendarController::class, 'index'])->name('kalender');

@@ -51,7 +51,7 @@ class AdminDashboardTest extends TestCase
             ->assertSee('Rekapitulasi Agenda & Kalender')
             ->assertSee('Direktori & Rekam Jejak Bruder')
             ->assertSee('Rilis Sapaan & Pengumuman Bersama')
-            ->assertSee('Lihat PWA')
+            ->assertSee('Beranda Bruder Muda')
             ->assertSee('aria-label="Buka menu"', false)
             ->assertSee(route('logout'), false)
             ->assertDontSee('class="sa-logout"', false)

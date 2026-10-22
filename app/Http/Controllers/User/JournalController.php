@@ -67,4 +67,56 @@ class JournalController extends Controller
 
         return redirect()->route('jurnal.index')->with('success', 'Jurnal pengembangan diri berhasil dipublikasikan.');
     }
+
+    /**
+     * Formulir edit jurnal pengembangan diri.
+     */
+    public function edit(SelfDevelopmentJournal $journal): View
+    {
+        abort_unless($journal->user_id === auth()->id(), 404);
+
+        return view('user.jurnal.edit', compact('journal'));
+    }
+
+    /**
+     * Perbarui jurnal pengembangan diri.
+     */
+    public function update(Request $request, SelfDevelopmentJournal $journal): RedirectResponse
+    {
+        abort_unless($journal->user_id === auth()->id(), 404);
+
+        $validated = $request->validate([
+            'activity_date' => ['required', 'date'],
+            'activity_name' => ['required', 'string', 'max:255'],
+            'organizer' => ['required', 'string', 'max:255'],
+            'speaker' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'reflection' => ['required', 'string', 'min:200', 'max:500'],
+        ], [
+            'activity_date.required' => 'Hari dan tanggal kegiatan wajib diisi.',
+            'activity_name.required' => 'Nama kegiatan wajib diisi.',
+            'organizer.required' => 'Penyelenggara wajib diisi.',
+            'speaker.required' => 'Narasumber wajib diisi.',
+            'description.required' => 'Deskripsi kegiatan wajib diisi.',
+            'reflection.required' => 'Refleksi singkat wajib diisi.',
+            'reflection.min' => 'Refleksi singkat minimal 200 karakter.',
+            'reflection.max' => 'Refleksi singkat maksimal 500 karakter.',
+        ]);
+
+        $journal->update($validated);
+
+        return redirect()->route('jurnal.index')->with('success', 'Jurnal pengembangan diri berhasil diperbarui.');
+    }
+
+    /**
+     * Hapus jurnal pengembangan diri.
+     */
+    public function destroy(SelfDevelopmentJournal $journal): RedirectResponse
+    {
+        abort_unless($journal->user_id === auth()->id(), 404);
+
+        $journal->delete();
+
+        return redirect()->route('jurnal.index')->with('success', 'Jurnal pengembangan diri berhasil dihapus.');
+    }
 }

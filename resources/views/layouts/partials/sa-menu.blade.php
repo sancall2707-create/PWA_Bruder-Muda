@@ -169,7 +169,7 @@
                 <a class="sa-menu-link {{ request()->routeIs('admin.dashboard') || request()->routeIs('superadmin.dashboard') ? 'active' : '' }}" href="{{ $homeUrl }}">Beranda</a>
                 <a class="sa-menu-link {{ request()->routeIs('superadmin.profil*') ? 'active' : '' }}" href="{{ route('superadmin.profil') }}">Profil &amp; Edit Akun Saya</a>
                 @if ($isAdmin)
-                    <a class="sa-menu-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Lihat PWA</a>
+                    <a class="sa-menu-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Beranda Bruder Muda</a>
                 @endif
                 <a class="sa-menu-link {{ request()->routeIs('superadmin.users*') ? 'active' : '' }}" href="{{ route('superadmin.users.index') }}">{{ $isAdmin ? 'Direktori & Rekam Jejak Bruder' : 'Kelola Data Bruder' }}</a>
                 <a class="sa-menu-link {{ request()->routeIs('superadmin.monitoring.raport') ? 'active' : '' }}" href="{{ route('superadmin.monitoring.raport') }}">Raport Pendampingan Bruder</a>
