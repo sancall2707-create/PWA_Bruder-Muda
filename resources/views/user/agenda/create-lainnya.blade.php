@@ -1,22 +1,27 @@
 @extends('layouts.user-app')
 
 @php
+    $editing = isset($schedule);
     $backUrl = route('agenda.index');
-    $pageTitle = 'Agenda Kegiatan Lainnya';
+    $pageTitle = $editing ? 'Ubah Agenda Kegiatan Lainnya' : 'Agenda Kegiatan Lainnya';
 @endphp
 
 @section('content')
 <div class="card">
     <div style="margin-bottom: 20px;">
-        <h2 style="font-size: 16px; font-weight: 700; color: var(--fic-text-primary);">Tambah Agenda Kegiatan Lainnya</h2>
+        <h2 style="font-size: 16px; font-weight: 700; color: var(--fic-text-primary);">{{ $editing ? 'Ubah Agenda Kegiatan Lainnya' : 'Tambah Agenda Kegiatan Lainnya' }}</h2>
         <p style="font-size: 12px; color: var(--fic-text-secondary); margin-top: 4px;">
             Catat kegiatan komunitas, perutusan sekolah, atau agenda formatif lainnya.
         </p>
     </div>
 
-    <form action="{{ route('agenda.store') }}" method="POST">
+    <form action="{{ $editing ? route('agenda.update', ['type' => 'lainnya', 'schedule' => $schedule]) : route('agenda.store') }}" method="POST">
         @csrf
-        <input type="hidden" name="agenda_type" value="lainnya">
+        @if($editing)
+            @method('PUT')
+        @else
+            <input type="hidden" name="agenda_type" value="lainnya">
+        @endif
 
         @if ($errors->any())
             <div style="background-color: #FEF3F2; border: 1px solid #FECDCA; border-radius: 12px; padding: 12px 14px; color: #B42318; font-size: 13px; margin-bottom: 18px;">
@@ -35,7 +40,7 @@
                 type="text"
                 id="title"
                 name="title"
-                value="{{ old('title') }}"
+                value="{{ old('title', $editing ? $schedule->title : '') }}"
                 placeholder="Contoh: Pertemuan Komunitas Distrik"
                 class="form-input"
                 required
@@ -51,7 +56,7 @@
                 type="date"
                 id="start_date"
                 name="start_date"
-                value="{{ old('start_date', date('Y-m-d')) }}"
+                value="{{ old('start_date', $editing ? $schedule->start_at->format('Y-m-d') : date('Y-m-d')) }}"
                 class="form-input"
                 required
             >
@@ -66,7 +71,7 @@
                 type="time"
                 id="start_time"
                 name="start_time"
-                value="{{ old('start_time', '09:00') }}"
+                value="{{ old('start_time', $editing ? $schedule->start_at->format('H:i') : '09:00') }}"
                 class="form-input"
                 required
             >
@@ -81,7 +86,7 @@
                 type="text"
                 id="location"
                 name="location"
-                value="{{ old('location') }}"
+                value="{{ old('location', $editing ? $schedule->location : '') }}"
                 placeholder="Contoh: Kapel Biara Pusat Semarang"
                 class="form-input"
                 required
@@ -99,11 +104,11 @@
                 class="form-textarea"
                 rows="4"
                 placeholder="Catatan persiapan, pakaian khusus, atau kebutuhan kegiatan..."
-            >{{ old('description') }}</textarea>
+            >{{ old('description', $editing ? $schedule->description : '') }}</textarea>
         </div>
 
         <button type="submit" class="btn-primary" style="background-color: #B57900; margin-top: 8px;">
-            SIMPAN AGENDA BARU
+            {{ $editing ? 'SIMPAN PERUBAHAN' : 'SIMPAN AGENDA BARU' }}
         </button>
     </form>
 </div>

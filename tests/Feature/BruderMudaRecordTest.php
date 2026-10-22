@@ -162,6 +162,129 @@ class BruderMudaRecordTest extends TestCase
             ->assertSee('0 / 3');
     }
 
+    public function test_owner_can_edit_and_delete_personal_agendas(): void
+    {
+        $user = User::factory()->create();
+        $other = User::factory()->create();
+        $today = now()->toDateString();
+
+        $this->actingAs($user)->post(route('agenda.store'), [
+            'agenda_type' => 'bimbingan',
+            'mentor_name' => 'Br. Yohanes Uji, FIC',
+            'meeting_date' => $today,
+            'meeting_time' => '10:00',
+            'location' => 'Ruang Bimbingan',
+            'topic_notes' => 'Doa batin.',
+        ])->assertRedirect(route('agenda.index'));
+
+        $this->actingAs($user)->post(route('agenda.store'), [
+            'agenda_type' => 'wawanhati',
+            'local_leader_name' => 'Br. Piko Uji, FIC',
+            'meeting_date' => $today,
+            'meeting_time' => '14:00',
+            'location' => 'Ruang Piko',
+        ])->assertRedirect(route('agenda.index'));
+
+        $this->actingAs($user)->post(route('agenda.store'), [
+            'agenda_type' => 'lainnya',
+            'title' => 'Ibadat Komunitas',
+            'start_date' => $today,
+            'start_time' => '09:00',
+            'location' => 'Kapel',
+            'description' => 'Doa bersama.',
+        ])->assertRedirect(route('agenda.index'));
+
+        $bimbingan = SpiritualGuidanceSchedule::first();
+        $wawanhati = WawanhatiSchedule::first();
+        $lainnya = PersonalAgenda::first();
+
+        $this->actingAs($user)
+            ->get(route('agenda.index'))
+            ->assertOk()
+            ->assertSee('agenda/bimbingan/'.$bimbingan->id.'/edit', false)
+            ->assertSee('agenda/wawanhati/'.$wawanhati->id.'/edit', false)
+            ->assertSee('agenda/lainnya/'.$lainnya->id.'/edit', false);
+
+        $this->actingAs($other)
+            ->get(route('agenda.edit', ['type' => 'bimbingan', 'schedule' => $bimbingan->id]))
+            ->assertNotFound();
+        $this->actingAs($other)
+            ->put(route('agenda.update', ['type' => 'wawanhati', 'schedule' => $wawanhati->id]), [
+                'local_leader_name' => 'Br. Orang Lain, FIC',
+                'meeting_date' => $today,
+                'meeting_time' => '16:00',
+                'location' => 'Ruang Lain',
+            ])
+            ->assertNotFound();
+        $this->actingAs($other)
+            ->delete(route('agenda.destroy', ['type' => 'lainnya', 'schedule' => $lainnya->id]))
+            ->assertNotFound();
+
+        $this->actingAs($user)
+            ->get(route('agenda.edit', ['type' => 'bimbingan', 'schedule' => $bimbingan->id]))
+            ->assertOk()
+            ->assertSee('Ubah Jadwal Bimbingan Rohani')
+            ->assertSee('Br. Yohanes Uji, FIC')
+            ->assertSee('value="10:00"', false);
+
+        $this->actingAs($user)
+            ->put(route('agenda.update', ['type' => 'bimbingan', 'schedule' => $bimbingan->id]), [
+                'meeting_date' => $today,
+                'meeting_time' => '11:15',
+                'location' => 'Ruang Baru',
+            ])
+            ->assertSessionHasErrors('mentor_name');
+
+        $this->actingAs($user)
+            ->put(route('agenda.update', ['type' => 'bimbingan', 'schedule' => $bimbingan->id]), [
+                'mentor_name' => 'Br. Markus Baru, FIC',
+                'meeting_date' => $today,
+                'meeting_time' => '11:15',
+                'location' => 'Ruang Baru',
+                'topic_notes' => 'Discernment.',
+            ])
+            ->assertRedirect(route('agenda.index'));
+
+        $bimbingan->refresh();
+        $this->assertSame('Br. Markus Baru, FIC', $bimbingan->mentor_name);
+        $this->assertSame('11:15:00', $bimbingan->scheduled_at->format('H:i:s'));
+        $this->assertSame('scheduled', $bimbingan->status);
+        $this->assertSame(1, SpiritualGuidanceSchedule::count());
+
+        $this->actingAs($user)
+            ->put(route('agenda.update', ['type' => 'lainnya', 'schedule' => $lainnya->id]), [
+                'title' => 'Rekoleksi Distrik',
+                'start_date' => $today,
+                'start_time' => '08:30',
+                'location' => 'Aula',
+                'description' => 'Persiapan pakaian.',
+            ])
+            ->assertRedirect(route('agenda.index'));
+
+        $this->assertSame('Rekoleksi Distrik', $lainnya->fresh()->title);
+        $this->assertSame('08:30:00', $lainnya->fresh()->start_at->format('H:i:s'));
+
+        $this->actingAs($user)
+            ->delete(route('agenda.destroy', ['type' => 'wawanhati', 'schedule' => $wawanhati->id]))
+            ->assertRedirect(route('agenda.index'));
+
+        $this->assertSoftDeleted('wawanhati_schedules', ['id' => $wawanhati->id]);
+
+        $this->actingAs($user)
+            ->get(route('agenda.index'))
+            ->assertOk()
+            ->assertSee('Br. Markus Baru, FIC')
+            ->assertSee('Rekoleksi Distrik')
+            ->assertSee('Agenda berhasil dihapus dari jadwal Anda.')
+            ->assertDontSee('Br. Piko Uji, FIC');
+
+        $this->actingAs($user)
+            ->get(route('kalender', ['date' => $today]))
+            ->assertOk()
+            ->assertSee('Br. Markus Baru, FIC')
+            ->assertDontSee('Br. Piko Uji, FIC');
+    }
+
     public function test_journal_is_published_and_counts_on_the_dashboard(): void
     {
         $user = User::factory()->create();
