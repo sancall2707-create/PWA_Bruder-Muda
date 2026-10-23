@@ -10,7 +10,7 @@ class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     * Seed 11 akun resmi: Super Admin, Admin Ketua TPPBM, Admin TPPBM, dan Bruder Muda.
+     * Seed seluruh akun resmi FIC: Super Admin, TPPBM, Admin, dan Seluruh Bruder Muda.
      */
     public function run(): void
     {
@@ -18,150 +18,305 @@ class UserSeeder extends Seeder
         $adminPassword = env('DEV_ADMIN_PASSWORD', 'Admin#FIC2026');
         $ketuaPassword = env('DEV_KETUA_PASSWORD', 'Ketua#FIC2026');
         $userPassword = env('DEV_USER_PASSWORD', 'User#FIC2026');
+        $defaultPassword = Hash::make('123456');
 
-        // 1. Super Admin (Administrator Data Raport)
-        $superAdmin = User::firstOrNew(['username' => 'superadmin']);
-        $superAdmin->name = 'Bruder Andrias Purwanto, FIC-Cah Ndeso';
-        $superAdmin->email = 'superadmin@fic.local';
-        $superAdmin->password = Hash::make($superAdminPassword);
-        $superAdmin->role = 'super_admin';
-        $superAdmin->is_active = true;
-        $superAdmin->community_location = 'Pusat Provinsi Semarang';
-        $superAdmin->phone = '081234567890';
-        $superAdmin->bio = 'Pengelola Utama Sistem Pembinaan Bruder Muda FIC Indonesia';
-        $superAdmin->birth_date = '1980-01-15';
-        $superAdmin->parents_name = 'Keluarga FIC';
-        $superAdmin->last_education = 'S2 Manajemen Pendidikan';
-        $superAdmin->entry_year = 2000;
-        $superAdmin->save();
+        // 1. Akun Dasar Sistem
+        $baseUsers = [
+            [
+                'username' => 'superadmin',
+                'name' => 'Bruder Andrias Purwanto, FIC-Cah Ndeso',
+                'email' => 'superadmin@fic.local',
+                'password' => Hash::make($superAdminPassword),
+                'role' => 'super_admin',
+                'community_location' => 'Pusat Provinsi Semarang',
+                'phone' => '081234567890',
+                'bio' => 'Pengelola Utama Sistem Pembinaan Bruder Muda FIC Indonesia',
+            ],
+            [
+                'username' => 'sarwoyes',
+                'name' => 'Br. Sarwo Ono, FIC',
+                'email' => 'sarwoyes@fic.local',
+                'password' => Hash::make($ketuaPassword),
+                'role' => 'admin_ketua_tppbm',
+                'community_location' => 'Semarang',
+                'phone' => '081234567899',
+                'bio' => 'Ketua Tim Pemantap Panggilan Bruder Muda (TPPBM)',
+            ],
+            [
+                'username' => 'galihsih',
+                'name' => 'Br. F.A. Galih Sih Hartanta, FIC',
+                'email' => 'fagsh08@gmail.com',
+                'password' => Hash::make($ketuaPassword),
+                'role' => 'admin_ketua_tppbm',
+                'community_location' => 'Muntilan',
+                'phone' => '087832139199',
+                'bio' => 'Ketua Tim Pemantap Panggilan Bruder Muda (TPPBM)',
+            ],
+            [
+                'username' => 'admin',
+                'name' => 'Admin TPPBM',
+                'email' => 'admin@fic.local',
+                'password' => Hash::make($adminPassword),
+                'role' => 'admin',
+                'community_location' => 'Komunitas St. Joseph Semarang',
+                'phone' => '081234567891',
+                'bio' => 'Staf Tim Pendamping Pembinaan Bruder Muda (TPPBM)',
+            ],
+            [
+                'username' => 'userdemo',
+                'name' => 'Br. Yohanes FIC',
+                'email' => 'userdemo@fic.local',
+                'password' => Hash::make($userPassword),
+                'role' => 'user',
+                'community_location' => 'Komunitas Bruderan Deltamas',
+                'phone' => '081234567892',
+                'bio' => 'Bruder Muda - Penugasan Unit Pendidikan Deltamas',
+            ],
+            [
+                'username' => 'bruder_anton',
+                'name' => 'Br. Antonius FIC',
+                'email' => 'anton@fic.local',
+                'password' => Hash::make($userPassword),
+                'role' => 'user',
+                'community_location' => 'Komunitas Bruderan Yogyakarta',
+                'phone' => '081234567893',
+            ],
+            [
+                'username' => 'bruder_michael',
+                'name' => 'Br. Michael FIC',
+                'email' => 'michael@fic.local',
+                'password' => Hash::make($userPassword),
+                'role' => 'user',
+                'community_location' => 'Komunitas Semarang',
+                'phone' => '081299998888',
+            ],
+            [
+                'username' => 'brunofic',
+                'name' => 'Br. Yohanes Sarwono, FIC',
+                'email' => 'brunofic@fic.local',
+                'password' => Hash::make($userPassword),
+                'role' => 'user',
+                'community_location' => 'Jakarta',
+                'phone' => '021223254',
+            ],
+            [
+                'username' => 'poerw',
+                'name' => 'Br. Purwanto, FIC',
+                'email' => 'poerw@fic.local',
+                'password' => Hash::make($userPassword),
+                'role' => 'user',
+                'community_location' => 'Semarang',
+            ],
+            [
+                'username' => 'agsuparno',
+                'name' => 'Br. Agustinus Suparno, FIC',
+                'email' => 'agsuparno@fic.local',
+                'password' => Hash::make($userPassword),
+                'role' => 'user',
+                'community_location' => 'Yogyakarta',
+            ],
+            [
+                'username' => 'ysapto_ficindo',
+                'name' => 'Br. Yohanes Sapto Nugroho, FIC',
+                'email' => 'ysapto@fic.local',
+                'password' => Hash::make($userPassword),
+                'role' => 'user',
+                'community_location' => 'Surakarta',
+            ],
+        ];
 
-        // 2. Admin Ketua TPPBM (Penanda Tangan Raport)
-        $sarwo = User::firstOrNew(['username' => 'sarwoyes']);
-        $sarwo->name = 'Br. Sarwo Ono, FIC';
-        $sarwo->email = 'sarwoyes@fic.local';
-        $sarwo->password = Hash::make($ketuaPassword);
-        $sarwo->role = 'admin_ketua_tppbm';
-        $sarwo->is_active = true;
-        $sarwo->community_location = 'Semarang';
-        $sarwo->phone = '081234567899';
-        $sarwo->bio = 'Ketua Tim Pemantap Panggilan Bruder Muda (TPPBM)';
-        $sarwo->save();
+        foreach ($baseUsers as $u) {
+            $user = User::firstOrNew(['username' => $u['username']]);
+            $user->fill($u);
+            if (! $user->exists || empty($user->password)) {
+                $user->password = $u['password'];
+            }
+            $user->is_active = true;
+            $user->save();
+        }
 
-        // 3. Admin Ketua TPPBM (Wakil/Ketua Pendamping)
-        $galih = User::firstOrNew(['username' => 'galihsih']);
-        $galih->name = 'Br. F.A. Galih Sih Hartanta, FIC';
-        $galih->email = 'fagsh08@gmail.com';
-        $galih->password = Hash::make($ketuaPassword);
-        $galih->role = 'admin_ketua_tppbm';
-        $galih->is_active = true;
-        $galih->community_location = 'Muntilan';
-        $galih->phone = '087832139199';
-        $galih->bio = 'Ketua Tim Pemantap Panggilan Bruder Muda (TPPBM)';
-        $galih->birth_date = '1985-03-09';
-        $galih->last_education = 'S2 Arsitektur';
-        $galih->entry_year = 2003;
-        $galih->save();
+        // 2. Daftar 25 Akun Resmi Pembinaan (5 Admin + 20 Bruder Muda)
+        $officialAccounts = [
+            // Admin (1 - 5)
+            [
+                'name' => 'Br. Agustinus Giwal Santoso, FIC',
+                'role' => 'admin',
+                'username' => 'giwalfic',
+                'email' => 'giwalfic@fic.local',
+                'community_location' => 'Semarang',
+            ],
+            [
+                'name' => 'Br. Albertus Suwarto, FIC',
+                'role' => 'admin',
+                'username' => 'wartofic',
+                'email' => 'wartofic@fic.local',
+                'community_location' => 'Semarang',
+            ],
+            [
+                'name' => 'Br. FA. Galih Sih Hartanta, FIC',
+                'role' => 'admin_ketua_tppbm',
+                'username' => 'galihfic',
+                'email' => 'galihfic@fic.local',
+                'community_location' => 'Muntilan',
+            ],
+            [
+                'name' => 'Br. Agustinus Suparno, FIC',
+                'role' => 'admin',
+                'username' => 'aguspfic',
+                'email' => 'aguspfic@fic.local',
+                'community_location' => 'Yogyakarta',
+            ],
+            [
+                'name' => 'Br. Andrias Purwanto, FIC',
+                'role' => 'admin',
+                'username' => 'wantofic',
+                'email' => 'wantofic@fic.local',
+                'community_location' => 'Semarang',
+            ],
+            // User / Bruder Muda (6 - 25)
+            [
+                'name' => 'Br. Alaysius Riyanto, FIC',
+                'role' => 'user',
+                'username' => 'riyantfic',
+                'email' => 'riyantfic@fic.local',
+            ],
+            [
+                'name' => 'Br. Fransiskus Saptono, FIC',
+                'role' => 'user',
+                'username' => 'saptofic',
+                'email' => 'saptofic@fic.local',
+            ],
+            [
+                'name' => 'Br. Thomas Aquinas, FIC',
+                'role' => 'user',
+                'username' => 'thomfic',
+                'email' => 'thomfic@fic.local',
+            ],
+            [
+                'name' => 'Br. Arcancio Amaral, FIC',
+                'role' => 'user',
+                'username' => 'canciofic',
+                'email' => 'canciofic@fic.local',
+            ],
+            [
+                'name' => 'Br. Hieronymus Wisnumurti R, FIC',
+                'role' => 'user',
+                'username' => 'hierofic',
+                'email' => 'hierofic@fic.local',
+            ],
+            [
+                'name' => 'Br. Hendrikus Arie Handoko, FIC',
+                'role' => 'user',
+                'username' => 'hendrikfic',
+                'email' => 'hendrikfic@fic.local',
+            ],
+            [
+                'name' => 'Br. Thomas Nova Wibisono, FIC',
+                'role' => 'user',
+                'username' => 'thnovafic',
+                'email' => 'thnovafic@fic.local',
+            ],
+            [
+                'name' => 'Br. Paulinus, FIC',
+                'role' => 'user',
+                'username' => 'paulfic',
+                'email' => 'paulfic@fic.local',
+            ],
+            [
+                'name' => 'Br. G. Anggara Tadon, FIC',
+                'role' => 'user',
+                'username' => 'anggafic',
+                'email' => 'anggafic@fic.local',
+            ],
+            [
+                'name' => 'Br. Yakobus Aditya, FIC',
+                'role' => 'user',
+                'username' => 'yakobfic',
+                'email' => 'yakobfic@fic.local',
+            ],
+            [
+                'name' => 'Br. Dinis Lopes, FIC',
+                'role' => 'user',
+                'username' => 'dinisfic',
+                'email' => 'dinisfic@fic.local',
+            ],
+            [
+                'name' => 'Br. Yohanes Zendi, FIC',
+                'role' => 'user',
+                'username' => 'zendific',
+                'email' => 'zendific@fic.local',
+            ],
+            [
+                'name' => 'Br. Jaimito Tan Tuames, FIC',
+                'role' => 'user',
+                'username' => 'jaimific',
+                'email' => 'jaimific@fic.local',
+            ],
+            [
+                'name' => 'Br. Gembira Fransiskus S, FIC',
+                'role' => 'user',
+                'username' => 'fransgfic',
+                'email' => 'fransgfic@fic.local',
+            ],
+            [
+                'name' => 'Br. Gregorius Yoan Danutama, FIC',
+                'role' => 'user',
+                'username' => 'gregfic',
+                'email' => 'gregfic@fic.local',
+            ],
+            [
+                'name' => 'Br. Laurentius Gde Gunawan S, FIC',
+                'role' => 'user',
+                'username' => 'bratafic',
+                'email' => 'bratafic@fic.local',
+            ],
+            [
+                'name' => 'Br. Philipus Aji Sapto Wibowo, FIC',
+                'role' => 'user',
+                'username' => 'ajisafic',
+                'email' => 'ajisafic@fic.local',
+            ],
+            [
+                'name' => 'Br. Constansius Afrisal S, FIC',
+                'role' => 'user',
+                'username' => 'constanfic',
+                'email' => 'constanfic@fic.local',
+            ],
+            [
+                'name' => 'Br. Remigio Cuil, FIC',
+                'role' => 'user',
+                'username' => 'remific',
+                'email' => 'remific@fic.local',
+            ],
+            [
+                'name' => 'Br. Justinus Coa, FIC',
+                'role' => 'user',
+                'username' => 'justfic',
+                'email' => 'justfic@fic.local',
+            ],
+        ];
 
-        // 4. Staf Admin TPPBM
-        $admin = User::firstOrNew(['username' => 'admin']);
-        $admin->name = 'Admin TPPBM';
-        $admin->email = 'admin@fic.local';
-        $admin->password = Hash::make($adminPassword);
-        $admin->role = 'admin';
-        $admin->is_active = true;
-        $admin->community_location = 'Komunitas St. Joseph Semarang';
-        $admin->phone = '081234567891';
-        $admin->bio = 'Staf Tim Pendamping Pembinaan Bruder Muda (TPPBM)';
-        $admin->save();
-
-        // 5. Bruder Muda: userdemo
-        $userDemo = User::firstOrNew(['username' => 'userdemo']);
-        $userDemo->name = 'Br. Yohanes FIC';
-        $userDemo->email = 'userdemo@fic.local';
-        $userDemo->password = Hash::make($userPassword);
-        $userDemo->role = 'user';
-        $userDemo->is_active = true;
-        $userDemo->community_location = 'Komunitas Bruderan Deltamas';
-        $userDemo->phone = '081234567892';
-        $userDemo->bio = 'Bruder Muda - Penugasan Unit Pendidikan Deltamas';
-        $userDemo->birth_date = '1998-05-20';
-        $userDemo->parents_name = 'Bpk. Yohanes & Ibu Maria';
-        $userDemo->last_education = 'S1 Filsafat Keagamaan';
-        $userDemo->entry_year = 2020;
-        $userDemo->save();
-
-        // 6. Bruder Muda: bruder_anton
-        $anton = User::firstOrNew(['username' => 'bruder_anton']);
-        $anton->name = 'Br. Antonius FIC';
-        $anton->email = 'anton@fic.local';
-        $anton->password = Hash::make($userPassword);
-        $anton->role = 'user';
-        $anton->is_active = true;
-        $anton->community_location = 'Komunitas Bruderan Yogyakarta';
-        $anton->phone = '081234567893';
-        $anton->bio = 'Bruder Muda - Penugasan Asrama Yogyakarta';
-        $anton->save();
-
-        // 7. Bruder Muda: bruder_michael
-        $michael = User::firstOrNew(['username' => 'bruder_michael']);
-        $michael->name = 'Br. Michael FIC';
-        $michael->email = 'michael@fic.local';
-        $michael->password = Hash::make($userPassword);
-        $michael->role = 'user';
-        $michael->is_active = true;
-        $michael->community_location = 'Komunitas Semarang';
-        $michael->phone = '081299998888';
-        $michael->bio = 'Bruder Muda';
-        $michael->birth_date = '1999-08-12';
-        $michael->save();
-
-        // 8. Bruder Muda: brunofic
-        $bruno = User::firstOrNew(['username' => 'brunofic']);
-        $bruno->name = 'Br. Yohanes Sarwono, FIC';
-        $bruno->email = 'brunofic@fic.local';
-        $bruno->password = Hash::make($userPassword);
-        $bruno->role = 'user';
-        $bruno->is_active = true;
-        $bruno->community_location = 'Jakarta';
-        $bruno->phone = '021223254';
-        $bruno->bio = 'Bruder Muda';
-        $bruno->birth_date = '1945-12-12';
-        $bruno->parents_name = 'Mento & Suratmi';
-        $bruno->last_education = 'S2 Mbio';
-        $bruno->entry_year = 2009;
-        $bruno->save();
-
-        // 9. Bruder Muda: poerw
-        $poerw = User::firstOrNew(['username' => 'poerw']);
-        $poerw->name = 'Br. Purwanto, FIC';
-        $poerw->email = 'poerw@fic.local';
-        $poerw->password = Hash::make($userPassword);
-        $poerw->role = 'user';
-        $poerw->is_active = true;
-        $poerw->community_location = 'Semarang';
-        $poerw->bio = 'Bruder Muda';
-        $poerw->save();
-
-        // 10. Bruder Muda: agsuparno
-        $agsuparno = User::firstOrNew(['username' => 'agsuparno']);
-        $agsuparno->name = 'Br. Agustinus Suparno, FIC';
-        $agsuparno->email = 'agsuparno@fic.local';
-        $agsuparno->password = Hash::make($userPassword);
-        $agsuparno->role = 'user';
-        $agsuparno->is_active = true;
-        $agsuparno->community_location = 'Yogyakarta';
-        $agsuparno->bio = 'Bruder Muda';
-        $agsuparno->save();
-
-        // 11. Bruder Muda: ysapto_ficindo
-        $ysapto = User::firstOrNew(['username' => 'ysapto_ficindo']);
-        $ysapto->name = 'Br. Yohanes Sapto Nugroho, FIC';
-        $ysapto->email = 'ysapto@fic.local';
-        $ysapto->password = Hash::make($userPassword);
-        $ysapto->role = 'user';
-        $ysapto->is_active = true;
-        $ysapto->community_location = 'Surakarta';
-        $ysapto->bio = 'Bruder Muda';
-        $ysapto->save();
+        foreach ($officialAccounts as $acc) {
+            $existing = User::where('username', $acc['username'])->first();
+            if ($existing) {
+                $existing->name = $acc['name'];
+                $existing->role = $acc['role'];
+                if (isset($acc['community_location'])) {
+                    $existing->community_location = $acc['community_location'];
+                }
+                $existing->is_active = true;
+                $existing->save();
+            } else {
+                $created = new User();
+                $created->name = $acc['name'];
+                $created->username = $acc['username'];
+                $created->role = $acc['role'];
+                $created->email = $acc['email'];
+                $created->password = $defaultPassword; // Password awal 123456
+                $created->community_location = $acc['community_location'] ?? 'Indonesia';
+                $created->is_active = true;
+                $created->save();
+            }
+        }
     }
 }
