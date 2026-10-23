@@ -165,7 +165,7 @@
     <div class="login-card">
         <!-- Brand Identity -->
         <div class="brand-header">
-            <img src="/images/logo-fic.png" alt="Lambang Kongregasi Bruder FIC" class="brand-emblem" width="96" height="96">
+            <img src="/images/logo-fic.png?v=2" alt="Lambang Kongregasi Bruder FIC" class="brand-emblem" width="96" height="96">
             <div class="brand-title-main">BRUDER FIC</div>
             <div class="brand-title-sub">INDONESIA</div>
             <p class="brand-tagline">“Hidup kita bagi Allah dan Sesama”</p>

@@ -25,7 +25,7 @@
             <header class="app-header">
                 <div class="header-top">
                     <div class="identity-brand">
-                        <img src="/images/logo-fic.png" alt="Lambang FIC" class="identity-logo" width="38" height="38">
+                        <img src="/images/logo-fic.png?v=2" alt="Lambang FIC" class="identity-logo" width="38" height="38">
                         <div class="identity-titles">
                             <span class="identity-title-main">BRUDER FIC</span>
                             <span class="identity-title-sub">INDONESIA</span>

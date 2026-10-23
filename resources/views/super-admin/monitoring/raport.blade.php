@@ -273,7 +273,7 @@
         <div class="raport-flow">
                 <!-- KOP RESMI DOKUMEN -->
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;">
-                    <img src="/images/logo-fic.png" alt="Logo FIC" style="width:52px; height:52px; object-fit:contain; flex-shrink:0;">
+                    <img src="/images/logo-fic.png?v=2" alt="Logo FIC" style="width:52px; height:52px; object-fit:contain; flex-shrink:0;">
                     <div style="text-align:center; flex:1;">
                         <div style="font-size:16px; font-weight:800; color:#0E3366; letter-spacing:0.8px; line-height:1.2; text-transform:uppercase;">
                             RAPORT PENDAMPINGAN BRUDER MUDA
