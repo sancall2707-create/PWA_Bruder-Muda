@@ -121,4 +121,27 @@ class JournalController extends Controller
 
         return redirect()->route('jurnal.index')->with('success', 'Jurnal pengembangan diri berhasil dihapus.');
     }
+
+    /**
+     * Hapus banyak jurnal sekaligus (bulk delete).
+     * Hanya memproses jurnal milik user yang sedang login.
+     */
+    public function destroyBulk(Request $request): RedirectResponse
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids) || ! is_array($ids)) {
+            return redirect()->route('jurnal.index')->with('error', 'Tidak ada jurnal yang dipilih.');
+        }
+
+        // Pastikan hanya jurnal milik user sendiri yang dihapus — keamanan berlapis
+        $deleted = SelfDevelopmentJournal::whereIn('id', $ids)
+            ->where('user_id', auth()->id())
+            ->delete();
+
+        return redirect()->route('jurnal.index')->with(
+            'success',
+            "{$deleted} jurnal pengembangan diri berhasil dihapus."
+        );
+    }
 }

@@ -251,7 +251,7 @@ class UserProfileTest extends TestCase
             ->getContent();
 
         $this->assertMatchesRegularExpression(
-            '/class="header-user-avatar"[^>]*>\s*<img\b(?=[^>]*\bclass="header-user-photo")(?=[^>]*\bsrc="'.preg_quote(route('profil.foto'), '/').'")[^>]*>/',
+            '/class="header-user-avatar"[^>]*>\s*<img\b(?=[^>]*\bclass="header-user-photo")(?=[^>]*\bsrc="'.preg_quote(route('profil.foto'), '/').'\b)[^>]*>/',
             $withPhotoHtml
         );
         $this->assertDoesNotMatchRegularExpression(
