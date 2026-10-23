@@ -74,7 +74,7 @@
                     @php
                         $words = preg_split('/\s+/', trim($u->name)) ?: [];
                         $initials = strtoupper(substr($words[0] ?? 'B', 0, 1).substr($words[1] ?? '', 0, 1));
-                        $monthDone = ($u->bimbingan_month_count ?? 0) + ($u->wawanhati_month_count ?? 0) + ($u->journal_month_count ?? 0);
+                        $monthDone = ($u->bimbingan_month_count ?? 0) + ($u->wawanhati_month_count ?? 0);
                         $isStaffOrAdmin = in_array($u->role, ['admin', 'admin_ketua_tppbm', 'super_admin'], true);
                     @endphp
                     <article class="card">
@@ -96,7 +96,7 @@
                                 @elseif($u->role === 'admin')
                                     <span class="pill" style="color:#026AA2; background:#F0F9FF; font-weight:700;">Admin TPPBM</span>
                                 @else
-                                    <span class="pill" style="color:#1455C0; background:#EFF4FF;">{{ $monthDone }}/3 bulan ini</span>
+                                    <span class="pill" style="color:#1455C0; background:#EFF4FF;">{{ $monthDone }}/2 bulan ini</span>
                                 @endif
                             </div>
                             <div class="actions">

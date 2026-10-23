@@ -152,7 +152,7 @@
     <div style="display: flex; flex-direction: column; gap: 10px;">
         @forelse($bruders as $b)
             @php
-                $monthDone = ($b->bimbingan_month_count ?? 0) + ($b->wawanhati_month_count ?? 0) + ($b->journal_month_count ?? 0);
+                $monthDone = ($b->bimbingan_month_count ?? 0) + ($b->wawanhati_month_count ?? 0);
                 $words = preg_split('/\s+/', trim($b->name)) ?: [];
                 $initials = strtoupper(substr($words[0] ?? 'B', 0, 1).substr($words[1] ?? '', 0, 1));
             @endphp
@@ -169,7 +169,7 @@
                                 {{ $b->is_active ? 'Aktif' : 'Nonaktif' }}
                             </span>
                             <span style="font-size: 11px; font-weight: 800; color: #1455C0; background: #EFF4FF; border-radius: 999px; padding: 2px 8px;">
-                                {{ $monthDone }}/3 bulan ini
+                                {{ $monthDone }}/2 bulan ini
                             </span>
                         </div>
                     </div>

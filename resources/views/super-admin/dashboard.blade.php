@@ -56,7 +56,7 @@
 <div style="display: flex; flex-direction: column; gap: 10px;">
     @forelse($bruders as $b)
         @php
-            $monthDone = ($b->bimbingan_month_count ?? 0) + ($b->wawanhati_month_count ?? 0) + ($b->journal_month_count ?? 0);
+            $monthDone = ($b->bimbingan_month_count ?? 0) + ($b->wawanhati_month_count ?? 0);
         @endphp
         <div class="user-card" style="background: #ffffff; border-radius: 14px; border: 1px solid #E4E7EC; padding: 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 2px 6px rgba(16,24,40,0.03);">
             <div>
@@ -64,7 +64,7 @@
                 <div class="user-info-loc" style="font-size: 12px; color: #667085; margin-top: 2px;">{{ $b->community_location ?? 'Komunitas belum diset' }}</div>
                 <div style="display: flex; gap: 6px; margin-top: 8px;">
                     <span style="font-size: 11px; font-weight: 800; color: {{ $b->is_active ? '#027A48' : '#B42318' }}; background: {{ $b->is_active ? '#ECFDF3' : '#FEF3F2' }}; border-radius: 999px; padding: 3px 8px;">{{ $b->is_active ? 'Aktif' : 'Nonaktif' }}</span>
-                    <span style="font-size: 11px; font-weight: 800; color: #1455C0; background: #EFF4FF; border-radius: 999px; padding: 3px 8px;">{{ $monthDone }}/3 bulan ini</span>
+                    <span style="font-size: 11px; font-weight: 800; color: #1455C0; background: #EFF4FF; border-radius: 999px; padding: 3px 8px;">{{ $monthDone }}/2 bulan ini</span>
                 </div>
             </div>
             <a href="{{ route('superadmin.users.track-record', $b->id) }}" class="btn" style="background: #1455C0; color: #fff; padding: 8px 14px; border-radius: 10px; font-weight: 700; text-decoration: none; font-size: 12px; white-space: nowrap;">Track Record</a>

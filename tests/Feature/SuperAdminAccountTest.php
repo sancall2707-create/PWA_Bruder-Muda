@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\SelfDevelopmentJournal;
+use App\Models\SpiritualGuidanceReport;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -23,16 +24,24 @@ class SuperAdminAccountTest extends TestCase
             'community_location' => 'Komunitas Uji',
             'is_active' => true,
         ]);
-        $this->publishJournal($bruder, 'Jurnal Kepatuhan');
+        SpiritualGuidanceReport::create([
+            'user_id' => $bruder->id,
+            'mentor_name' => 'Br. Pembimbing, FIC',
+            'location' => 'Semarang',
+            'report_content' => str_repeat('Refleksi bimbingan rohani bulanan bruder muda. ', 6),
+            'meeting_at' => now(),
+            'status' => 'submitted',
+            'submitted_at' => now(),
+        ]);
 
         $this->actingAs($admin)
             ->get(route('superadmin.dashboard'))
             ->assertOk()
-            ->assertSee('33%')
-            ->assertSee('1 dari 3 laporan selesai')
+            ->assertSee('50%')
+            ->assertSee('1 dari 2 laporan selesai')
             ->assertSee('Br. Uji Kepatuhan')
             ->assertSee('Komunitas Uji')
-            ->assertSee('1/3 bulan ini')
+            ->assertSee('1/2 bulan ini')
             ->assertSee('Aktif')
             ->assertSee('Kelola Data Bruder')
             ->assertSee('Monitoring & Ekspor Data')

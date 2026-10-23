@@ -44,8 +44,8 @@ class SuperAdminOverviewService
             ->whereIn('status', ['published', 'submitted', 'completed', 'approved'])
             ->count();
 
-        $expectedReports = $activeBruders * 3;
-        $completedReports = $bimbinganSubmitted + $wawanhatiSubmitted + $journalPublished;
+        $expectedReports = $activeBruders * 2;
+        $completedReports = $bimbinganSubmitted + $wawanhatiSubmitted;
         $completionPercent = $expectedReports === 0
             ? 0
             : min(100, (int) round(($completedReports / $expectedReports) * 100));
