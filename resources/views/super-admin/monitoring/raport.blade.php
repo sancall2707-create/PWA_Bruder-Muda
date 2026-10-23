@@ -16,7 +16,7 @@
         margin-top: 14px;
         font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif;
         color: #1F2937;
-        font-size: 11px;
+        font-size: 12px;
         line-height: 1.45;
         box-sizing: border-box;
         width: 100%;
@@ -30,7 +30,7 @@
     .raport-section-title {
         color: #0E3366;
         font-weight: 800;
-        font-size: 12px;
+        font-size: 13px;
         letter-spacing: 0.3px;
         text-transform: uppercase;
         margin: 12px 0 5px 0;
@@ -62,7 +62,7 @@
         border-right: none;
     }
     .raport-cell-label {
-        font-size: 9px;
+        font-size: 10px;
         font-weight: 800;
         color: #6B7280;
         text-transform: uppercase;
@@ -70,7 +70,7 @@
         margin-bottom: 1px;
     }
     .raport-cell-value {
-        font-size: 10.5px;
+        font-size: 11.5px;
         font-weight: 600;
         color: #1F2937;
     }
@@ -80,7 +80,7 @@
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 8px;
-        font-size: 10.5px;
+        font-size: 11.5px;
     }
     .raport-table th {
         background-color: #0E3366 !important;
@@ -116,7 +116,7 @@
         gap: 4px;
         padding: 2px 8px;
         border-radius: 999px;
-        font-size: 9px;
+        font-size: 10px;
         font-weight: 800;
         letter-spacing: 0.3px;
         line-height: 1.2;
@@ -147,7 +147,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 9.5px;
+        font-size: 10.5px;
         color: #6B7280;
         background: #ffffff;
         box-sizing: border-box;
@@ -161,7 +161,7 @@
         display: flex;
         justify-content: space-between;
         margin-top: 28px;
-        font-size: 11px;
+        font-size: 12px;
     }
 
     /* PRINT RULES */
@@ -275,11 +275,11 @@
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px;">
                     <img src="/images/logo-fic.png" alt="Logo FIC" style="width:52px; height:52px; object-fit:contain; flex-shrink:0;">
                     <div style="text-align:center; flex:1;">
-                        <div style="font-size:15px; font-weight:800; color:#0E3366; letter-spacing:0.8px; line-height:1.2; text-transform:uppercase;">
+                        <div style="font-size:16px; font-weight:800; color:#0E3366; letter-spacing:0.8px; line-height:1.2; text-transform:uppercase;">
                             RAPORT PENDAMPINGAN BRUDER MUDA
                         </div>
-                        <div style="font-size:11.5px; font-weight:700; color:#1F2937; margin-top:2px;">Kongregasi Bruder FIC Indonesia</div>
-                        <div style="font-size:10px; color:#6B7280;">Tim Pemantap Panggilan Bruder Muda (TPPBM)</div>
+                        <div style="font-size:12.5px; font-weight:700; color:#1F2937; margin-top:2px;">Kongregasi Bruder FIC Indonesia</div>
+                        <div style="font-size:11px; color:#6B7280;">Tim Pemantap Panggilan Bruder Muda (TPPBM)</div>
                     </div>
                     <img src="/images/logo-tppbm.png" alt="Logo TPPBM" style="width:52px; height:52px; object-fit:contain; flex-shrink:0;">
                 </div>
@@ -287,7 +287,7 @@
                 <!-- GARIS GANDA PEMISAH KOP -->
                 <div style="border-top: 2.5px solid #0E3366; border-bottom: 0.8px solid #0E3366; height: 2px; margin-bottom: 10px;"></div>
 
-                <div style="text-align:center; font-size:12px; font-weight:700; color:#0E3366; margin:2px 0 10px;">Periode {{ $periodeLabel }}</div>
+                <div style="text-align:center; font-size:13px; font-weight:700; color:#0E3366; margin:2px 0 10px;">Periode {{ $periodeLabel }}</div>
 
                 <!-- A. DATA DIRI -->
                 <div class="raport-section-title" style="margin-top:0;">A. DATA DIRI</div>
@@ -435,10 +435,10 @@
                 <div class="raport-card-box" style="padding: 6px 12px; margin-bottom: 12px;">
                     @foreach($raport['perutusan'] as $p)
                         <div style="display:flex; gap:16px; padding:5px 0; {{ !$loop->last ? 'border-bottom:1px dotted #D1D5DB;' : '' }}">
-                            <div style="width:110px; font-weight:800; color:#0E3366; font-size:10.5px; white-space:nowrap;">
+                            <div style="width:110px; font-weight:800; color:#0E3366; font-size:11.5px; white-space:nowrap;">
                                 {{ $p['masa'] }}
                             </div>
-                            <div style="flex:1; font-size:10.5px; color:#1F2937;">
+                            <div style="flex:1; font-size:11.5px; color:#1F2937;">
                                 <strong>{{ $p['komunitas'] }}</strong> &mdash; Tugas Pokok: {{ $p['pokok'] }}
                             </div>
                         </div>
@@ -450,7 +450,7 @@
                 @foreach($bimbinganAll as $b)
                     <div class="raport-log-card" style="border-left: 4px solid {{ $b['done'] ? '#0E3366' : '#DC2626' }};">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                            <div style="font-size:11px; font-weight:800; color:#0E3366;">
+                            <div style="font-size:12px; font-weight:800; color:#0E3366;">
                                 Bulan: {{ $b['bulan'] }}
                             </div>
                             @if($b['done'])
@@ -459,12 +459,12 @@
                                 <span class="badge-pill badge-belum">✘ BELUM / TIDAK TERLAKSANA</span>
                             @endif
                         </div>
-                        <div style="display:flex; flex-wrap:wrap; gap:12px; font-size:9.5px; margin-bottom:4px; color:#4B5563;">
+                        <div style="display:flex; flex-wrap:wrap; gap:12px; font-size:10.5px; margin-bottom:4px; color:#4B5563;">
                             <div><strong>Tgl:</strong> {{ $b['date'] !== '-' ? $b['date'] . ' ' . ucfirst(strtolower($b['bulan'])) : '-' }}</div>
                             <div><strong>Pembimbing:</strong> {{ $b['mentor'] }}</div>
                             <div><strong>Tempat:</strong> {{ $b['location'] }}</div>
                         </div>
-                        <div style="font-size:10px; color:#1F2937; line-height:1.4;">
+                        <div style="font-size:11px; color:#1F2937; line-height:1.4;">
                             @if($b['done'])
                                 <strong>Refleksi:</strong> {{ $b['content'] }}
                             @else
@@ -479,7 +479,7 @@
                 @foreach($wawanhatiAll as $w)
                     <div class="raport-log-card" style="border-left: 4px solid {{ $w['done'] ? '#0E3366' : '#DC2626' }};">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                            <div style="font-size:11px; font-weight:800; color:#0E3366;">
+                            <div style="font-size:12px; font-weight:800; color:#0E3366;">
                                 Bulan: {{ $w['bulan'] }}
                             </div>
                             @if($w['done'])
@@ -488,12 +488,12 @@
                                 <span class="badge-pill badge-belum">✘ BELUM / TIDAK TERLAKSANA</span>
                             @endif
                         </div>
-                        <div style="display:flex; flex-wrap:wrap; gap:12px; font-size:9.5px; margin-bottom:4px; color:#4B5563;">
+                        <div style="display:flex; flex-wrap:wrap; gap:12px; font-size:10.5px; margin-bottom:4px; color:#4B5563;">
                             <div><strong>Tgl:</strong> {{ $w['date'] !== '-' ? $w['date'] . ' ' . ucfirst(strtolower($w['bulan'])) : '-' }}</div>
                             <div><strong>Pimpinan Lokal:</strong> {{ $w['leader'] }}</div>
                             <div><strong>Tempat:</strong> {{ $w['location'] }}</div>
                         </div>
-                        <div style="font-size:10px; color:#1F2937; line-height:1.4;">
+                        <div style="font-size:11px; color:#1F2937; line-height:1.4;">
                             @if($w['done'])
                                 <strong>Refleksi:</strong> {{ $w['content'] }}
                             @else
@@ -508,26 +508,26 @@
                 @forelse($pengembanganAll as $pd)
                     <div class="raport-log-card" style="border-left: 4px solid #0E3366; margin-bottom:8px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                            <div style="font-size:11px; font-weight:800; color:#0E3366;">
+                            <div style="font-size:12px; font-weight:800; color:#0E3366;">
                                 {{ $pd['label'] }}
                             </div>
                             <span class="badge-pill badge-tercatat">TERCATAT</span>
                         </div>
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:3px 14px; font-size:9.5px; margin-bottom:5px; color:#4B5563;">
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:3px 14px; font-size:10.5px; margin-bottom:5px; color:#4B5563;">
                             <div><strong>Kegiatan:</strong> {{ $pd['name'] }}</div>
                             <div><strong>Tanggal:</strong> {{ $pd['date'] }}</div>
                             <div><strong>Penyelenggara:</strong> {{ $pd['organizer'] }}</div>
                             <div><strong>Narasumber:</strong> {{ $pd['speaker'] }}</div>
                         </div>
-                        <div style="font-size:10px; color:#1F2937; margin-bottom:3px; line-height:1.4;">
+                        <div style="font-size:11px; color:#1F2937; margin-bottom:3px; line-height:1.4;">
                             <strong>Deskripsi:</strong> {{ $pd['description'] }}
                         </div>
-                        <div style="font-size:10px; color:#1F2937; line-height:1.4;">
+                        <div style="font-size:11px; color:#1F2937; line-height:1.4;">
                             <strong>Refleksi:</strong> {{ $pd['reflection'] }}
                         </div>
                     </div>
                 @empty
-                    <div style="padding:10px; border:1px dashed #CBD5E1; border-radius:6px; text-align:center; color:#64748B; font-size:10px;">
+                    <div style="padding:10px; border:1px dashed #CBD5E1; border-radius:6px; text-align:center; color:#64748B; font-size:11px;">
                         Belum ada kegiatan pengembangan diri yang dilaporkan pada periode ini.
                     </div>
                 @endforelse
@@ -537,7 +537,7 @@
                     I. CATATAN PENDAMPING BRUDER MUDA (TPPBM)
                 </div>
 
-                <div style="display:flex; flex-direction:column; gap:12px; font-size:10.5px; line-height:1.55; margin-top:8px;">
+                <div style="display:flex; flex-direction:column; gap:12px; font-size:11.5px; line-height:1.55; margin-top:8px;">
                     <div>
                         <div style="font-weight:800; color:#1F2937;">Catatan Pribadi</div>
                         @if(!empty($raport['catatan_tppbm']['pribadi']))
@@ -631,13 +631,13 @@
                 margin: 1.5cm 1.5cm 1.8cm 2cm;
                 @bottom-left {
                     content: "Raport Bruder Muda - {{ $namaFooter }}";
-                    font-size: 9.5px;
+                    font-size: 10.5px;
                     color: #6B7280;
                     font-family: "Plus Jakarta Sans", "Inter", sans-serif;
                 }
                 @bottom-right {
                     content: "Halaman " counter(page);
-                    font-size: 9.5px;
+                    font-size: 10.5px;
                     color: #6B7280;
                     font-family: "Plus Jakarta Sans", "Inter", sans-serif;
                 }

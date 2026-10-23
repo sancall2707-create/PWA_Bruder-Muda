@@ -325,6 +325,10 @@ class SuperAdminMonitoringTest extends TestCase
 
         $response->assertOk()
             ->assertSee('Periode Agustus - Oktober 2026')
+            ->assertSee('class="raport-sheet"', false)
+            ->assertSee('font-size: 12px;', false)
+            ->assertSee('font-size: 11.5px;', false)
+            ->assertSee('font-size:13px;', false)
             ->assertSee('RAPORT PENDAMPINGAN BRUDER MUDA')
             ->assertSee('Kongregasi Bruder FIC Indonesia')
             ->assertSee('Tim Pemantap Panggilan Bruder Muda (TPPBM)')
