@@ -391,6 +391,123 @@ class BruderMudaRecordTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_bimbingan_and_wawanhati_reject_future_dates(): void
+    {
+        $user = User::factory()->create();
+        $futureDate = now()->addDay()->toDateString();
+        $content = $this->narrative();
+
+        // Bimbingan reject future date
+        $this->actingAs($user)->post(route('bimbingan.store'), [
+            'meeting_date' => $futureDate,
+            'mentor_name' => 'Br. Markus, FIC',
+            'location' => 'Ruang Bimbingan',
+            'report_content' => $content,
+        ])->assertSessionHasErrors('meeting_date');
+
+        $this->assertSame(0, SpiritualGuidanceReport::count());
+
+        // Wawanhati reject future date
+        $this->actingAs($user)->post(route('wawanhati.store'), [
+            'meeting_date' => $futureDate,
+            'local_leader_name' => 'Br. Frans, FIC',
+            'location' => 'Ruang Piko',
+            'report_content' => $content,
+        ])->assertSessionHasErrors('meeting_date');
+
+        $this->assertSame(0, WawanhatiReport::count());
+    }
+
+    public function test_owner_can_edit_and_delete_bimbingan_report(): void
+    {
+        $user = User::factory()->create();
+        $other = User::factory()->create();
+        $content = $this->narrative();
+
+        $report = SpiritualGuidanceReport::create([
+            'user_id' => $user->id,
+            'mentor_name' => 'Br. Awal, FIC',
+            'meeting_at' => now()->toDateString(),
+            'location' => 'Ruang A',
+            'report_content' => $content,
+            'status' => 'submitted',
+            'submitted_at' => now(),
+        ]);
+
+        // Form edit
+        $this->actingAs($user)->get(route('bimbingan.edit', $report))
+            ->assertOk()
+            ->assertSee('Edit Laporan Bimbingan Rohani')
+            ->assertSee('Br. Awal, FIC');
+
+        $this->actingAs($other)->get(route('bimbingan.edit', $report))
+            ->assertNotFound();
+
+        // Update
+        $newContent = $this->narrative(260);
+        $this->actingAs($user)->put(route('bimbingan.update', $report), [
+            'meeting_date' => now()->toDateString(),
+            'mentor_name' => 'Br. Diperbarui, FIC',
+            'location' => 'Ruang Baru',
+            'report_content' => $newContent,
+        ])->assertRedirect(route('bimbingan.index'))
+          ->assertSessionHas('success', 'Laporan Bimbingan Rohani berhasil diperbarui.');
+
+        $this->assertSame('Br. Diperbarui, FIC', $report->fresh()->mentor_name);
+
+        // Delete
+        $this->actingAs($user)->delete(route('bimbingan.destroy', $report))
+            ->assertRedirect(route('bimbingan.index'))
+            ->assertSessionHas('success', 'Laporan Bimbingan Rohani berhasil dihapus.');
+
+        $this->assertSoftDeleted('spiritual_guidance_reports', ['id' => $report->id]);
+    }
+
+    public function test_owner_can_edit_and_delete_wawanhati_report(): void
+    {
+        $user = User::factory()->create();
+        $other = User::factory()->create();
+        $content = $this->narrative();
+
+        $report = WawanhatiReport::create([
+            'user_id' => $user->id,
+            'local_leader_name' => 'Br. Piko Awal, FIC',
+            'meeting_at' => now()->toDateString(),
+            'location' => 'Ruang Piko',
+            'report_content' => $content,
+            'status' => 'submitted',
+            'submitted_at' => now(),
+        ]);
+
+        // Form edit
+        $this->actingAs($user)->get(route('wawanhati.edit', $report))
+            ->assertOk()
+            ->assertSee('Edit Laporan Wawanhati Pimpinan Lokal')
+            ->assertSee('Br. Piko Awal, FIC');
+
+        $this->actingAs($other)->get(route('wawanhati.edit', $report))
+            ->assertNotFound();
+
+        // Update
+        $newContent = $this->narrative(260);
+        $this->actingAs($user)->put(route('wawanhati.update', $report), [
+            'meeting_date' => now()->toDateString(),
+            'local_leader_name' => 'Br. Piko Diperbarui, FIC',
+            'location' => 'Ruang Piko Baru',
+            'report_content' => $newContent,
+        ])->assertRedirect(route('wawanhati.index'))
+          ->assertSessionHas('success', 'Laporan Wawanhati Pimpinan Lokal berhasil diperbarui.');
+
+        $this->assertSame('Br. Piko Diperbarui, FIC', $report->fresh()->local_leader_name);
+
+        // Delete
+        $this->actingAs($user)->delete(route('wawanhati.destroy', $report))
+            ->assertRedirect(route('wawanhati.index'))
+            ->assertSessionHas('success', 'Laporan Wawanhati Pimpinan Lokal berhasil dihapus.');
+
+        $this->assertSoftDeleted('wawanhati_reports', ['id' => $report->id]);
+    }
+
     private function narrative(int $length = 220): string
     {
         return mb_substr(str_repeat('Refleksi pembinaan bruder muda tetap ditulis utuh. ', 20), 0, $length);

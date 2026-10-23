@@ -73,8 +73,21 @@
             @endif
 
             @if($report->proof_file)
-                <a href="{{ route('bimbingan.proof', $report) }}" style="font-size: 12px; font-weight: 700; color: var(--fic-primary);">Unduh logbook</a>
+                <div style="margin-top: 8px;">
+                    <a href="{{ route('bimbingan.proof', $report) }}" style="font-size: 12px; font-weight: 700; color: var(--fic-primary);">Unduh logbook</a>
+                </div>
             @endif
+
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <a href="{{ route('bimbingan.edit', $report) }}" class="btn-secondary" style="flex: 1; min-height: 40px; padding: 8px 12px; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
+                    Edit
+                </a>
+                <form method="POST" action="{{ route('bimbingan.destroy', $report) }}" onsubmit="return confirm('Hapus laporan bimbingan rohani ini?');" style="flex: 1; margin: 0;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn-danger" style="width: 100%; min-height: 40px; padding: 8px 12px; font-size: 13px;">Hapus</button>
+                </form>
+            </div>
         </div>
     @empty
         <x-empty-state

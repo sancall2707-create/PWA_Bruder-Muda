@@ -34,6 +34,8 @@ class RaportPdfPrinter
                 '--no-sandbox',
                 '--disable-dev-shm-usage',
                 '--no-first-run',
+                '--disable-background-networking',
+                '--host-rules=MAP * ~NOTFOUND',
                 '--user-data-dir='.$profile,
                 '--virtual-time-budget=8000',
                 '--no-pdf-header-footer',
@@ -63,11 +65,14 @@ class RaportPdfPrinter
             $html
         ) ?? $html;
 
-        return preg_replace(
+        $html = preg_replace(
             '#(?<=["\'])(/(?:css|images|favicon)[^"\']*)#',
             'file://'.$public.'$1',
             $html
         ) ?? $html;
+
+        // Hapus elemen navigasi/header dan img remote yang tidak dicetak untuk mencegah deadlock request internal
+        return preg_replace('#<img[^>]+src=["\']https?://[^"\']+["\'][^>]*>#i', '', $html) ?? $html;
     }
 
     private function deleteDirectory(string $path): void

@@ -56,12 +56,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/bimbingan-rohani', [SpiritualGuidanceController::class, 'index'])->name('bimbingan.index');
         Route::get('/bimbingan-rohani/tambah', [SpiritualGuidanceController::class, 'create'])->name('bimbingan.create');
         Route::post('/bimbingan-rohani', [SpiritualGuidanceController::class, 'store'])->name('bimbingan.store');
+        Route::get('/bimbingan-rohani/{report}/edit', [SpiritualGuidanceController::class, 'edit'])->name('bimbingan.edit');
+        Route::put('/bimbingan-rohani/{report}', [SpiritualGuidanceController::class, 'update'])->name('bimbingan.update');
+        Route::delete('/bimbingan-rohani/{report}', [SpiritualGuidanceController::class, 'destroy'])->name('bimbingan.destroy');
         Route::get('/bimbingan-rohani/{report}/bukti', [SpiritualGuidanceController::class, 'proof'])->name('bimbingan.proof');
 
         // 6 & 7. Wawanhati & Input Laporan Wawanhati
         Route::get('/wawanhati', [WawanhatiController::class, 'index'])->name('wawanhati.index');
         Route::get('/wawanhati/tambah', [WawanhatiController::class, 'create'])->name('wawanhati.create');
         Route::post('/wawanhati', [WawanhatiController::class, 'store'])->name('wawanhati.store');
+        Route::get('/wawanhati/{report}/edit', [WawanhatiController::class, 'edit'])->name('wawanhati.edit');
+        Route::put('/wawanhati/{report}', [WawanhatiController::class, 'update'])->name('wawanhati.update');
+        Route::delete('/wawanhati/{report}', [WawanhatiController::class, 'destroy'])->name('wawanhati.destroy');
         Route::get('/wawanhati/{report}/bukti', [WawanhatiController::class, 'proof'])->name('wawanhati.proof');
 
         // 8, 9, 10, 11. Agenda Pribadi & Input Jadwal

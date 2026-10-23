@@ -547,10 +547,7 @@
                                 @endforeach
                             </ul>
                         @else
-                            <ol type="a" style="margin:4px 0 0 16px; padding:0; color:#374151;">
-                                <li>Proses pengenalan diri adalah fondasi utama dalam panggilan. Teruslah belajar menerima kelebihan dan kelemahan diri secara jujur dan terbuka. Jangan lupa untuk selalu menjaga keseimbangan antara kesehatan fisik, mental, dan emosional (cura personalis).</li>
-                                <li>Kematangan pribadi dan kemauan untuk terus dievaluasi akan sangat membantu kelancaran proses formasi Bruder ke depannya.</li>
-                            </ol>
+                            <div style="color:#9CA3AF; margin:2px 0 4px;">-</div>
                         @endif
                     </div>
 
@@ -563,10 +560,7 @@
                                 @endforeach
                             </ul>
                         @else
-                            <ol type="a" style="margin:4px 0 0 16px; padding:0; color:#374151;">
-                                <li>Hidup rohani adalah jangkar dari seluruh peziarahan panggilan kita. Tetaplah setia dan bertekun dalam doa-doa harian, meditasi pribadi, serta perayaan Ekaristi.</li>
-                                <li>Usahakan agar waktu-waktu hening tidak hanya menjadi rutinitas wajib yang kering, melainkan menjadi perjumpaan yang intim untuk sungguh-sungguh mendengarkan kehendak Tuhan setiap harinya.</li>
-                            </ol>
+                            <div style="color:#9CA3AF; margin:2px 0 4px;">-</div>
                         @endif
                     </div>
 
@@ -579,10 +573,7 @@
                                 @endforeach
                             </ul>
                         @else
-                            <ol type="a" style="margin:4px 0 0 16px; padding:0; color:#374151;">
-                                <li>Komunitas adalah tempat di mana kasih persaudaraan diuji sekaligus dihidupi secara nyata. Berusahalah untuk selalu proaktif mengambil bagian dalam tugas-tugas harian dan kegiatan bersama (seperti rekreasi atau doa komunitas).</li>
-                                <li>Tumbuhkan kepekaan terhadap kebutuhan sesama bruder, serta belajarlah untuk senantiasa lapang dada dalam menghadapi perbedaan karakter antaranggota komunitas.</li>
-                            </ol>
+                            <div style="color:#9CA3AF; margin:2px 0 4px;">-</div>
                         @endif
                     </div>
 
@@ -595,10 +586,7 @@
                                 @endforeach
                             </ul>
                         @else
-                            <ol type="a" style="margin:4px 0 0 16px; padding:0; color:#374151;">
-                                <li>Tugas perutusan dan kerasulan kita menuntut dedikasi dan kasih yang tulus. Layanilah setiap jiwa yang dipercayakan kepada Bruder dengan hati yang gembira dan penuh totalitas.</li>
-                                <li>Selalu ingat bahwa karya kerasulan bukanlah sekadar soal pencapaian kerja profesional, melainkan wujud kesaksian nyata akan kehadiran Allah yang peduli di tengah-tengah umat dan kaum muda.</li>
-                            </ol>
+                            <div style="color:#9CA3AF; margin:2px 0 4px;">-</div>
                         @endif
                     </div>
 
@@ -611,10 +599,7 @@
                                 @endforeach
                             </ul>
                         @else
-                            <ol type="a" style="margin:4px 0 0 16px; padding:0; color:#374151;">
-                                <li>Menghidupi Triprasetia (Kemiskinan, Kemurnian, dan Ketaatan) adalah jalan pembebasan sejati, bukan pengekangan.</li>
-                                <li>Hiduplah dalam kesederhanaan yang solider dengan mereka yang lemah, jagalah kemurnian hati dalam setiap relasi pastoral, dan belajarlah taat dengan semangat iman kepada pimpinan serta keputusan komunitas. Biarkan kaul-kaul ini sungguh mewarnai cara berpikir dan bertindak Bruder sehari-hari.</li>
-                            </ol>
+                            <div style="color:#9CA3AF; margin:2px 0 4px;">-</div>
                         @endif
                     </div>
                 </div>

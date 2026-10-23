@@ -329,6 +329,8 @@ class SuperAdminMonitoringTest extends TestCase
             ->assertSee('5 Frater')
             ->assertDontSee('Frater/Bruder')
             ->assertDontSee('page-break-after: always')
+            ->assertDontSee('Proses pengenalan diri adalah fondasi utama')
+            ->assertDontSee('Hidup rohani adalah jangkar')
             ->assertSee('Br. F.A. Galih Sih Hartanta, FIC')
             ->assertSee('Br. Andrias Purwanto, FIC');
     }

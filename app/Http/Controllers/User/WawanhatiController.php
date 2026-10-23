@@ -44,13 +44,14 @@ class WawanhatiController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'meeting_date' => ['required', 'date'],
+            'meeting_date' => ['required', 'date', 'before_or_equal:today'],
             'local_leader_name' => ['required', 'string', 'max:255'],
             'location' => ['required', 'string', 'max:255'],
             'report_content' => ['required', 'string', 'min:200', 'max:500'],
             'proof_file' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
         ], [
             'meeting_date.required' => 'Hari dan tanggal pertemuan wajib diisi.',
+            'meeting_date.before_or_equal' => 'Tanggal pertemuan tidak boleh melebihi hari ini (hanya dapat memilih hari ini atau tanggal yang sudah lewat).',
             'local_leader_name.required' => 'Nama pimpinan lokal wajib diisi.',
             'location.required' => 'Tempat / ruangan wajib diisi.',
             'report_content.required' => 'Isi / catatan wawanhati wajib diisi.',
@@ -95,6 +96,72 @@ class WawanhatiController extends Controller
         ]);
 
         return redirect()->route('wawanhati.index')->with('success', 'Laporan Wawanhati Pimpinan Lokal berhasil dikirim.');
+    }
+
+    /**
+     * Formulir edit laporan Wawanhati.
+     */
+    public function edit(WawanhatiReport $report): View
+    {
+        abort_unless($report->user_id === auth()->id(), 404);
+
+        return view('user.wawanhati.edit', compact('report'));
+    }
+
+    /**
+     * Perbarui laporan Wawanhati.
+     */
+    public function update(Request $request, WawanhatiReport $report): RedirectResponse
+    {
+        abort_unless($report->user_id === auth()->id(), 404);
+
+        $validated = $request->validate([
+            'meeting_date' => ['required', 'date', 'before_or_equal:today'],
+            'local_leader_name' => ['required', 'string', 'max:255'],
+            'location' => ['required', 'string', 'max:255'],
+            'report_content' => ['required', 'string', 'min:200', 'max:500'],
+            'proof_file' => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+        ], [
+            'meeting_date.required' => 'Hari dan tanggal pertemuan wajib diisi.',
+            'meeting_date.before_or_equal' => 'Tanggal pertemuan tidak boleh melebihi hari ini (hanya dapat memilih hari ini atau tanggal yang sudah lewat).',
+            'local_leader_name.required' => 'Nama pimpinan lokal wajib diisi.',
+            'location.required' => 'Tempat / ruangan wajib diisi.',
+            'report_content.required' => 'Isi / catatan wawanhati wajib diisi.',
+            'report_content.min' => 'Isi catatan wawanhati minimal 200 karakter.',
+            'report_content.max' => 'Isi catatan wawanhati maksimal 500 karakter.',
+            'proof_file.mimes' => 'Format file bukti harus berupa JPG, PNG, atau PDF.',
+            'proof_file.max' => 'Ukuran file bukti maksimal 5MB.',
+        ]);
+
+        $proofPath = $report->proof_file;
+        if ($request->hasFile('proof_file')) {
+            if ($this->isOwnedLogbook($report->proof_file)) {
+                Storage::disk('local')->delete($report->proof_file);
+            }
+            $proofPath = $request->file('proof_file')->store('logbooks/wawanhati', 'local');
+        }
+
+        $report->update([
+            'local_leader_name' => $validated['local_leader_name'],
+            'meeting_at' => $validated['meeting_date'],
+            'location' => $validated['location'],
+            'report_content' => $validated['report_content'],
+            'proof_file' => $proofPath,
+        ]);
+
+        return redirect()->route('wawanhati.index')->with('success', 'Laporan Wawanhati Pimpinan Lokal berhasil diperbarui.');
+    }
+
+    /**
+     * Hapus laporan Wawanhati.
+     */
+    public function destroy(WawanhatiReport $report): RedirectResponse
+    {
+        abort_unless($report->user_id === auth()->id(), 404);
+
+        $report->delete();
+
+        return redirect()->route('wawanhati.index')->with('success', 'Laporan Wawanhati Pimpinan Lokal berhasil dihapus.');
     }
 
     public function proof(WawanhatiReport $report): StreamedResponse
