@@ -47,6 +47,34 @@
     </div>
 </div>
 
+<!-- Jadwal Pembinaan & Seluruh Agenda Terdekat -->
+<div style="margin-top: 10px;">
+    <div style="font-size: 15px; font-weight: 800; color: #101828; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+        <span>Jadwal Pembinaan &amp; Agenda Terdekat</span>
+        <a href="{{ route('superadmin.monitoring.agenda') }}" style="font-size: 12px; font-weight: 700; color: #1455C0; text-decoration: none;">Lihat Kalender →</a>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+        @forelse($upcomingSchedules ?? [] as $sched)
+            <div style="background: #ffffff; border-radius: 14px; border: 1px solid #E4E7EC; padding: 12px 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 4px rgba(16,24,40,0.02);">
+                <div style="width: 4px; height: 36px; border-radius: 4px; background: {{ $sched->color }}; flex-shrink: 0;"></div>
+                <div style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 13px; font-weight: 700; color: #101828;">{{ $sched->bruder }}</span>
+                        <span style="font-size: 11px; font-weight: 700; color: {{ $sched->color }};">{{ $sched->type }}</span>
+                    </div>
+                    <div style="font-size: 12px; color: #475467; margin-top: 2px;">{{ $sched->title }}</div>
+                    <div style="font-size: 11px; color: #667085; margin-top: 2px;">{{ $sched->datetime }} &bull; {{ $sched->location }}</div>
+                </div>
+            </div>
+        @empty
+            <div style="background: #ffffff; border-radius: 14px; border: 1px dashed #D0D5DD; padding: 16px; text-align: center; color: #667085; font-size: 13px;">
+                Belum ada jadwal kegiatan atau agenda bruder terdekat.
+            </div>
+        @endforelse
+    </div>
+</div>
+
 <!-- Recent Bruder Cards -->
 <div class="section-title" style="font-size: 15px; font-weight: 800; color: #101828; margin-top: 8px; display: flex; align-items: center; justify-content: space-between;">
     <span>Daftar Bruder Muda</span>

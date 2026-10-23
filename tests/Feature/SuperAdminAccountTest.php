@@ -43,6 +43,7 @@ class SuperAdminAccountTest extends TestCase
             ->assertSee('Komunitas Uji')
             ->assertSee('1/2 bulan ini')
             ->assertSee('Aktif')
+            ->assertSee('Jadwal Pembinaan & Agenda Terdekat')
             ->assertSee('Kelola Data Bruder')
             ->assertSee('Monitoring & Ekspor Data')
             ->assertSee('Buat Sapaan Provinsial')

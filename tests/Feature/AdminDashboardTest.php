@@ -49,6 +49,7 @@ class AdminDashboardTest extends TestCase
             ->assertSee('Br. Antonius FIC')
             ->assertSee('Monitoring & Ekspor Laporan')
             ->assertSee('Rekapitulasi Agenda & Kalender')
+            ->assertSee('Jadwal Pembinaan & Agenda Terdekat')
             ->assertSee('Direktori & Rekam Jejak Bruder')
             ->assertSee('Rilis Sapaan & Pengumuman Bersama')
             ->assertSee('Beranda Bruder Muda')

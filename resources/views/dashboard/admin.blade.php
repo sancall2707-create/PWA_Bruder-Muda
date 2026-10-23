@@ -74,7 +74,7 @@
 <!-- Pengingat Jadwal Pembinaan Terdekat -->
 <div style="margin-top: 4px;">
     <div style="font-size: 15px; font-weight: 800; color: #101828; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
-        <span>Jadwal Pembinaan Terdekat</span>
+        <span>Jadwal Pembinaan &amp; Agenda Terdekat</span>
         <a href="{{ route('superadmin.monitoring.agenda') }}" style="font-size: 12px; font-weight: 700; color: #1455C0; text-decoration: none;">Lihat Kalender →</a>
     </div>
 

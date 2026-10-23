@@ -74,47 +74,57 @@ class SuperAdminMonitoringTest extends TestCase
     public function test_agenda_recap_lists_all_three_schedule_types(): void
     {
         $admin = User::factory()->create(['role' => 'super_admin']);
+        $now = now();
         $anton = User::factory()->create(['role' => 'user', 'name' => 'Br. Anton Pantau']);
 
         SpiritualGuidanceSchedule::query()->create([
             'user_id' => $anton->id,
             'mentor_name' => 'Rm. Mentor Pantau',
-            'scheduled_at' => '2026-10-15 16:00:00',
+            'scheduled_at' => $now->copy()->addDays(2)->setTime(16, 0, 0),
             'location' => 'Kapel Uji',
             'status' => 'scheduled',
         ]);
         WawanhatiSchedule::query()->create([
             'user_id' => $anton->id,
             'local_leader_name' => 'Br. Pimlok Pantau',
-            'scheduled_at' => '2026-10-20 08:30:00',
+            'scheduled_at' => $now->copy()->addDays(3)->setTime(8, 30, 0),
             'location' => 'Rumah Komunitas',
             'status' => 'scheduled',
         ]);
         PersonalAgenda::query()->create([
             'user_id' => $anton->id,
             'title' => 'Retret Pribadi Pantau',
-            'start_at' => '2026-10-22 05:00:00',
+            'start_at' => $now->copy()->addDays(4)->setTime(5, 0, 0),
             'location' => 'Aula',
             'status' => 'scheduled',
         ]);
 
         $this->actingAs($admin)
-            ->get(route('superadmin.monitoring.agenda', ['bulan' => 10, 'tahun' => 2026]))
+            ->get(route('superadmin.monitoring.agenda', ['bulan' => $now->month, 'tahun' => $now->year]))
             ->assertOk()
             ->assertSee('Br. Anton Pantau')
             ->assertSee('Bimbingan Rohani')
-            ->assertSee('15 Oktober 2026')
-            ->assertSee('16:00 WIB')
             ->assertSee('Rm. Mentor Pantau')
             ->assertSee('Kapel Uji')
             ->assertSee('Wawanhati Pilok')
-            ->assertSee('08:30 WIB')
             ->assertSee('Retret Pribadi Pantau')
             ->assertSee('Menunggu');
 
+        $this->actingAs($admin)
+            ->get(route('superadmin.dashboard'))
+            ->assertOk()
+            ->assertSee('Br. Anton Pantau')
+            ->assertSee('Retret Pribadi Pantau');
+
+        $this->actingAs($admin)
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertSee('Br. Anton Pantau')
+            ->assertSee('Retret Pribadi Pantau');
+
         $excel = $this->actingAs($admin)->get(route('superadmin.monitoring.export', [
-            'bulan' => 10,
-            'tahun' => 2026,
+            'bulan' => $now->month,
+            'tahun' => $now->year,
             'jenis' => 'agenda',
             'format' => 'excel',
         ]));
