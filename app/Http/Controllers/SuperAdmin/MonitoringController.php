@@ -217,51 +217,71 @@ class MonitoringController extends Controller
 
         // 4. Formasi Religius FIC
         $form = $user->formation_data ?? [];
-        $formasi = [
-            [
+        $currentYear = (int) now()->year;
+
+        $formasi = [];
+        $postulatYear = ! empty($form['postulat_in']) ? (int) $form['postulat_in'] : null;
+        if ($postulatYear === null || $postulatYear <= $currentYear) {
+            $formasi[] = [
                 'tahapan' => 'Postulat',
                 'tahun' => $form['postulat_in'] ?? '-',
                 'angkatan' => ! empty($form['postulat_count']) ? $form['postulat_count'].' Frater' : '-',
                 'magister' => $form['postulat_magister'] ?? '-',
-            ],
-            [
+            ];
+        }
+
+        $kanonikYear = ! empty($form['kanonik_in']) ? (int) $form['kanonik_in'] : null;
+        if ($kanonikYear === null || $kanonikYear <= $currentYear) {
+            $formasi[] = [
                 'tahapan' => 'Novisiat Kanonik',
                 'tahun' => $form['kanonik_in'] ?? '-',
                 'angkatan' => ! empty($form['kanonik_count']) ? $form['kanonik_count'].' Frater' : '-',
                 'magister' => $form['kanonik_magister'] ?? '-',
-            ],
-            [
+            ];
+        }
+
+        $apostolikYear = ! empty($form['apostolik_in']) ? (int) $form['apostolik_in'] : null;
+        if ($apostolikYear === null || $apostolikYear <= $currentYear) {
+            $formasi[] = [
                 'tahapan' => 'Novisiat Apostolik',
                 'tahun' => $form['apostolik_in'] ?? '-',
                 'angkatan' => ! empty($form['apostolik_count']) ? $form['apostolik_count'].' Frater' : '-',
                 'magister' => $form['apostolik_magister'] ?? '-',
-            ],
-            [
+            ];
+        }
+
+        $prasetia1Year = ! empty($form['prasetia_1_year']) ? (int) $form['prasetia_1_year'] : null;
+        if ($prasetia1Year === null || $prasetia1Year <= $currentYear) {
+            $formasi[] = [
                 'tahapan' => 'Prasetia Pertama',
                 'tahun' => $form['prasetia_1_year'] ?? '-',
                 'angkatan' => ! empty($form['prasetia_1_count']) ? $form['prasetia_1_count'].' Bruder' : '-',
                 'magister' => $form['prasetia_1_provincial'] ?? '-',
-            ],
-        ];
+            ];
+        }
 
         $pembaruanKe = [1 => 'Pertama', 2 => 'Kedua', 3 => 'Ketiga', 4 => 'Keempat', 5 => 'Kelima', 6 => 'Keenam'];
         $hasPembaruan = false;
         for ($p = 1; $p <= 6; $p++) {
             $pemData = $form['pembaruan'][$p] ?? [];
             if (! empty($pemData['year'])) {
-                $hasPembaruan = true;
-                $formasi[] = [
-                    'tahapan' => 'Pembaruan '.$pembaruanKe[$p],
-                    'tahun' => $pemData['year'],
-                    'angkatan' => ! empty($pemData['count']) ? $pemData['count'].' Bruder' : '-',
-                    'magister' => $pemData['provincial'] ?? '-',
-                ];
+                $pYear = (int) $pemData['year'];
+                // Hanya tampilkan jika tahun sudah lewat atau sedang berjalan
+                if ($pYear <= $currentYear) {
+                    $hasPembaruan = true;
+                    $formasi[] = [
+                        'tahapan' => 'Pembaruan '.$pembaruanKe[$p],
+                        'tahun' => $pemData['year'],
+                        'angkatan' => ! empty($pemData['count']) ? $pemData['count'].' Bruder' : '-',
+                        'magister' => $pemData['provincial'] ?? '-',
+                    ];
+                }
             }
         }
-        if (! $hasPembaruan) {
+        if (! $hasPembaruan && empty($formasi)) {
             $formasi[] = [
-                'tahapan' => 'Pembaruan Ketiga - Keenam',
-                'tahun' => 'Dalam masa persiapan / Belum terlaksana',
+                'tahapan' => 'Pembaruan',
+                'tahun' => 'Dalam masa persiapan',
                 'angkatan' => '-',
                 'magister' => '-',
             ];
@@ -274,20 +294,28 @@ class MonitoringController extends Controller
         for ($t = 1; $t <= 6; $t++) {
             $tData = $asg[$t] ?? [];
             if (! empty($tData['community'])) {
-                $masa = trim(($tData['start_year'] ?? '').' - '.($tData['end_year'] ?? 'Sekarang'));
-                $perutusan[] = [
-                    'tugas_ke' => $tugasKe[$t],
-                    'komunitas' => $tData['community'],
-                    'masa' => $masa !== '-' ? $masa : '-',
-                    'pokok' => $tData['duty'] ?? '-',
-                ];
+                $startYear = ! empty($tData['start_year']) ? (int) $tData['start_year'] : null;
+
+                // Hanya tampilkan jika tahun mulai sudah lewat atau sedang berjalan
+                if ($startYear === null || $startYear <= $currentYear) {
+                    $endYearVal = ! empty($tData['end_year']) ? (int) $tData['end_year'] : null;
+                    $endLabel = ($endYearVal !== null && $endYearVal <= $currentYear) ? $endYearVal : 'Sekarang';
+                    $masa = trim(($tData['start_year'] ?? '').' - '.$endLabel);
+
+                    $perutusan[] = [
+                        'tugas_ke' => $tugasKe[$t],
+                        'komunitas' => $tData['community'],
+                        'masa' => $masa !== '-' ? $masa : '-',
+                        'pokok' => $tData['duty'] ?? '-',
+                    ];
+                }
             }
         }
         if (empty($perutusan)) {
             $perutusan[] = [
                 'tugas_ke' => 'Pertama',
                 'komunitas' => $user->community_location ?: 'Komunitas FIC',
-                'masa' => '2025 - Sekarang',
+                'masa' => now()->year.' - Sekarang',
                 'pokok' => 'Penugasan Komunitas',
             ];
         }
