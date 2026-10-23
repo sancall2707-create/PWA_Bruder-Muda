@@ -28,8 +28,12 @@
         .field input:focus, .field select:focus, .field textarea:focus { border-color:#1455C0; outline:none; box-shadow:0 0 0 3px rgba(20,85,192,0.12); }
         .field input[readonly] { background:rgba(242,244,247,0.85); color:#475467; cursor:default; }
         .hint { margin:0; font-size:12px; line-height:1.45; color:#667085; }
-        .btn-submit { border:none; border-radius:14px; padding:15px; font-weight:800; font-size:15px; background:linear-gradient(135deg, #1455C0 0%, #003E97 100%); color:#fff; cursor:pointer; box-shadow:0 4px 12px rgba(20,85,192,0.25); width:100%; }
-        .back-link { display:block; text-align:center; margin-top:8px; color:#1455C0; text-decoration:none; font-weight:700; font-size:13px; }
+        .btn-submit { width:100%; min-height:46px; background:#1455C0; color:#fff; border:none; border-radius:12px; font-weight:800; font-size:14px; cursor:pointer; box-shadow:0 4px 14px rgba(20,85,192,0.3); }
+        .back-link { display:block; text-align:center; margin-top:12px; color:#1455C0; font-weight:700; font-size:13px; text-decoration:none; }
+        .sa-tab-btn { border: 1px solid #D0D5DD; background: #F8F9FC; color: #475467; padding: 7px 12px; border-radius: 10px; font-size: 11px; font-weight: 800; white-space: nowrap; cursor: pointer; transition: all 0.15s ease; flex-shrink: 0; }
+        .sa-tab-btn.active { background: #1455C0; color: #ffffff; border-color: #1455C0; box-shadow: 0 2px 6px rgba(20, 85, 192, 0.28); }
+        .sa-tab-pane { display: none; }
+        .sa-tab-pane.active { display: block; }
     </style>
 </head>
 <body>
@@ -62,18 +66,18 @@
             @csrf
             <input type="hidden" name="update_biodata" value="1">
 
-            <!-- TAB JUMP NAVIGATION UNTUK MOBILE -->
-            <div style="position:sticky; top:12px; z-index:40; background:rgba(255,255,255,0.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-radius:14px; padding:6px; box-shadow:0 4px 12px rgba(0,62,151,0.08); border:1px solid rgba(20,85,192,0.15); display:flex; gap:6px; overflow-x:auto;">
-                <button type="button" onclick="document.getElementById('sec-sa-akun').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#EFF8FF; color:#1455C0; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">1. Akun</button>
-                <button type="button" onclick="document.getElementById('sec-sa-pokok').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">2. Pokok</button>
-                <button type="button" onclick="document.getElementById('sec-sa-keluarga').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">3. Keluarga</button>
-                <button type="button" onclick="document.getElementById('sec-sa-pendidikan').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">4. Pendidikan</button>
-                <button type="button" onclick="document.getElementById('sec-sa-formasi').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">5. Formasi</button>
-                <button type="button" onclick="document.getElementById('sec-sa-penugasan').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">6. Penugasan</button>
+            <!-- TAB SELECTOR (HANYA SATU TAB TAMPIL PADA SATU WAKTU) -->
+            <div style="position:sticky; top:12px; z-index:40; background:rgba(255,255,255,0.95); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-radius:14px; padding:6px; box-shadow:0 4px 14px rgba(0,62,151,0.08); border:1px solid rgba(20,85,192,0.18); display:flex; gap:6px; overflow-x:auto;">
+                <button type="button" class="sa-tab-btn active" data-tab="sec-sa-akun">1. Akun</button>
+                <button type="button" class="sa-tab-btn" data-tab="sec-sa-pokok">2. Pokok</button>
+                <button type="button" class="sa-tab-btn" data-tab="sec-sa-keluarga">3. Keluarga</button>
+                <button type="button" class="sa-tab-btn" data-tab="sec-sa-pendidikan">4. Pendidikan</button>
+                <button type="button" class="sa-tab-btn" data-tab="sec-sa-formasi">5. Formasi</button>
+                <button type="button" class="sa-tab-btn" data-tab="sec-sa-penugasan">6. Penugasan</button>
             </div>
 
             <!-- SEKSI 1: IDENTITAS & AKSES AKUN -->
-            <div class="form-section" id="sec-sa-akun">
+            <div class="form-section sa-tab-pane active" id="sec-sa-akun">
                 <div class="section-label">1. Identitas, Foto &amp; Akses Akun</div>
 
                 <!-- Avatar & Foto Profil -->
@@ -147,10 +151,16 @@
                     <label for="password_confirmation">Konfirmasi Kata Sandi Baru</label>
                     <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Ulangi kata sandi baru" autocomplete="new-password">
                 </div>
+
+                <div style="display:flex; justify-content:flex-end; margin-top:16px; padding-top:12px; border-top:1px solid #F2F4F7;">
+                    <button type="button" onclick="switchSaTab('sec-sa-pokok')" class="btn" style="background:#1455C0; font-size:12px; font-weight:700;">
+                        Lanjut ke 2. Pokok &rarr;
+                    </button>
+                </div>
             </div>
 
             <!-- SEKSI 2: DATA POKOK & KONTAK -->
-            <div class="form-section" id="sec-sa-pokok">
+            <div class="form-section sa-tab-pane" id="sec-sa-pokok">
                 <div class="section-label">2. Data Pokok &amp; Kontak</div>
 
                 <div class="field">
@@ -183,10 +193,19 @@
                     <label for="bio">Bio / Catatan Pembinaan Awal</label>
                     <textarea id="bio" name="bio" rows="3" placeholder="Catatan perihal bruder bersangkutan...">{{ old('bio', $user->bio) }}</textarea>
                 </div>
+
+                <div style="display:flex; justify-content:space-between; gap:10px; margin-top:16px; padding-top:12px; border-top:1px solid #F2F4F7;">
+                    <button type="button" onclick="switchSaTab('sec-sa-akun')" class="btn btn-muted" style="font-size:12px; font-weight:700;">
+                        &larr; 1. Akun
+                    </button>
+                    <button type="button" onclick="switchSaTab('sec-sa-keluarga')" class="btn" style="background:#1455C0; font-size:12px; font-weight:700;">
+                        Lanjut ke 3. Keluarga &rarr;
+                    </button>
+                </div>
             </div>
 
             <!-- SEKSI 3: DATA KELUARGA & NARAHUBUNG -->
-            <div class="form-section" id="sec-sa-keluarga">
+            <div class="form-section sa-tab-pane" id="sec-sa-keluarga">
                 <div class="section-label">3. Data Keluarga &amp; Narahubung</div>
 
                 <div style="font-size:12px; font-weight:800; color:#344054; text-transform:uppercase;">Data Ayah</div>
@@ -261,10 +280,19 @@
                     <label>Alamat Narahubung</label>
                     <input type="text" name="family_data[emergency_address]" value="{{ old('family_data.emergency_address', $family['emergency_address'] ?? '') }}" placeholder="Kota / Alamat narahubung">
                 </div>
+
+                <div style="display:flex; justify-content:space-between; gap:10px; margin-top:16px; padding-top:12px; border-top:1px solid #F2F4F7;">
+                    <button type="button" onclick="switchSaTab('sec-sa-pokok')" class="btn btn-muted" style="font-size:12px; font-weight:700;">
+                        &larr; 2. Pokok
+                    </button>
+                    <button type="button" onclick="switchSaTab('sec-sa-pendidikan')" class="btn" style="background:#1455C0; font-size:12px; font-weight:700;">
+                        Lanjut ke 4. Pendidikan &rarr;
+                    </button>
+                </div>
             </div>
 
             <!-- SEKSI 4: RIWAYAT PENDIDIKAN FORMAL -->
-            <div class="form-section" id="sec-sa-pendidikan">
+            <div class="form-section sa-tab-pane" id="sec-sa-pendidikan">
                 <div class="section-label">4. Riwayat Pendidikan Formal</div>
 
                 <div style="font-size:12px; font-weight:800; color:#344054; text-transform:uppercase;">SD</div>
@@ -354,10 +382,19 @@
                         <input type="number" name="education_data[s2_out]" value="{{ old('education_data.s2_out', $education['s2_out'] ?? '') }}">
                     </div>
                 </div>
+
+                <div style="display:flex; justify-content:space-between; gap:10px; margin-top:16px; padding-top:12px; border-top:1px solid #F2F4F7;">
+                    <button type="button" onclick="switchSaTab('sec-sa-keluarga')" class="btn btn-muted" style="font-size:12px; font-weight:700;">
+                        &larr; 3. Keluarga
+                    </button>
+                    <button type="button" onclick="switchSaTab('sec-sa-formasi')" class="btn" style="background:#1455C0; font-size:12px; font-weight:700;">
+                        Lanjut ke 5. Formasi &rarr;
+                    </button>
+                </div>
             </div>
 
             <!-- SEKSI 5: RIWAYAT FORMASI BRUDER FIC -->
-            <div class="form-section" id="sec-sa-formasi">
+            <div class="form-section sa-tab-pane" id="sec-sa-formasi">
                 <div class="section-label">5. Riwayat Formasi Bruder FIC</div>
 
                 <div style="font-size:12px; font-weight:800; color:#344054; text-transform:uppercase;">1. Postulat</div>
@@ -396,10 +433,19 @@
                         <div class="field" style="flex:1;"><label>Nama Provinsial</label><input type="text" name="formation_data[pembaruan][{{ $p }}][provincial]" value="{{ old("formation_data.pembaruan.{$p}.provincial", $formation['pembaruan'][$p]['provincial'] ?? '') }}"></div>
                     </div>
                 @endfor
+
+                <div style="display:flex; justify-content:space-between; gap:10px; margin-top:16px; padding-top:12px; border-top:1px solid #F2F4F7;">
+                    <button type="button" onclick="switchSaTab('sec-sa-pendidikan')" class="btn btn-muted" style="font-size:12px; font-weight:700;">
+                        &larr; 4. Pendidikan
+                    </button>
+                    <button type="button" onclick="switchSaTab('sec-sa-penugasan')" class="btn" style="background:#1455C0; font-size:12px; font-weight:700;">
+                        Lanjut ke 6. Penugasan &rarr;
+                    </button>
+                </div>
             </div>
 
             <!-- SEKSI 6: RIWAYAT PENUGASAN KOMUNITAS -->
-            <div class="form-section" id="sec-sa-penugasan">
+            <div class="form-section sa-tab-pane" id="sec-sa-penugasan">
                 <div class="section-label">6. Riwayat Komunitas &amp; Penugasan</div>
 
                 @for($t = 1; $t <= 6; $t++)
@@ -419,6 +465,12 @@
                         <input type="text" name="assignment_data[{{ $t }}][duty]" value="{{ old("assignment_data.{$t}.duty", $assignment[$t]['duty'] ?? '') }}" placeholder="Guru / Pamong / Bendahara">
                     </div>
                 @endfor
+
+                <div style="display:flex; justify-content:flex-start; margin-top:16px; padding-top:12px; border-top:1px solid #F2F4F7;">
+                    <button type="button" onclick="switchSaTab('sec-sa-formasi')" class="btn btn-muted" style="font-size:12px; font-weight:700;">
+                        &larr; 5. Formasi
+                    </button>
+                </div>
             </div>
 
             <div style="margin-top: 16px;">
@@ -431,6 +483,32 @@
 </div>
 
 <script>
+    function switchSaTab(tabId) {
+        document.querySelectorAll('.sa-tab-btn').forEach(function(btn) {
+            btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+        });
+        document.querySelectorAll('.sa-tab-pane').forEach(function(pane) {
+            pane.classList.toggle('active', pane.id === tabId);
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.sa-tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            switchSaTab(this.getAttribute('data-tab'));
+        });
+    });
+
+    var accountForm = document.querySelector('form');
+    if (accountForm) {
+        accountForm.addEventListener('invalid', function(e) {
+            var pane = e.target.closest('.sa-tab-pane');
+            if (pane && !pane.classList.contains('active')) {
+                switchSaTab(pane.id);
+            }
+        }, true);
+    }
+
     (function() {
         const input = document.getElementById('profile_photo');
         if (!input) return;

@@ -29,20 +29,48 @@
     </div>
 @endif
 
+<style>
+    .profil-tab-btn {
+        border: 1px solid #D0D5DD;
+        background: #F8F9FC;
+        color: #475467;
+        padding: 7px 14px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 800;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        flex-shrink: 0;
+    }
+    .profil-tab-btn.active {
+        background: #1455C0;
+        color: #ffffff;
+        border-color: #1455C0;
+        box-shadow: 0 2px 6px rgba(20, 85, 192, 0.28);
+    }
+    .profil-tab-pane {
+        display: none;
+    }
+    .profil-tab-pane.active {
+        display: block;
+    }
+</style>
+
 <form action="{{ route('profil.update') }}" method="POST" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:14px;">
     @csrf
 
-    <!-- TAB JUMP NAVIGATION UNTUK MOBILE -->
-    <div style="position:sticky; top:12px; z-index:40; background:rgba(255,255,255,0.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-radius:14px; padding:6px; box-shadow:0 4px 12px rgba(0,62,151,0.08); border:1px solid rgba(20,85,192,0.15); display:flex; gap:6px; overflow-x:auto;">
-        <button type="button" onclick="document.getElementById('sec-pokok').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#EFF8FF; color:#1455C0; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">1. Pokok</button>
-        <button type="button" onclick="document.getElementById('sec-keluarga').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">2. Keluarga</button>
-        <button type="button" onclick="document.getElementById('sec-pendidikan').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">3. Pendidikan</button>
-        <button type="button" onclick="document.getElementById('sec-formasi').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">4. Formasi</button>
-        <button type="button" onclick="document.getElementById('sec-penugasan').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">5. Penugasan</button>
+    <!-- TAB SELECTOR (HANYA TAB AKTIF YANG TAMPIL) -->
+    <div style="position:sticky; top:12px; z-index:40; background:rgba(255,255,255,0.95); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-radius:14px; padding:6px; box-shadow:0 4px 14px rgba(0,62,151,0.08); border:1px solid rgba(20,85,192,0.18); display:flex; gap:6px; overflow-x:auto;">
+        <button type="button" class="profil-tab-btn active" data-tab="sec-pokok">1. Pokok</button>
+        <button type="button" class="profil-tab-btn" data-tab="sec-keluarga">2. Keluarga</button>
+        <button type="button" class="profil-tab-btn" data-tab="sec-pendidikan">3. Pendidikan</button>
+        <button type="button" class="profil-tab-btn" data-tab="sec-formasi">4. Formasi</button>
+        <button type="button" class="profil-tab-btn" data-tab="sec-penugasan">5. Penugasan</button>
     </div>
 
     <!-- SECTION 1: DATA AKUN & PRIBADI -->
-    <div class="card" id="sec-pokok" style="padding:20px 16px;">
+    <div class="card profil-tab-pane active" id="sec-pokok" style="padding:20px 16px;">
         <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 16px; text-align:center;">
             1. Data Pokok &amp; Kontak
         </h3>
@@ -116,10 +144,16 @@
             <label for="community_location" class="form-label">Komunitas Saat Ini</label>
             <input type="text" id="community_location" name="community_location" value="{{ old('community_location', $user->community_location) }}" placeholder="Contoh: Komunitas Bruderan Deltamas" class="form-input">
         </div>
-    </div>
 
-    <!-- SECTION 2: DATA KELUARGA & NARAHUBUNG -->
-    <div class="card" id="sec-keluarga" style="padding:16px;">
+        <div style="display:flex; justify-content:flex-end; margin-top:20px; padding-top:14px; border-top:1px solid #F2F4F7;">
+            <button type="button" onclick="switchProfilTab('sec-keluarga')" class="btn-secondary" style="font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:6px;">
+                Lanjut ke 2. Keluarga &rarr;
+            </button>
+        </div>
+        </div>
+
+        <!-- SECTION 2: DATA KELUARGA & NARAHUBUNG -->
+        <div class="card profil-tab-pane" id="sec-keluarga" style="padding:16px;">
         <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px; text-align:center;">
             2. Data Keluarga &amp; Narahubung
         </h3>
@@ -200,10 +234,19 @@
             <label class="form-label">Alamat Narahubung</label>
             <input type="text" name="family_data[emergency_address]" value="{{ old('family_data.emergency_address', $family['emergency_address'] ?? '') }}" placeholder="Kota / Alamat narahubung" class="form-input">
         </div>
+
+        <div style="display:flex; justify-content:space-between; gap:10px; margin-top:20px; padding-top:14px; border-top:1px solid #F2F4F7;">
+            <button type="button" onclick="switchProfilTab('sec-pokok')" class="btn-secondary" style="font-size:12px; font-weight:700;">
+                &larr; 1. Pokok
+            </button>
+            <button type="button" onclick="switchProfilTab('sec-pendidikan')" class="btn-secondary" style="font-size:12px; font-weight:700;">
+                Lanjut ke 3. Pendidikan &rarr;
+            </button>
+        </div>
     </div>
 
     <!-- SECTION 3: RIWAYAT PENDIDIKAN FORMAL -->
-    <div class="card" id="sec-pendidikan" style="padding:16px;">
+    <div class="card profil-tab-pane" id="sec-pendidikan" style="padding:16px;">
         <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px; text-align:center;">
             3. Riwayat Pendidikan Formal
         </h3>
@@ -300,10 +343,19 @@
                 <input type="number" name="education_data[s2_out]" value="{{ old('education_data.s2_out', $education['s2_out'] ?? '') }}" class="form-input">
             </div>
         </div>
+
+        <div style="display:flex; justify-content:space-between; gap:10px; margin-top:20px; padding-top:14px; border-top:1px solid #F2F4F7;">
+            <button type="button" onclick="switchProfilTab('sec-keluarga')" class="btn-secondary" style="font-size:12px; font-weight:700;">
+                &larr; 2. Keluarga
+            </button>
+            <button type="button" onclick="switchProfilTab('sec-formasi')" class="btn-secondary" style="font-size:12px; font-weight:700;">
+                Lanjut ke 4. Formasi &rarr;
+            </button>
+        </div>
     </div>
 
     <!-- SECTION 4: RIWAYAT FORMASI BRUDER FIC -->
-    <div class="card" id="sec-formasi" style="padding:16px;">
+    <div class="card profil-tab-pane" id="sec-formasi" style="padding:16px;">
         <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px; text-align:center;">
             4. Riwayat Formasi Bruder FIC
         </h3>
@@ -394,10 +446,19 @@
                 </div>
             </div>
         @endfor
+
+        <div style="display:flex; justify-content:space-between; gap:10px; margin-top:20px; padding-top:14px; border-top:1px solid #F2F4F7;">
+            <button type="button" onclick="switchProfilTab('sec-pendidikan')" class="btn-secondary" style="font-size:12px; font-weight:700;">
+                &larr; 3. Pendidikan
+            </button>
+            <button type="button" onclick="switchProfilTab('sec-penugasan')" class="btn-secondary" style="font-size:12px; font-weight:700;">
+                Lanjut ke 5. Penugasan &rarr;
+            </button>
+        </div>
     </div>
 
     <!-- SECTION 5: RIWAYAT PENUGASAN KOMUNITAS -->
-    <div class="card" id="sec-penugasan" style="padding:16px;">
+    <div class="card profil-tab-pane" id="sec-penugasan" style="padding:16px;">
         <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px; text-align:center;">
             5. Riwayat Komunitas &amp; Penugasan
         </h3>
@@ -425,6 +486,12 @@
                 <input type="text" name="assignment_data[{{ $t }}][duty]" value="{{ old("assignment_data.{$t}.duty", $assignment[$t]['duty'] ?? '') }}" placeholder="Guru / Pamong / Bendahara" class="form-input">
             </div>
         @endfor
+
+        <div style="display:flex; justify-content:flex-start; margin-top:20px; padding-top:14px; border-top:1px solid #F2F4F7;">
+            <button type="button" onclick="switchProfilTab('sec-formasi')" class="btn-secondary" style="font-size:12px; font-weight:700;">
+                &larr; 4. Formasi
+            </button>
+        </div>
     </div>
 
     <div style="margin: 12px 0 100px;">
@@ -440,6 +507,32 @@
 
 @push('scripts')
 <script>
+    function switchProfilTab(tabId) {
+        document.querySelectorAll('.profil-tab-btn').forEach(function(btn) {
+            btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+        });
+        document.querySelectorAll('.profil-tab-pane').forEach(function(pane) {
+            pane.classList.toggle('active', pane.id === tabId);
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.profil-tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            switchProfilTab(this.getAttribute('data-tab'));
+        });
+    });
+
+    var formEl = document.querySelector('form');
+    if (formEl) {
+        formEl.addEventListener('invalid', function(e) {
+            var pane = e.target.closest('.profil-tab-pane');
+            if (pane && !pane.classList.contains('active')) {
+                switchProfilTab(pane.id);
+            }
+        }, true);
+    }
+
     (function () {
         var photoInput = document.getElementById('profile_photo');
         if (!photoInput) return;

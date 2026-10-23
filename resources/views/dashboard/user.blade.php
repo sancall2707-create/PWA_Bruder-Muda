@@ -46,7 +46,7 @@
             <span class="stat-info-val">{{ $stats['pembinaan_bulan'] }} / 2</span>
             <span class="stat-info-sub">Maksimal 2 kali sebulan (Bimbingan &amp; Wawanhati)</span>
             <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(20,85,192,0.15); font-size: 11px; font-weight: 700; color: #1455C0;">
-                Akumulasi Tahun {{ now()->year }}: {{ $stats['pembinaan_tahun'] }} / 24 (2 &times; 12)
+                Akumulasi Tahun {{ now()->year }}: {{ $stats['pembinaan_tahun'] }} / 24
             </div>
         </div>
     </div>
@@ -64,25 +64,27 @@
     </div>
 @endif
 
-<!-- CHECKLIST INSTRUMEN BULAN INI -->
+<!-- CHECKLIST INSTRUMEN BULAN INI (SIMETRIS & RAPI) -->
 <div class="card" style="padding: 16px; margin-bottom: 14px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <div style="font-size:12px; font-weight:800; color:#101828; text-transform:uppercase; letter-spacing:0.3px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div style="font-size:12px; font-weight:800; color:#101828; text-transform:uppercase; letter-spacing:0.5px;">
             Checklist Formasi {{ now()->locale('id')->translatedFormat('F') }}
         </div>
-        <span style="font-size:11px; font-weight:700; color:#667085;">3 Instrumen</span>
+        <span style="font-size:10px; font-weight:700; color:#475467; background:#F2F4F7; padding:3px 8px; border-radius:999px; white-space:nowrap;">
+            3 Instrumen
+        </span>
     </div>
 
     <div style="display:flex; flex-direction:column; gap:8px;">
         <!-- 1. Bimbingan Rohani -->
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border-radius:12px; background:{{ $stats['checklist']['bimbingan']['done'] ? '#F6FEF9; border:1px solid #D1FADF;' : '#F8F9FC; border:1px solid #EAECF0;' }}">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <div style="width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; {{ $stats['checklist']['bimbingan']['done'] ? 'background:#12B76A; color:#fff;' : 'background:#E4E7EC; color:#667085;' }}">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 12px; border-radius:12px; min-height:54px; box-sizing:border-box; background:{{ $stats['checklist']['bimbingan']['done'] ? '#F6FEF9; border:1px solid #D1FADF;' : '#F8F9FC; border:1px solid #EAECF0;' }}">
+            <div style="display:flex; align-items:center; gap:10px; min-width:0; flex:1;">
+                <div style="width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex-shrink:0; {{ $stats['checklist']['bimbingan']['done'] ? 'background:#12B76A; color:#fff;' : 'background:#E4E7EC; color:#667085;' }}">
                     {{ $stats['checklist']['bimbingan']['done'] ? '✓' : '1' }}
                 </div>
-                <div>
-                    <div style="font-size:13px; font-weight:700; color:#101828;">Bimbingan Rohani</div>
-                    <div style="font-size:11px; color:#667085;">
+                <div style="min-width:0; flex:1;">
+                    <div style="font-size:13px; font-weight:700; color:#101828; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Bimbingan Rohani</div>
+                    <div style="font-size:11px; color:#667085; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px;">
                         @if($stats['checklist']['bimbingan']['done'])
                             Terlaksana: {{ $stats['checklist']['bimbingan']['item']->meeting_at->locale('id')->translatedFormat('d M Y') }}
                         @else
@@ -92,21 +94,21 @@
                 </div>
             </div>
             @if($stats['checklist']['bimbingan']['done'])
-                <a href="{{ route('bimbingan.index') }}" style="font-size:11px; font-weight:700; color:#027A48; text-decoration:none; padding:4px 10px; background:#ECFDF3; border-radius:999px;">Lihat &rarr;</a>
+                <a href="{{ route('bimbingan.index') }}" style="width:76px; min-width:76px; height:32px; display:inline-flex; align-items:center; justify-content:center; text-align:center; font-size:11px; font-weight:800; color:#027A48; text-decoration:none; background:#ECFDF3; border:1px solid #A6F4C5; border-radius:999px; box-sizing:border-box; flex-shrink:0;">Lihat &rarr;</a>
             @else
-                <a href="{{ route('bimbingan.create') }}" style="font-size:11px; font-weight:700; color:#fff; text-decoration:none; padding:6px 12px; background:#1455C0; border-radius:999px;">+ Isi</a>
+                <a href="{{ route('bimbingan.create') }}" style="width:76px; min-width:76px; height:32px; display:inline-flex; align-items:center; justify-content:center; text-align:center; font-size:11px; font-weight:800; color:#fff; text-decoration:none; background:#1455C0; border-radius:999px; box-sizing:border-box; flex-shrink:0;">+ Isi</a>
             @endif
         </div>
 
         <!-- 2. Wawanhati Pimpinan Lokal -->
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border-radius:12px; background:{{ $stats['checklist']['wawanhati']['done'] ? '#F6FEF9; border:1px solid #D1FADF;' : '#F8F9FC; border:1px solid #EAECF0;' }}">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <div style="width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; {{ $stats['checklist']['wawanhati']['done'] ? 'background:#12B76A; color:#fff;' : 'background:#E4E7EC; color:#667085;' }}">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 12px; border-radius:12px; min-height:54px; box-sizing:border-box; background:{{ $stats['checklist']['wawanhati']['done'] ? '#F6FEF9; border:1px solid #D1FADF;' : '#F8F9FC; border:1px solid #EAECF0;' }}">
+            <div style="display:flex; align-items:center; gap:10px; min-width:0; flex:1;">
+                <div style="width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex-shrink:0; {{ $stats['checklist']['wawanhati']['done'] ? 'background:#12B76A; color:#fff;' : 'background:#E4E7EC; color:#667085;' }}">
                     {{ $stats['checklist']['wawanhati']['done'] ? '✓' : '2' }}
                 </div>
-                <div>
-                    <div style="font-size:13px; font-weight:700; color:#101828;">Wawanhati Pimpinan Lokal</div>
-                    <div style="font-size:11px; color:#667085;">
+                <div style="min-width:0; flex:1;">
+                    <div style="font-size:13px; font-weight:700; color:#101828; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Wawanhati Pimpinan Lokal</div>
+                    <div style="font-size:11px; color:#667085; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px;">
                         @if($stats['checklist']['wawanhati']['done'])
                             Terlaksana: {{ $stats['checklist']['wawanhati']['item']->meeting_at->locale('id')->translatedFormat('d M Y') }}
                         @else
@@ -116,21 +118,21 @@
                 </div>
             </div>
             @if($stats['checklist']['wawanhati']['done'])
-                <a href="{{ route('wawanhati.index') }}" style="font-size:11px; font-weight:700; color:#027A48; text-decoration:none; padding:4px 10px; background:#ECFDF3; border-radius:999px;">Lihat &rarr;</a>
+                <a href="{{ route('wawanhati.index') }}" style="width:76px; min-width:76px; height:32px; display:inline-flex; align-items:center; justify-content:center; text-align:center; font-size:11px; font-weight:800; color:#027A48; text-decoration:none; background:#ECFDF3; border:1px solid #A6F4C5; border-radius:999px; box-sizing:border-box; flex-shrink:0;">Lihat &rarr;</a>
             @else
-                <a href="{{ route('wawanhati.create') }}" style="font-size:11px; font-weight:700; color:#fff; text-decoration:none; padding:6px 12px; background:#00838F; border-radius:999px;">+ Isi</a>
+                <a href="{{ route('wawanhati.create') }}" style="width:76px; min-width:76px; height:32px; display:inline-flex; align-items:center; justify-content:center; text-align:center; font-size:11px; font-weight:800; color:#fff; text-decoration:none; background:#00838F; border-radius:999px; box-sizing:border-box; flex-shrink:0;">+ Isi</a>
             @endif
         </div>
 
         <!-- 3. Jurnal Pengembangan Diri -->
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border-radius:12px; background:{{ $stats['checklist']['jurnal']['done'] ? '#F6FEF9; border:1px solid #D1FADF;' : '#F8F9FC; border:1px solid #EAECF0;' }}">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <div style="width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; {{ $stats['checklist']['jurnal']['done'] ? 'background:#12B76A; color:#fff;' : 'background:#E4E7EC; color:#667085;' }}">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 12px; border-radius:12px; min-height:54px; box-sizing:border-box; background:{{ $stats['checklist']['jurnal']['done'] ? '#F6FEF9; border:1px solid #D1FADF;' : '#F8F9FC; border:1px solid #EAECF0;' }}">
+            <div style="display:flex; align-items:center; gap:10px; min-width:0; flex:1;">
+                <div style="width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex-shrink:0; {{ $stats['checklist']['jurnal']['done'] ? 'background:#12B76A; color:#fff;' : 'background:#E4E7EC; color:#667085;' }}">
                     {{ $stats['checklist']['jurnal']['done'] ? '✓' : '3' }}
                 </div>
-                <div>
-                    <div style="font-size:13px; font-weight:700; color:#101828;">Jurnal Pengembangan Diri</div>
-                    <div style="font-size:11px; color:#667085;">
+                <div style="min-width:0; flex:1;">
+                    <div style="font-size:13px; font-weight:700; color:#101828; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Jurnal Pengembangan Diri</div>
+                    <div style="font-size:11px; color:#667085; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px;">
                         @if($stats['checklist']['jurnal']['done'])
                             {{ $stats['checklist']['jurnal']['count'] }} jurnal tercatat bulan ini
                         @else
@@ -140,9 +142,9 @@
                 </div>
             </div>
             @if($stats['checklist']['jurnal']['done'])
-                <a href="{{ route('jurnal.index') }}" style="font-size:11px; font-weight:700; color:#027A48; text-decoration:none; padding:4px 10px; background:#ECFDF3; border-radius:999px;">Lihat &rarr;</a>
+                <a href="{{ route('jurnal.index') }}" style="width:76px; min-width:76px; height:32px; display:inline-flex; align-items:center; justify-content:center; text-align:center; font-size:11px; font-weight:800; color:#027A48; text-decoration:none; background:#ECFDF3; border:1px solid #A6F4C5; border-radius:999px; box-sizing:border-box; flex-shrink:0;">Lihat &rarr;</a>
             @else
-                <a href="{{ route('jurnal.create') }}" style="font-size:11px; font-weight:700; color:#fff; text-decoration:none; padding:6px 12px; background:#027A48; border-radius:999px;">+ Tulis</a>
+                <a href="{{ route('jurnal.create') }}" style="width:76px; min-width:76px; height:32px; display:inline-flex; align-items:center; justify-content:center; text-align:center; font-size:11px; font-weight:800; color:#fff; text-decoration:none; background:#027A48; border-radius:999px; box-sizing:border-box; flex-shrink:0;">+ Isi</a>
             @endif
         </div>
     </div>
