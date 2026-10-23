@@ -54,6 +54,55 @@ class MonitoringController extends Controller
         ]);
     }
 
+    /**
+     * Daftar lengkap Jurnal Pengembangan Diri semua bruder — bisa filter & hapus massal.
+     */
+    public function jurnalIndex(Request $request): View
+    {
+        $bruders = $this->bruders();
+        $selectedBruderId = $request->input('bruder') ? (int) $request->input('bruder') : null;
+
+        $query = \App\Models\SelfDevelopmentJournal::with('user')
+            ->whereHas('user', fn ($q) => $q->where('role', 'user')->where('is_active', true));
+
+        if ($selectedBruderId) {
+            $query->where('user_id', $selectedBruderId);
+        }
+
+        $journals = $query->orderByDesc('activity_date')->get();
+
+        return view('super-admin.monitoring.jurnal', [
+            'journals'          => $journals,
+            'bruders'           => $bruders,
+            'selectedBruderId'  => $selectedBruderId,
+            'headerTitle'       => 'Jurnal Pengembangan Diri',
+            'headerSubtitle'    => 'Kelola dan hapus jurnal seluruh bruder muda',
+        ]);
+    }
+
+    /**
+     * Hapus massal Jurnal Pengembangan Diri oleh Super Admin / Admin TPPBM.
+     * Hanya jurnal milik user role=user yang boleh dihapus.
+     */
+    public function jurnalDestroyBulk(Request $request): RedirectResponse
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids) || ! is_array($ids)) {
+            return redirect()->route('superadmin.monitoring.jurnal.index')->with('error', 'Tidak ada jurnal yang dipilih.');
+        }
+
+        $ids = array_map('intval', $ids);
+
+        // Keamanan: hanya boleh hapus jurnal milik bruder (role=user), bukan admin
+        $deleted = \App\Models\SelfDevelopmentJournal::whereIn('id', $ids)
+            ->whereHas('user', fn ($q) => $q->where('role', 'user'))
+            ->delete();
+
+        return redirect()->route('superadmin.monitoring.jurnal.index', $request->only('bruder'))
+            ->with('success', "{$deleted} jurnal berhasil dihapus.");
+    }
+
     public function export(Request $request): Response|RedirectResponse
     {
         if ($request->input('jenis') === 'raport' && $request->input('format') === 'pdf') {

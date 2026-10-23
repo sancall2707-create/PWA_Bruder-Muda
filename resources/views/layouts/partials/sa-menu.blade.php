@@ -175,6 +175,7 @@
                 <a class="sa-menu-link {{ request()->routeIs('superadmin.monitoring.raport') ? 'active' : '' }}" href="{{ route('superadmin.monitoring.raport') }}">Raport Pendampingan Bruder</a>
                 <a class="sa-menu-link {{ request()->routeIs('superadmin.monitoring.index') ? 'active' : '' }}" href="{{ route('superadmin.monitoring.index') }}">{{ $isAdmin ? 'Monitoring & Ekspor Laporan' : 'Monitoring & Ekspor Data' }}</a>
                 <a class="sa-menu-link {{ request()->routeIs('superadmin.monitoring.agenda') ? 'active' : '' }}" href="{{ route('superadmin.monitoring.agenda') }}">Rekapitulasi Agenda &amp; Kalender</a>
+                <a class="sa-menu-link {{ request()->routeIs('superadmin.monitoring.jurnal.*') ? 'active' : '' }}" href="{{ route('superadmin.monitoring.jurnal.index') }}">Jurnal Pengembangan Diri</a>
                 <a class="sa-menu-link {{ request()->routeIs('superadmin.sapaan*') ? 'active' : '' }}" href="{{ route('superadmin.sapaan.index') }}">{{ $isAdmin ? 'Rilis Sapaan & Pengumuman Bersama' : 'Buat Sapaan Provinsial' }}</a>
             </div>
             <form class="sa-menu-logout" action="{{ route('logout') }}" method="POST">

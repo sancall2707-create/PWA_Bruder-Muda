@@ -10,13 +10,16 @@
 
 <div style="display: flex; background: #F2F4F7; border-radius: 12px; padding: 4px; gap: 4px;">
     <a href="{{ route('superadmin.monitoring.raport', $queryBase) }}" style="flex:1; text-align:center; padding:10px 4px; border-radius:10px; font-weight:700; font-size:12px; text-decoration:none; {{ request()->routeIs('superadmin.monitoring.raport') ? 'background:#fff;color:#1455C0;box-shadow:0 2px 6px rgba(0,0,0,0.08);' : 'color:#667085;' }}">
-        Raport Pendampingan
+        Raport
     </a>
     <a href="{{ route('superadmin.monitoring.index', $queryBase) }}" style="flex:1; text-align:center; padding:10px 4px; border-radius:10px; font-weight:700; font-size:12px; text-decoration:none; {{ request()->routeIs('superadmin.monitoring.index') ? 'background:#fff;color:#1455C0;box-shadow:0 2px 6px rgba(0,0,0,0.08);' : 'color:#667085;' }}">
-        Laporan Jurnal &amp; Bimbingan
+        Laporan
     </a>
     <a href="{{ route('superadmin.monitoring.agenda', $queryBase) }}" style="flex:1; text-align:center; padding:10px 4px; border-radius:10px; font-weight:700; font-size:12px; text-decoration:none; {{ request()->routeIs('superadmin.monitoring.agenda') ? 'background:#fff;color:#1455C0;box-shadow:0 2px 6px rgba(0,0,0,0.08);' : 'color:#667085;' }}">
-        Rekapitulasi Agenda
+        Agenda
+    </a>
+    <a href="{{ route('superadmin.monitoring.jurnal.index') }}" style="flex:1; text-align:center; padding:10px 4px; border-radius:10px; font-weight:700; font-size:12px; text-decoration:none; {{ request()->routeIs('superadmin.monitoring.jurnal.*') ? 'background:#fff;color:#1455C0;box-shadow:0 2px 6px rgba(0,0,0,0.08);' : 'color:#667085;' }}">
+        Jurnal
     </a>
 </div>
 

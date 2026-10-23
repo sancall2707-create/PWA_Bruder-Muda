@@ -134,6 +134,9 @@ class JournalController extends Controller
             return redirect()->route('jurnal.index')->with('error', 'Tidak ada jurnal yang dipilih.');
         }
 
+        // Cast ke integer agar query aman
+        $ids = array_map('intval', $ids);
+
         // Pastikan hanya jurnal milik user sendiri yang dihapus — keamanan berlapis
         $deleted = SelfDevelopmentJournal::whereIn('id', $ids)
             ->where('user_id', auth()->id())

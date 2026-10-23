@@ -151,6 +151,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
         Route::get('/monitoring/agenda', [MonitoringController::class, 'agenda'])->name('monitoring.agenda');
         Route::get('/monitoring/export', [MonitoringController::class, 'export'])->name('monitoring.export');
+        Route::get('/monitoring/jurnal', [MonitoringController::class, 'jurnalIndex'])->name('monitoring.jurnal.index');
+        Route::delete('/monitoring/jurnal/bulk', [MonitoringController::class, 'jurnalDestroyBulk'])->name('monitoring.jurnal.destroyBulk');
 
         // Sapaan & Publikasi
         Route::get('/sapaan', [ProvincialMessageManagementController::class, 'index'])->name('sapaan.index');
