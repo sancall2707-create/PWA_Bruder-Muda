@@ -201,6 +201,31 @@ class ProvincialPublicationTest extends TestCase
         $this->assertSoftDeleted('provincial_messages', ['id' => $message->id]);
     }
 
+    public function test_sapaan_label_adapts_to_tppbm_role(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $bruder = User::factory()->create(['role' => 'user']);
+
+        $this->publish($admin, [
+            'kind' => 'sapaan',
+            'title' => 'Sapaan dari Tim Pendamping',
+            'author_name' => 'Tim Pendamping TPPBM',
+            'author_role' => 'TPPBM',
+            'content' => 'Isi pesan pembinaan dari TPPBM untuk bruder muda.',
+        ]);
+
+        $this->actingAs($bruder)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertSee('Sapaan TPPBM')
+            ->assertDontSee('Sapaan Provinsial');
+
+        $this->actingAs($bruder)
+            ->get(route('sapaan-provinsial'))
+            ->assertOk()
+            ->assertSee('Sapaan TPPBM');
+    }
+
     /**
      * @param  array<string, string>  $overrides
      */

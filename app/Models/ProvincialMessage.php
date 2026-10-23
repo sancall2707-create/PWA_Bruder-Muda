@@ -101,6 +101,18 @@ class ProvincialMessage extends Model
         return $moment->copy()->locale('id')->translatedFormat('j F Y');
     }
 
+    /**
+     * Label jenis sapaan dinamis berdasarkan peran pembuat/penulis.
+     */
+    public function sapaanLabel(): string
+    {
+        if ($this->author_role === 'TPPBM') {
+            return 'Sapaan TPPBM';
+        }
+
+        return 'Sapaan Provinsial';
+    }
+
     public function scheduleLabel(): ?string
     {
         if (! $this->starts_at instanceof Carbon) {

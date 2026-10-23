@@ -152,7 +152,7 @@
 
 @if($sapaan)
     <a href="{{ route('sapaan-provinsial') }}" class="card" style="display:block; text-decoration:none; color:inherit; padding:14px;">
-        <div style="font-size:11px; font-weight:800; letter-spacing:0.4px; color:var(--fic-gold); text-transform:uppercase;">Sapaan Provinsial</div>
+        <div style="font-size:11px; font-weight:800; letter-spacing:0.4px; color:var(--fic-gold); text-transform:uppercase;">{{ $sapaan->sapaanLabel() }}</div>
         @if($sapaan->image)
             <img src="{{ route('sapaan-provinsial.foto', $sapaan) }}" alt="Foto sapaan" style="width:100%; height:auto; max-height:640px; object-fit:contain; border-radius:12px; margin-top:10px; display:block;">
         @endif

@@ -1,8 +1,9 @@
 @extends('layouts.user-app')
 
 @php
-    $title = 'Sapaan Provinsial';
-    $headerGreetingLabel = 'Sapaan Provinsial';
+    $pageTitle = $message ? $message->label : 'Sapaan';
+    $title = $pageTitle;
+    $headerGreetingLabel = $pageTitle;
     $hideBottomNav = true;
 @endphp
 

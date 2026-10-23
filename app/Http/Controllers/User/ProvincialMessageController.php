@@ -61,6 +61,7 @@ class ProvincialMessageController extends Controller
             'title' => $message->title,
             'author_name' => $message->author_name ?: 'Provinsi FIC Indonesia',
             'author_role' => $message->author_role ?: 'TPPBM',
+            'label' => $message->sapaanLabel(),
             'initials' => $this->initials($message->author_name ?: 'FIC'),
             'published_at' => $message->publishedLabel(),
             'image_url' => $message->image ? route('sapaan-provinsial.foto', $message) : null,
