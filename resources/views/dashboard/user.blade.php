@@ -88,10 +88,12 @@
             <div style="font-size:11px; color:#475467; margin-top:3px; line-height:1.4;">
                 Target 2 kali per bulan (Bimbingan Rohani &amp; Wawanhati Pilok).
             </div>
-            <div style="margin-top:8px; padding-top:8px; border-top:1px dashed rgba(20,85,192,0.18); font-size:11px; font-weight:700; color:#1455C0; line-height:1.4;">
-                Akumulasi {{ $stats['label_tahunan'] }}: <strong>{{ $stats['pembinaan_tahun'] }} / 24</strong>
-            </div>
         </div>
+    </div>
+
+    <div class="stat-year-summary">
+        <span>Akumulasi {{ $stats['label_tahunan'] }}</span>
+        <strong>{{ $stats['pembinaan_tahun'] }} / 24</strong>
     </div>
 </div>
 

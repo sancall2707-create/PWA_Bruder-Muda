@@ -316,7 +316,9 @@ class BruderMudaRecordTest extends TestCase
             ->assertSee('Akumulasi Tahunan')
             ->assertSee('Bulan Berjalan')
             ->assertSee('1 jurnal tercatat bulan ini')
-            ->assertSee('Akumulasi');
+            ->assertSee('stat-year-summary', false)
+            ->assertSee('Akumulasi Januari – '.now('Asia/Jakarta')->locale('id')->translatedFormat('F Y'), false)
+            ->assertSee('0 / 24', false);
     }
 
     public function test_owner_can_edit_and_delete_journal(): void
