@@ -53,10 +53,8 @@ class MonitoringController extends Controller
             return redirect()->back()->with('error', 'Jenis laporan tidak valid.');
         }
 
-        // Keamanan: hanya hapus laporan milik user role=user
-        $deleted = $model::where('id', $id)
-            ->whereHas('user', fn ($q) => $q->where('role', 'user'))
-            ->delete();
+        // Keamanan: hapus laporan (termasuk jika user pemiliknya berstatus trashed/soft-deleted)
+        $deleted = $model::where('id', $id)->delete();
 
         if ($deleted) {
             return redirect()->back()->with('success', 'Laporan berhasil dihapus.');
@@ -102,21 +100,15 @@ class MonitoringController extends Controller
         $totalDeleted = 0;
 
         if (! empty($bimbinganIds)) {
-            $totalDeleted += \App\Models\SpiritualGuidanceReport::whereIn('id', $bimbinganIds)
-                ->whereHas('user', fn ($q) => $q->where('role', 'user'))
-                ->delete();
+            $totalDeleted += \App\Models\SpiritualGuidanceReport::whereIn('id', $bimbinganIds)->delete();
         }
 
         if (! empty($wawanhatiIds)) {
-            $totalDeleted += \App\Models\WawanhatiReport::whereIn('id', $wawanhatiIds)
-                ->whereHas('user', fn ($q) => $q->where('role', 'user'))
-                ->delete();
+            $totalDeleted += \App\Models\WawanhatiReport::whereIn('id', $wawanhatiIds)->delete();
         }
 
         if (! empty($jurnalIds)) {
-            $totalDeleted += \App\Models\SelfDevelopmentJournal::whereIn('id', $jurnalIds)
-                ->whereHas('user', fn ($q) => $q->where('role', 'user'))
-                ->delete();
+            $totalDeleted += \App\Models\SelfDevelopmentJournal::whereIn('id', $jurnalIds)->delete();
         }
 
         return redirect()->back()->with('success', "{$totalDeleted} laporan berhasil dihapus.");
@@ -179,10 +171,8 @@ class MonitoringController extends Controller
 
         $ids = array_map('intval', $ids);
 
-        // Keamanan: hanya boleh hapus jurnal milik bruder (role=user), bukan admin
-        $deleted = \App\Models\SelfDevelopmentJournal::whereIn('id', $ids)
-            ->whereHas('user', fn ($q) => $q->where('role', 'user'))
-            ->delete();
+        // Hapus jurnal yang dipilih
+        $deleted = \App\Models\SelfDevelopmentJournal::whereIn('id', $ids)->delete();
 
         return redirect()->route('superadmin.monitoring.jurnal.index', $request->only('bruder'))
             ->with('success', "{$deleted} jurnal berhasil dihapus.");
