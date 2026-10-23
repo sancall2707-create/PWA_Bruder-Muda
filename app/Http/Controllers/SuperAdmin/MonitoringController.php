@@ -37,6 +37,91 @@ class MonitoringController extends Controller
         ]);
     }
 
+    /**
+     * Hapus satu laporan (bimbingan, wawanhati, atau jurnal) dari Monitoring oleh Super Admin / Admin.
+     */
+    public function destroyReportSingle(Request $request, string $type, int $id): RedirectResponse
+    {
+        $model = match ($type) {
+            'bimbingan' => \App\Models\SpiritualGuidanceReport::class,
+            'wawanhati' => \App\Models\WawanhatiReport::class,
+            'jurnal'    => \App\Models\SelfDevelopmentJournal::class,
+            default     => null,
+        };
+
+        if (! $model) {
+            return redirect()->back()->with('error', 'Jenis laporan tidak valid.');
+        }
+
+        // Keamanan: hanya hapus laporan milik user role=user
+        $deleted = $model::where('id', $id)
+            ->whereHas('user', fn ($q) => $q->where('role', 'user'))
+            ->delete();
+
+        if ($deleted) {
+            return redirect()->back()->with('success', 'Laporan berhasil dihapus.');
+        }
+
+        return redirect()->back()->with('error', 'Laporan tidak ditemukan atau gagal dihapus.');
+    }
+
+    /**
+     * Hapus massal laporan terpilih dari Monitoring oleh Super Admin / Admin.
+     * Menerima array item: [ "bimbingan:12", "wawanhati:5", "jurnal:8" ]
+     */
+    public function destroyReportBulk(Request $request): RedirectResponse
+    {
+        $items = $request->input('items', []);
+
+        if (empty($items) || ! is_array($items)) {
+            return redirect()->back()->with('error', 'Tidak ada laporan yang dipilih.');
+        }
+
+        $bimbinganIds = [];
+        $wawanhatiIds = [];
+        $jurnalIds = [];
+
+        foreach ($items as $item) {
+            if (! is_string($item) || ! str_contains($item, ':')) {
+                continue;
+            }
+            [$cat, $idStr] = explode(':', $item, 2);
+            $id = (int) $idStr;
+            if ($id <= 0) {
+                continue;
+            }
+
+            match ($cat) {
+                'bimbingan' => $bimbinganIds[] = $id,
+                'wawanhati' => $wawanhatiIds[] = $id,
+                'jurnal'    => $jurnalIds[] = $id,
+                default     => null,
+            };
+        }
+
+        $totalDeleted = 0;
+
+        if (! empty($bimbinganIds)) {
+            $totalDeleted += \App\Models\SpiritualGuidanceReport::whereIn('id', $bimbinganIds)
+                ->whereHas('user', fn ($q) => $q->where('role', 'user'))
+                ->delete();
+        }
+
+        if (! empty($wawanhatiIds)) {
+            $totalDeleted += \App\Models\WawanhatiReport::whereIn('id', $wawanhatiIds)
+                ->whereHas('user', fn ($q) => $q->where('role', 'user'))
+                ->delete();
+        }
+
+        if (! empty($jurnalIds)) {
+            $totalDeleted += \App\Models\SelfDevelopmentJournal::whereIn('id', $jurnalIds)
+                ->whereHas('user', fn ($q) => $q->where('role', 'user'))
+                ->delete();
+        }
+
+        return redirect()->back()->with('success', "{$totalDeleted} laporan berhasil dihapus.");
+    }
+
     public function agenda(Request $request): View
     {
         $filters = $this->monitoring->filters($request);

@@ -75,6 +75,7 @@ class MonitoringQuery
             $filters,
             'meeting_at',
         )->orderByDesc('meeting_at')->get()->map(fn (SpiritualGuidanceReport $report) => $this->row(
+            id: (int) $report->id,
             bruder: $this->bruderName($report->user),
             type: 'Bimbingan Rohani',
             category: 'bimbingan',
@@ -90,6 +91,7 @@ class MonitoringQuery
             $filters,
             'meeting_at',
         )->orderByDesc('meeting_at')->get()->map(fn (WawanhatiReport $report) => $this->row(
+            id: (int) $report->id,
             bruder: $this->bruderName($report->user),
             type: 'Wawanhati Pilok',
             category: 'wawanhati',
@@ -105,6 +107,7 @@ class MonitoringQuery
             $filters,
             'activity_date',
         )->orderByDesc('activity_date')->get()->map(fn (SelfDevelopmentJournal $journal) => $this->row(
+            id: (int) $journal->id,
             bruder: $this->bruderName($journal->user),
             type: 'Jurnal Pengembangan Diri',
             category: 'jurnal',
@@ -281,12 +284,14 @@ class MonitoringQuery
         string $counterpart,
         ?string $location,
         string $summary,
+        int $id = 0,
     ): object {
         $at = $at->copy()->locale('id');
         $done = in_array(strtolower($status), ['completed', 'approved', 'published', 'submitted', 'selesai', 'done'], true);
         $summary = trim(preg_replace('/\s+/', ' ', strip_tags($summary)) ?? '');
 
         return (object) [
+            'id' => $id,
             'bruder' => $bruder,
             'type' => $type,
             'category' => $category,

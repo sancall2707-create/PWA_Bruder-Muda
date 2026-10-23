@@ -149,6 +149,8 @@ Route::middleware('auth')->group(function () {
         // Monitoring Laporan & Raport
         Route::get('/monitoring/raport', [MonitoringController::class, 'raport'])->name('monitoring.raport');
         Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
+        Route::delete('/monitoring/laporan/bulk', [MonitoringController::class, 'destroyReportBulk'])->name('monitoring.laporan.destroyBulk');
+        Route::delete('/monitoring/laporan/{type}/{id}', [MonitoringController::class, 'destroyReportSingle'])->name('monitoring.laporan.destroySingle');
         Route::get('/monitoring/agenda', [MonitoringController::class, 'agenda'])->name('monitoring.agenda');
         Route::get('/monitoring/export', [MonitoringController::class, 'export'])->name('monitoring.export');
         Route::get('/monitoring/jurnal', [MonitoringController::class, 'jurnalIndex'])->name('monitoring.jurnal.index');
