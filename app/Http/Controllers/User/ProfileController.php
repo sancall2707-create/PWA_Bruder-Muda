@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ProfileImageCompressor;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,7 +42,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * Layani foto profil milik pengguna yang sedang masuk.
+     * Layani foto profil pengguna sendiri.
      * Berkas tidak dipublikasikan lewat symlink storage.
      */
     public function photo(Request $request): StreamedResponse
@@ -49,9 +50,7 @@ class ProfileController extends Controller
         $path = $request->user()->profile_photo;
         abort_unless($this->isServableProfilePhoto($path), 404);
 
-        return Storage::disk('public')->response($path, null, [
-            'Cache-Control' => 'private, no-store',
-        ]);
+        return ProfileImageCompressor::response($path, $request);
     }
 
     /**
@@ -214,7 +213,7 @@ class ProfileController extends Controller
             return;
         }
 
-        $stored = $request->file('profile_photo')->store('profil', 'public');
+        $stored = (new ProfileImageCompressor)->store($request->file('profile_photo'));
 
         if (! is_string($stored) || ! $this->isProfilePhotoPath($stored)) {
             throw ValidationException::withMessages([

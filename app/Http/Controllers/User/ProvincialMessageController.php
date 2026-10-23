@@ -5,13 +5,14 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\ProvincialMessage;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProvincialMessageController extends Controller
 {
     /**
-     * Tampilkan sapaan yang dipublikasikan dan pengumuman yang sedang tayang.
+     * Tampilkan halaman Sapaan Provinsial & Pengumuman lengkap.
      */
     public function index(): View
     {
@@ -21,12 +22,20 @@ class ProvincialMessageController extends Controller
         ]);
     }
 
-    public function photo(ProvincialMessage $message): StreamedResponse
+    public function photo(ProvincialMessage $message, Request $request): StreamedResponse
     {
         abort_unless($this->canViewPhoto($message), 404);
 
-        return Storage::disk('public')->response($message->image, null, [
-            'Cache-Control' => 'private, max-age=86400',
+        $path = $message->image;
+        $disk = Storage::disk('public');
+        $fullPath = $disk->path($path);
+        $lastModified = filemtime($fullPath);
+        $etag = '"'.md5($path.$lastModified).'"';
+
+        return $disk->response($path, null, [
+            'Cache-Control' => 'public, max-age=604800, must-revalidate',
+            'ETag' => $etag,
+            'Last-Modified' => gmdate('D, d M Y H:i:s', $lastModified).' GMT',
         ]);
     }
 

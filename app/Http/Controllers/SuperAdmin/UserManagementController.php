@@ -4,12 +4,15 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ProfileImageCompressor;
 use App\Services\SuperAdminOverviewService;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -218,7 +221,7 @@ class UserManagementController extends Controller
                 'profile_photo.max' => 'Ukuran foto maksimal 10 MB.',
             ]);
 
-            $stored = $request->file('profile_photo')->store('profil', 'public');
+            $stored = (new ProfileImageCompressor)->store($request->file('profile_photo'));
             if (is_string($stored)) {
                 $oldPhoto = $user->profile_photo;
                 $user->profile_photo = $stored;
@@ -305,15 +308,13 @@ class UserManagementController extends Controller
     }
 
     /**
-     * Layani foto profil pengguna tertentu secara aman.
+     * Layani foto profil pengguna tertentu secara aman dengan cache HTTP.
      */
     public function photo(User $user): StreamedResponse
     {
         $path = $user->profile_photo;
         abort_unless(is_string($path) && str_starts_with($path, 'profil/') && Storage::disk('public')->exists($path), 404);
 
-        return Storage::disk('public')->response($path, null, [
-            'Cache-Control' => 'private, no-store',
-        ]);
+        return ProfileImageCompressor::response($path, request());
     }
 }

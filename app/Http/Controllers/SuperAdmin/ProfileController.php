@@ -4,11 +4,14 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ProfileImageCompressor;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
@@ -64,7 +67,7 @@ class ProfileController extends Controller
         $user->bio = $validated['bio'] ?? null;
 
         if ($request->hasFile('profile_photo')) {
-            $stored = $request->file('profile_photo')->store('profil', 'public');
+            $stored = (new ProfileImageCompressor)->store($request->file('profile_photo'));
             if (is_string($stored)) {
                 $oldPhoto = $user->profile_photo;
                 $user->profile_photo = $stored;
