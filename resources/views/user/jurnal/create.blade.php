@@ -35,9 +35,11 @@
                 id="activity_date"
                 name="activity_date"
                 value="{{ old('activity_date', date('Y-m-d')) }}"
+                max="{{ date('Y-m-d') }}"
                 class="form-input"
                 required
             >
+            <span class="form-help">Hanya dapat memilih hari ini atau tanggal yang sudah lewat.</span>
         </div>
 
         <!-- Nama Kegiatan -->

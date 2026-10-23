@@ -321,6 +321,7 @@ class BruderMudaRecordTest extends TestCase
     {
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
+        $futureDate = now()->addDays(5)->toDateString();
 
         $journal = SelfDevelopmentJournal::create([
             'user_id' => $user->id,
@@ -344,10 +345,20 @@ class BruderMudaRecordTest extends TestCase
         $this->actingAs($otherUser)->get(route('jurnal.edit', $journal))
             ->assertNotFound();
 
-        // Update jurnal
+        // Update jurnal dengan tanggal masa depan harus ditolak
         $newReflection = $this->narrative(280);
         $this->actingAs($user)->put(route('jurnal.update', $journal), [
-            'activity_date' => now()->addDay()->toDateString(),
+            'activity_date' => $futureDate,
+            'activity_name' => 'Retret Masa Depan',
+            'organizer' => 'Provinsi FIC',
+            'speaker' => 'Rm. Thomas',
+            'description' => 'Materi baru retret.',
+            'reflection' => $newReflection,
+        ])->assertSessionHasErrors('activity_date');
+
+        // Update jurnal valid (tanggal hari ini/lewat)
+        $this->actingAs($user)->put(route('jurnal.update', $journal), [
+            'activity_date' => now()->toDateString(),
             'activity_name' => 'Retret Diperbarui',
             'organizer' => 'Provinsi FIC Indonesia',
             'speaker' => 'Rm. Thomas',
@@ -417,6 +428,18 @@ class BruderMudaRecordTest extends TestCase
         ])->assertSessionHasErrors('meeting_date');
 
         $this->assertSame(0, WawanhatiReport::count());
+
+        // Jurnal reject future date
+        $this->actingAs($user)->post(route('jurnal.store'), [
+            'activity_date' => $futureDate,
+            'activity_name' => 'Seminar Masa Depan',
+            'organizer' => 'Provinsi FIC',
+            'speaker' => 'Narasumber',
+            'description' => 'Deskripsi kegiatan',
+            'reflection' => $content,
+        ])->assertSessionHasErrors('activity_date');
+
+        $this->assertSame(0, SelfDevelopmentJournal::count());
     }
 
     public function test_owner_can_edit_and_delete_bimbingan_report(): void

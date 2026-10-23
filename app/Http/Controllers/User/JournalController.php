@@ -36,7 +36,7 @@ class JournalController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'activity_date' => ['required', 'date'],
+            'activity_date' => ['required', 'date', 'before_or_equal:today'],
             'activity_name' => ['required', 'string', 'max:255'],
             'organizer' => ['required', 'string', 'max:255'],
             'speaker' => ['required', 'string', 'max:255'],
@@ -44,6 +44,7 @@ class JournalController extends Controller
             'reflection' => ['required', 'string', 'min:200', 'max:500'],
         ], [
             'activity_date.required' => 'Hari dan tanggal kegiatan wajib diisi.',
+            'activity_date.before_or_equal' => 'Tanggal kegiatan tidak boleh melebihi hari ini (hanya dapat memilih hari ini atau tanggal yang sudah lewat).',
             'activity_name.required' => 'Nama kegiatan wajib diisi.',
             'organizer.required' => 'Penyelenggara wajib diisi.',
             'speaker.required' => 'Narasumber wajib diisi.',
@@ -86,7 +87,7 @@ class JournalController extends Controller
         abort_unless($journal->user_id === auth()->id(), 404);
 
         $validated = $request->validate([
-            'activity_date' => ['required', 'date'],
+            'activity_date' => ['required', 'date', 'before_or_equal:today'],
             'activity_name' => ['required', 'string', 'max:255'],
             'organizer' => ['required', 'string', 'max:255'],
             'speaker' => ['required', 'string', 'max:255'],
@@ -94,6 +95,7 @@ class JournalController extends Controller
             'reflection' => ['required', 'string', 'min:200', 'max:500'],
         ], [
             'activity_date.required' => 'Hari dan tanggal kegiatan wajib diisi.',
+            'activity_date.before_or_equal' => 'Tanggal kegiatan tidak boleh melebihi hari ini (hanya dapat memilih hari ini atau tanggal yang sudah lewat).',
             'activity_name.required' => 'Nama kegiatan wajib diisi.',
             'organizer.required' => 'Penyelenggara wajib diisi.',
             'speaker.required' => 'Narasumber wajib diisi.',

@@ -10,6 +10,7 @@ use App\Models\WawanhatiReport;
 use App\Models\WawanhatiSchedule;
 use App\Services\PersonalScheduleQuery;
 use App\Services\SuperAdminOverviewService;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 
 class DashboardController extends Controller
@@ -164,78 +165,84 @@ class DashboardController extends Controller
 
     /**
      * Hitung statistik pembinaan bulanan dan tahunan user.
-     * Aturan:
-     * - Pembinaan per bulan = Bimbingan Rohani + Wawanhati Pilok (Maksimal 2x per bulan)
-     * - Sebelah Kiri (Akumulasi s.d. bulan berjalan):
-     *   Akumulasi target dari Januari s.d. bulan berjalan (contoh: Januari-Maret = 3 bulan x 2 = target 6)
-     * - Sebelah Kanan (Bulan Berjalan):
-     *   Target pembinaan bulan berjalan = 2x (jika ganti bulan kembali ke 0).
+     * Ketentuan:
+     * 1. Akumulasi Tahunan (Januari – bulan berjalan):
+     *    - Menghitung seluruh pembinaan sejak 1 Januari sampai tanggal saat ini pada tahun berjalan.
+     *    - Target tahunan adalah 24 kali (2 kali setiap bulan x 12 bulan).
+     *    - Persentase = (jumlah pembinaan aktual tahun berjalan / 24) x 100%, dibatasi maks 100%.
+     *    - Nilai akumulasi terus bertambah seiring bertambahnya pembinaan.
+     *    - Pergantian bulan tidak boleh mereset akumulasi tahunan.
+     * 2. Akumulasi Bulanan (bulan berjalan):
+     *    - Hanya menghitung pembinaan pada bulan dan tahun yang sedang berjalan.
+     *    - Target bulanan adalah 2 kali.
+     *    - Ketika bulan berganti, perhitungan otomatis dimulai dari 0/2.
+     * 3. Ketentuan Teknis:
+     *    - Berbasis zona waktu Asia/Jakarta.
+     *    - Hanya memperhitungkan jenis pembinaan wajib (Bimbingan Rohani & Wawanhati).
      */
     private function getMonthlyStats(int $userId): array
     {
-        $start = now()->startOfMonth();
-        $end = now()->endOfMonth();
-        $yearStart = now()->startOfYear();
-        $currentMonthNum = (int) now()->month; // 1 s.d 12
+        $now = Carbon::now('Asia/Jakarta');
+        $startOfMonth = $now->copy()->startOfMonth();
+        $endOfMonth = $now->copy()->endOfMonth();
+        $startOfYear = $now->copy()->startOfYear();
 
         $counted = ['completed', 'approved', 'published', 'submitted'];
 
+        // 1. Akumulasi Bulanan (Bulan Berjalan)
         $bimbinganBulan = SpiritualGuidanceReport::where('user_id', $userId)
-            ->whereBetween('meeting_at', [$start, $end])
+            ->whereBetween('meeting_at', [$startOfMonth, $endOfMonth])
             ->whereIn('status', $counted)
             ->count();
 
         $wawanhatiBulan = WawanhatiReport::where('user_id', $userId)
-            ->whereBetween('meeting_at', [$start, $end])
+            ->whereBetween('meeting_at', [$startOfMonth, $endOfMonth])
             ->whereIn('status', $counted)
             ->count();
 
         $jurnalBulan = SelfDevelopmentJournal::where('user_id', $userId)
-            ->whereBetween('activity_date', [$start->toDateString(), $end->toDateString()])
+            ->whereBetween('activity_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
             ->whereIn('status', $counted)
             ->count();
 
-        // 1. Target & Realisasi Bulan Berjalan (Sebelah Kanan)
         $pembinaanBulan = $bimbinganBulan + $wawanhatiBulan;
-        $targetBulan = 2; // Maksimal 2 kali sebulan
+        $targetBulan = 2; // Target 2 kali setiap bulan
         $persentaseBulan = min(100, (int) round(($pembinaanBulan / $targetBulan) * 100));
 
-        // 2. Target & Realisasi Akumulasi Januari s.d. Bulan Berjalan (Sebelah Kiri)
-        $bimbinganAkumulasi = SpiritualGuidanceReport::where('user_id', $userId)
-            ->whereBetween('meeting_at', [$yearStart, $end])
+        // 2. Akumulasi Tahunan (1 Januari sampai tanggal saat ini pada tahun berjalan)
+        $bimbinganTahun = SpiritualGuidanceReport::where('user_id', $userId)
+            ->whereBetween('meeting_at', [$startOfYear, $now])
             ->whereIn('status', $counted)
             ->count();
 
-        $wawanhatiAkumulasi = WawanhatiReport::where('user_id', $userId)
-            ->whereBetween('meeting_at', [$yearStart, $end])
+        $wawanhatiTahun = WawanhatiReport::where('user_id', $userId)
+            ->whereBetween('meeting_at', [$startOfYear, $now])
             ->whereIn('status', $counted)
             ->count();
 
-        $pembinaanAkumulasi = $bimbinganAkumulasi + $wawanhatiAkumulasi;
-        $targetAkumulasi = $currentMonthNum * 2; // Januari s.d. bulan berjalan (bulan x 2)
-        $persentaseAkumulasi = $targetAkumulasi > 0
-            ? min(100, (int) round(($pembinaanAkumulasi / $targetAkumulasi) * 100))
-            : 0;
+        $pembinaanTahun = $bimbinganTahun + $wawanhatiTahun;
+        $targetTahun = 24; // Target tahunan 24 kali
+        $persentaseTahun = min(100, (int) round(($pembinaanTahun / $targetTahun) * 100));
 
         $latestBimbingan = SpiritualGuidanceReport::where('user_id', $userId)
-            ->whereBetween('meeting_at', [$start, $end])
+            ->whereBetween('meeting_at', [$startOfMonth, $endOfMonth])
             ->whereIn('status', $counted)
             ->latest('meeting_at')
             ->first();
 
         $latestWawanhati = WawanhatiReport::where('user_id', $userId)
-            ->whereBetween('meeting_at', [$start, $end])
+            ->whereBetween('meeting_at', [$startOfMonth, $endOfMonth])
             ->whereIn('status', $counted)
             ->latest('meeting_at')
             ->first();
 
         $latestJurnal = SelfDevelopmentJournal::where('user_id', $userId)
-            ->whereBetween('activity_date', [$start->toDateString(), $end->toDateString()])
+            ->whereBetween('activity_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
             ->whereIn('status', $counted)
             ->latest('activity_date')
             ->first();
 
-        $namaBulanBerjalan = now()->locale('id')->translatedFormat('F');
+        $namaBulan = $now->locale('id')->translatedFormat('F');
 
         return [
             'bimbingan' => $bimbinganBulan,
@@ -243,18 +250,15 @@ class DashboardController extends Controller
             'jurnal' => $jurnalBulan,
             'total' => $pembinaanBulan,
             'target' => $targetBulan,
-            'persentase' => $persentaseAkumulasi, // Ring kiri: Akumulasi Jan s.d. Bulan Berjalan
+            'persentase' => $persentaseTahun, // Ring kiri: Persentase Akumulasi Tahunan (target 24)
             'pembinaan_bulan' => $pembinaanBulan,
             'target_bulan' => $targetBulan,
-            'persentase_bulan' => $persentaseBulan, // Persentase kanan: per bulan berjalan
-            'pembinaan_akumulasi' => $pembinaanAkumulasi,
-            'target_akumulasi' => $targetAkumulasi,
-            'persentase_akumulasi' => $persentaseAkumulasi,
-            'label_akumulasi' => $currentMonthNum > 1
-                ? "Januari – {$namaBulanBerjalan}"
-                : "Bulan {$namaBulanBerjalan}",
-            'pembinaan_tahun' => $pembinaanAkumulasi,
-            'target_tahun' => 24,
+            'persentase_bulan' => $persentaseBulan,
+            'pembinaan_tahun' => $pembinaanTahun,
+            'target_tahun' => $targetTahun,
+            'persentase_tahun' => $persentaseTahun,
+            'label_tahunan' => "Januari – {$namaBulan} {$now->year}",
+            'label_bulan' => "Bulan {$namaBulan}",
             'checklist' => [
                 'bimbingan' => [
                     'done' => $bimbinganBulan > 0,

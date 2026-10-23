@@ -20,7 +20,7 @@ class SuperAdminOverviewService
      */
     public function monthlySummary(?Carbon $month = null): array
     {
-        $month = $month ?: now();
+        $month = $month ? $month->copy()->setTimezone('Asia/Jakarta') : Carbon::now('Asia/Jakarta');
         $start = $month->copy()->startOfMonth();
         $end = $month->copy()->endOfMonth();
 
