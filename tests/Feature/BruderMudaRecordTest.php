@@ -313,6 +313,8 @@ class BruderMudaRecordTest extends TestCase
             ->get(route('dashboard'))
             ->assertOk()
             ->assertSee('Statistik Pembinaan Formatif')
+            ->assertSee('Akumulasi Tahunan')
+            ->assertSee('Bulan Berjalan')
             ->assertSee('1 jurnal tercatat bulan ini')
             ->assertSee('Akumulasi');
     }
