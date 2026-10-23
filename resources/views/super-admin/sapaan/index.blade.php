@@ -33,12 +33,12 @@
 
     <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:700; color:#475467;">
         Nama penulis
-        <input name="author_name" value="{{ old('author_name', $editing->author_name ?? 'Br. Agustinus Giwal Santoso, FIC') }}" required maxlength="255" style="padding:12px 14px; border-radius:12px; border:1px solid #D0D5DD; font-size:14px;">
+        <input name="author_name" id="author_name_input" value="{{ old('author_name', $editing->author_name ?? 'Br. Agustinus Giwal Santoso, FIC') }}" required maxlength="255" style="padding:12px 14px; border-radius:12px; border:1px solid #D0D5DD; font-size:14px;">
     </label>
 
     <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:700; color:#475467;">
         Peran
-        <select name="author_role" aria-label="Peran" style="padding:12px 14px; border-radius:12px; border:1px solid #D0D5DD; font-size:14px; color:#101828;">
+        <select name="author_role" id="author_role_select" aria-label="Peran" style="padding:12px 14px; border-radius:12px; border:1px solid #D0D5DD; font-size:14px; color:#101828;">
             @foreach(['Pemimpin Provinsial FIC Indonesia', 'TPPBM'] as $role)
                 <option value="{{ $role }}" {{ old('author_role', $editing->author_role ?? 'Pemimpin Provinsial FIC Indonesia') === $role ? 'selected' : '' }}>{{ $role }}</option>
             @endforeach
@@ -128,4 +128,24 @@
         <div style="text-align:center; color:#667085; padding:20px; background:#fff; border:1px solid #E4E7EC; border-radius:14px;">Belum ada sapaan atau pengumuman.</div>
     @endforelse
 </div>
+
+<script>
+    (function() {
+        var roleSelect = document.getElementById('author_role_select');
+        var nameInput = document.getElementById('author_name_input');
+        if (roleSelect && nameInput) {
+            roleSelect.addEventListener('change', function() {
+                if (this.value === 'TPPBM') {
+                    if (nameInput.value === 'Br. Agustinus Giwal Santoso, FIC' || nameInput.value.trim() === '') {
+                        nameInput.value = 'Tim Pendamping Pembinaan Bruder Muda (TPPBM)';
+                    }
+                } else if (this.value === 'Pemimpin Provinsial FIC Indonesia') {
+                    if (nameInput.value === 'Tim Pendamping Pembinaan Bruder Muda (TPPBM)' || nameInput.value.trim() === '') {
+                        nameInput.value = 'Br. Agustinus Giwal Santoso, FIC';
+                    }
+                }
+            });
+        }
+    })();
+</script>
 @endsection
