@@ -27,26 +27,29 @@
     </a>
 @endif
 
-<!-- STATISTIK PEMBINAAN (Maksimal 2x/bulan, 24/tahun) -->
+<!-- STATISTIK PEMBINAAN: KIRI (AKUMULASI JAN S.D BULAN BERJALAN) vs KANAN (BULAN BERJALAN) -->
 <div class="progress-stat-card">
     <div class="stat-header">
-        <span class="stat-title">Statistik Pembinaan Bulan Ini</span>
+        <span class="stat-title">Statistik Pembinaan Formatif</span>
         <span class="badge badge-scheduled">{{ now()->locale('id')->translatedFormat('F Y') }}</span>
     </div>
     <div class="stat-body">
+        <!-- SEBELAH KIRI: Akumulasi Januari s.d Bulan Berjalan -->
         <div class="stat-ring">
             <svg class="stat-ring-svg" viewBox="0 0 80 80">
                 <circle class="stat-ring-circle-bg" cx="40" cy="40" r="32" />
                 <circle class="stat-ring-circle" cx="40" cy="40" r="32" style="stroke-dashoffset: {{ $ringOffset }}" />
             </svg>
-            <div class="stat-ring-text">{{ $stats['persentase'] }}%</div>
+            <div class="stat-ring-text">{{ $stats['persentase_akumulasi'] }}%</div>
         </div>
+
+        <!-- SEBELAH KANAN: Realisasi Bulan Berjalan (Reset tiap bulan baru) -->
         <div class="stat-info">
-            <span class="stat-info-label">Target Pembinaan Bulanan</span>
+            <span class="stat-info-label">Bulan {{ now()->locale('id')->translatedFormat('F') }} ({{ $stats['persentase_bulan'] }}%)</span>
             <span class="stat-info-val">{{ $stats['pembinaan_bulan'] }} / 2</span>
-            <span class="stat-info-sub">Maksimal 2 kali sebulan (Bimbingan &amp; Wawanhati)</span>
-            <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(20,85,192,0.15); font-size: 11px; font-weight: 700; color: #1455C0;">
-                Akumulasi Tahun {{ now()->year }}: {{ $stats['pembinaan_tahun'] }} / 24
+            <span class="stat-info-sub">Maksimal 2 kali (Bimbingan &amp; Wawanhati)</span>
+            <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(20,85,192,0.18); font-size: 11px; font-weight: 700; color: #1455C0;">
+                Akumulasi {{ $stats['label_akumulasi'] }}: <strong>{{ $stats['pembinaan_akumulasi'] }} / {{ $stats['target_akumulasi'] }}</strong>
             </div>
         </div>
     </div>

@@ -312,11 +312,9 @@ class BruderMudaRecordTest extends TestCase
         $this->actingAs($user)
             ->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('Target Pembinaan Bulanan')
+            ->assertSee('Statistik Pembinaan Formatif')
             ->assertSee('1 jurnal tercatat bulan ini')
-            ->assertSee('Akumulasi Tahun')
-            ->assertSee('/ 24')
-            ->assertDontSee('2 &times; 12', false);
+            ->assertSee('Akumulasi');
     }
 
     public function test_owner_can_edit_and_delete_journal(): void

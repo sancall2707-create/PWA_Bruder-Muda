@@ -60,9 +60,10 @@ class PersonalScheduleQuery
                 status: $agenda->status,
             ));
 
-        return $bimbingan
-            ->merge($wawanhati)
-            ->merge($personal)
+        return collect()
+            ->concat($bimbingan)
+            ->concat($wawanhati)
+            ->concat($personal)
             ->sortBy(fn (object $item) => $item->starts_at->getTimestamp())
             ->values();
     }
