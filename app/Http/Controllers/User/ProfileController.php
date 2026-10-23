@@ -200,7 +200,7 @@ class ProfileController extends Controller
             return null;
         }
 
-        return route('profil.foto');
+        return route('profil.foto', ['v' => substr(md5($user->profile_photo), 0, 8)]);
     }
 
     /**

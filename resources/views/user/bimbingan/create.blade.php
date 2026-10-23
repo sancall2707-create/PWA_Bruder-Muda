@@ -51,7 +51,7 @@
                 type="text"
                 id="mentor_name"
                 name="mentor_name"
-                value="{{ old('mentor_name', 'Br. Yohanes Subagio, FIC') }}"
+                value="{{ old('mentor_name') }}"
                 placeholder="Contoh: Br. Yohanes Subagio, FIC"
                 class="form-input"
                 required

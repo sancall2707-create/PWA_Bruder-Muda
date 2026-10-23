@@ -88,8 +88,8 @@
                 @endphp
                 <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; margin-bottom:12px;">
                     <div style="width:84px; height:84px; border-radius:50%; overflow:hidden; border:3px solid #fff; box-shadow:0 4px 14px rgba(20,85,192,0.2); margin-bottom:8px; background:#1455C0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:26px; font-weight:800;">
-                        @if($hasPhoto)
-                            <img id="avatarPreviewImg" src="{{ route('superadmin.users.photo', $user) }}" alt="Foto {{ $user->name }}" style="width:100%; height:100%; object-fit:cover;">
+                        @if ($hasPhoto)
+                            <img id="avatarPreviewImg" src="{{ route('superadmin.users.photo', [$user, 'v' => substr(md5($user->profile_photo), 0, 8)]) }}" alt="Foto {{ $user->name }}" style="width:100%; height:100%; object-fit:cover;">
                         @else
                             <img id="avatarPreviewImg" src="" alt="Foto" style="width:100%; height:100%; object-fit:cover; display:none;">
                             <span id="avatarInitials">{{ $initials }}</span>

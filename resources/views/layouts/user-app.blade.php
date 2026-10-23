@@ -40,6 +40,7 @@
                                 $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
                             }
                             $photoPath = $user->profile_photo ?? null;
+                            $userPhotoVersion = $photoPath ? substr(md5($photoPath), 0, 8) : '0';
                             $hasProfilePhoto = is_string($photoPath)
                                 && str_starts_with($photoPath, 'profil/')
                                 && $photoPath !== 'profil/'
@@ -48,7 +49,7 @@
                                 && ! str_ends_with($photoPath, '/');
                         @endphp
                         @if ($hasProfilePhoto)
-                            <img src="{{ route('profil.foto') }}" alt="Foto profil" class="header-user-photo" width="42" height="42">
+                            <img src="{{ route('profil.foto', ['v' => $userPhotoVersion]) }}" alt="Foto profil" class="header-user-photo" width="42" height="42">
                         @else
                             {{ $initials }}
                         @endif

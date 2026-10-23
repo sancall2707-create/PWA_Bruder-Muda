@@ -79,7 +79,7 @@
                     @endphp
                     <article class="card">
                         @if ($u->profile_photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($u->profile_photo))
-                            <img src="{{ route('superadmin.users.photo', $u) }}" alt="Foto {{ $u->name }}" class="avatar" style="object-fit:cover; padding:0; width:44px; height:44px; border-radius:50%;">
+                            <img src="{{ route('superadmin.users.photo', [$u, 'v' => substr(md5($u->profile_photo), 0, 8)]) }}" alt="Foto {{ $u->name }}" class="avatar" style="object-fit:cover; padding:0; width:44px; height:44px; border-radius:50%;">
                         @else
                             <div class="avatar" aria-hidden="true">{{ $initials }}</div>
                         @endif

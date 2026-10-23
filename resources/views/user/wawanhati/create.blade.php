@@ -51,7 +51,7 @@
                 type="text"
                 id="local_leader_name"
                 name="local_leader_name"
-                value="{{ old('local_leader_name', 'Br. Fransiskus Xaverius, FIC') }}"
+                value="{{ old('local_leader_name') }}"
                 placeholder="Contoh: Br. Fransiskus Xaverius, FIC"
                 class="form-input"
                 required

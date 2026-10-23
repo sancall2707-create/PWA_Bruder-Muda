@@ -146,9 +146,10 @@
                             $saUser = auth()->user();
                             $saWords = explode(' ', trim($saUser->name ?? 'SA'));
                             $saInitials = strtoupper(substr($saWords[0], 0, 1) . (isset($saWords[1]) ? substr($saWords[1], 0, 1) : ''));
+                            $saPhotoVersion = $saUser->profile_photo ? substr(md5($saUser->profile_photo), 0, 8) : '0';
                         @endphp
                         @if ($saUser->profile_photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($saUser->profile_photo))
-                            <img src="{{ route('profil.foto') }}" alt="Foto profil" style="width:100%; height:100%; object-fit:cover;">
+                            <img src="{{ route('profil.foto', ['v' => $saPhotoVersion]) }}" alt="Foto profil" style="width:100%; height:100%; object-fit:cover;">
                         @else
                             {{ $saInitials }}
                         @endif

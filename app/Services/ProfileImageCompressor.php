@@ -33,7 +33,7 @@ class ProfileImageCompressor
     }
 
     /**
-     * Layani foto profil dengan StreamedResponse dan Cache-Control.
+     * Layani foto profil dengan StreamedResponse dan Cache-Control no-cache (selalu revalidasi ETag).
      */
     public static function response(string $path, Request $request): StreamedResponse
     {
@@ -47,7 +47,7 @@ class ProfileImageCompressor
         $etag = '"'.md5($path.$lastModified).'"';
 
         return $disk->response($path, null, [
-            'Cache-Control' => 'private, max-age=86400, must-revalidate',
+            'Cache-Control' => 'private, no-cache, must-revalidate',
             'ETag' => $etag,
             'Last-Modified' => gmdate('D, d M Y H:i:s', $lastModified).' GMT',
         ]);

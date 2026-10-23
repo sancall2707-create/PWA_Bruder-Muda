@@ -16,8 +16,11 @@
 <!-- Card 1: Avatar & Ringkasan Akun -->
 <div class="card" style="padding: 24px 18px; text-align: center; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(14px); border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.85); box-shadow: 0 8px 24px rgba(0, 62, 151, 0.08);">
     <div style="display: flex; justify-content: center; margin-bottom: 12px;">
+        @php
+            $photoVersion = $user->profile_photo ? substr(md5($user->profile_photo), 0, 8) : '0';
+        @endphp
         @if ($hasPhoto)
-            <img id="saAvatarPreviewImg" src="{{ route('profil.foto') }}" alt="Foto profil {{ $user->name }}" width="92" height="92" style="width: 92px; height: 92px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; box-shadow: 0 4px 16px rgba(20, 85, 192, 0.25); display: block;">
+            <img id="saAvatarPreviewImg" src="{{ route('profil.foto', ['v' => $photoVersion]) }}" alt="Foto profil {{ $user->name }}" width="92" height="92" style="width: 92px; height: 92px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; box-shadow: 0 4px 16px rgba(20, 85, 192, 0.25); display: block;">
         @else
             <img id="saAvatarPreviewImg" src="" alt="Foto" width="92" height="92" style="width: 92px; height: 92px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; box-shadow: 0 4px 16px rgba(20, 85, 192, 0.25); display: none;">
             <div id="saAvatarInitials" style="width: 92px; height: 92px; border-radius: 50%; background: linear-gradient(135deg, #1455C0 0%, #003E97 100%); color: #ffffff; font-size: 30px; font-weight: 800; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(20, 85, 192, 0.25); border: 3px solid #ffffff;">
