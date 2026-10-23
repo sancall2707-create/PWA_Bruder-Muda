@@ -177,5 +177,24 @@
 
         @include('layouts.partials.sa-menu')
     </div>
+
+    <script>
+        // Loading state otomatis pada formulir saat disubmit
+        document.addEventListener('submit', function(e) {
+            var submitBtn = e.target.querySelector('button[type="submit"]:not([data-no-loading])');
+            if (submitBtn && !submitBtn.disabled) {
+                setTimeout(function() {
+                    submitBtn.disabled = true;
+                    submitBtn.dataset.originalHtml = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<span style="display:inline-flex; align-items:center; justify-content:center; gap:6px;"><svg style="animation:ficSpin 0.9s linear infinite; width:16px; height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg> Menyimpan...</span>';
+                    submitBtn.style.opacity = '0.82';
+                    submitBtn.style.cursor = 'not-allowed';
+                }, 30);
+            }
+        });
+    </script>
+    <style>
+        @keyframes ficSpin { 100% { transform: rotate(360deg); } }
+    </style>
 </body>
 </html>

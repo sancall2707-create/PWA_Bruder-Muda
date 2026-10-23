@@ -27,6 +27,7 @@
     </a>
 @endif
 
+<!-- STATISTIK PEMBINAAN (Maksimal 2x/bulan, 24/tahun) -->
 <div class="progress-stat-card">
     <div class="stat-header">
         <span class="stat-title">Statistik Pembinaan Bulan Ini</span>
@@ -41,9 +42,108 @@
             <div class="stat-ring-text">{{ $stats['persentase'] }}%</div>
         </div>
         <div class="stat-info">
-            <span class="stat-info-label">Pencapaian Target</span>
-            <span class="stat-info-val">{{ $stats['total'] }} / {{ $stats['target'] }}</span>
-            <span class="stat-info-sub">Laporan tersimpan bulan ini</span>
+            <span class="stat-info-label">Target Pembinaan Bulanan</span>
+            <span class="stat-info-val">{{ $stats['pembinaan_bulan'] }} / 2</span>
+            <span class="stat-info-sub">Maksimal 2 kali sebulan (Bimbingan &amp; Wawanhati)</span>
+            <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed rgba(20,85,192,0.15); font-size: 11px; font-weight: 700; color: #1455C0;">
+                Akumulasi Tahun {{ now()->year }}: {{ $stats['pembinaan_tahun'] }} / 24 (2 &times; 12)
+            </div>
+        </div>
+    </div>
+</div>
+
+@if($stats['pembinaan_bulan'] >= 2)
+    <div style="background: linear-gradient(135deg, #ECFDF3 0%, #D1FADF 100%); border: 1px solid #A6F4C5; border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; margin-bottom: 14px;">
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: #12B76A; color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px;">
+            &#10004;
+        </div>
+        <div>
+            <div style="font-size: 13px; font-weight: 800; color: #027A48;">Profisiat! Target Pembinaan Lengkap</div>
+            <div style="font-size: 11px; color: #05603A; margin-top: 2px;">Target pembinaan bulan {{ now()->locale('id')->translatedFormat('F') }} telah terpenuhi (2/2). Tetap setia dalam peziarahan panggilan.</div>
+        </div>
+    </div>
+@endif
+
+<!-- CHECKLIST INSTRUMEN BULAN INI -->
+<div class="card" style="padding: 16px; margin-bottom: 14px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div style="font-size:12px; font-weight:800; color:#101828; text-transform:uppercase; letter-spacing:0.3px;">
+            Checklist Formasi {{ now()->locale('id')->translatedFormat('F') }}
+        </div>
+        <span style="font-size:11px; font-weight:700; color:#667085;">3 Instrumen</span>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px;">
+        <!-- 1. Bimbingan Rohani -->
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border-radius:12px; background:{{ $stats['checklist']['bimbingan']['done'] ? '#F6FEF9; border:1px solid #D1FADF;' : '#F8F9FC; border:1px solid #EAECF0;' }}">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; {{ $stats['checklist']['bimbingan']['done'] ? 'background:#12B76A; color:#fff;' : 'background:#E4E7EC; color:#667085;' }}">
+                    {{ $stats['checklist']['bimbingan']['done'] ? '✓' : '1' }}
+                </div>
+                <div>
+                    <div style="font-size:13px; font-weight:700; color:#101828;">Bimbingan Rohani</div>
+                    <div style="font-size:11px; color:#667085;">
+                        @if($stats['checklist']['bimbingan']['done'])
+                            Terlaksana: {{ $stats['checklist']['bimbingan']['item']->meeting_at->locale('id')->translatedFormat('d M Y') }}
+                        @else
+                            Wajib 1x sebulan
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @if($stats['checklist']['bimbingan']['done'])
+                <a href="{{ route('bimbingan.index') }}" style="font-size:11px; font-weight:700; color:#027A48; text-decoration:none; padding:4px 10px; background:#ECFDF3; border-radius:999px;">Lihat &rarr;</a>
+            @else
+                <a href="{{ route('bimbingan.create') }}" style="font-size:11px; font-weight:700; color:#fff; text-decoration:none; padding:6px 12px; background:#1455C0; border-radius:999px;">+ Isi</a>
+            @endif
+        </div>
+
+        <!-- 2. Wawanhati Pimpinan Lokal -->
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border-radius:12px; background:{{ $stats['checklist']['wawanhati']['done'] ? '#F6FEF9; border:1px solid #D1FADF;' : '#F8F9FC; border:1px solid #EAECF0;' }}">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; {{ $stats['checklist']['wawanhati']['done'] ? 'background:#12B76A; color:#fff;' : 'background:#E4E7EC; color:#667085;' }}">
+                    {{ $stats['checklist']['wawanhati']['done'] ? '✓' : '2' }}
+                </div>
+                <div>
+                    <div style="font-size:13px; font-weight:700; color:#101828;">Wawanhati Pimpinan Lokal</div>
+                    <div style="font-size:11px; color:#667085;">
+                        @if($stats['checklist']['wawanhati']['done'])
+                            Terlaksana: {{ $stats['checklist']['wawanhati']['item']->meeting_at->locale('id')->translatedFormat('d M Y') }}
+                        @else
+                            Wajib 1x sebulan
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @if($stats['checklist']['wawanhati']['done'])
+                <a href="{{ route('wawanhati.index') }}" style="font-size:11px; font-weight:700; color:#027A48; text-decoration:none; padding:4px 10px; background:#ECFDF3; border-radius:999px;">Lihat &rarr;</a>
+            @else
+                <a href="{{ route('wawanhati.create') }}" style="font-size:11px; font-weight:700; color:#fff; text-decoration:none; padding:6px 12px; background:#00838F; border-radius:999px;">+ Isi</a>
+            @endif
+        </div>
+
+        <!-- 3. Jurnal Pengembangan Diri -->
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 12px; border-radius:12px; background:{{ $stats['checklist']['jurnal']['done'] ? '#F6FEF9; border:1px solid #D1FADF;' : '#F8F9FC; border:1px solid #EAECF0;' }}">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; {{ $stats['checklist']['jurnal']['done'] ? 'background:#12B76A; color:#fff;' : 'background:#E4E7EC; color:#667085;' }}">
+                    {{ $stats['checklist']['jurnal']['done'] ? '✓' : '3' }}
+                </div>
+                <div>
+                    <div style="font-size:13px; font-weight:700; color:#101828;">Jurnal Pengembangan Diri</div>
+                    <div style="font-size:11px; color:#667085;">
+                        @if($stats['checklist']['jurnal']['done'])
+                            {{ $stats['checklist']['jurnal']['count'] }} jurnal tercatat bulan ini
+                        @else
+                            Refleksi seminar/retret/studi
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @if($stats['checklist']['jurnal']['done'])
+                <a href="{{ route('jurnal.index') }}" style="font-size:11px; font-weight:700; color:#027A48; text-decoration:none; padding:4px 10px; background:#ECFDF3; border-radius:999px;">Lihat &rarr;</a>
+            @else
+                <a href="{{ route('jurnal.create') }}" style="font-size:11px; font-weight:700; color:#fff; text-decoration:none; padding:6px 12px; background:#027A48; border-radius:999px;">+ Tulis</a>
+            @endif
         </div>
     </div>
 </div>
@@ -162,4 +262,48 @@
         </a>
     </div>
 </div>
+
+<!-- KARTU AJAKAN INSTALASI PWA (Tampil otomatis jika dibuka via browser biasa) -->
+<div id="pwaInstallCard" class="card" style="display:none; padding:14px 16px; background:linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%); border:1px solid #B9E6FE; border-radius:16px; margin-top:14px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <div style="width:36px; height:36px; border-radius:10px; background:#1455C0; color:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            </div>
+            <div>
+                <div style="font-size:13px; font-weight:800; color:#0E3366;">Pasang Aplikasi di HP</div>
+                <div style="font-size:11px; color:#475467; margin-top:2px;">Akses cepat &amp; hemat kuota di layar utama</div>
+            </div>
+        </div>
+        <button type="button" id="pwaInstallBtn" style="border:none; background:#1455C0; color:#fff; font-size:11px; font-weight:800; padding:8px 14px; border-radius:999px; cursor:pointer; white-space:nowrap;">
+            Pasang
+        </button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        var deferredPrompt;
+        var card = document.getElementById('pwaInstallCard');
+        var btn = document.getElementById('pwaInstallBtn');
+        if (!window.matchMedia('(display-mode: standalone)').matches && card) {
+            window.addEventListener('beforeinstallprompt', function(e) {
+                e.preventDefault();
+                deferredPrompt = e;
+                card.style.display = 'block';
+            });
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        deferredPrompt.userChoice.then(function() {
+                            card.style.display = 'none';
+                            deferredPrompt = null;
+                        });
+                    }
+                });
+            }
+        }
+    })();
+</script>
 @endsection

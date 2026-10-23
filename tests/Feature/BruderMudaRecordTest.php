@@ -159,7 +159,7 @@ class BruderMudaRecordTest extends TestCase
             ->get(route('dashboard'))
             ->assertOk()
             ->assertSee('Br. Piko Uji, FIC')
-            ->assertSee('0 / 3');
+            ->assertSee('0 / 2');
     }
 
     public function test_owner_can_edit_and_delete_personal_agendas(): void
@@ -312,8 +312,9 @@ class BruderMudaRecordTest extends TestCase
         $this->actingAs($user)
             ->get(route('dashboard'))
             ->assertOk()
-            ->assertSee('1 / 3')
-            ->assertSee('33%');
+            ->assertSee('Target Pembinaan Bulanan')
+            ->assertSee('1 jurnal tercatat bulan ini')
+            ->assertSee('24 (2', false);
     }
 
     public function test_owner_can_edit_and_delete_journal(): void

@@ -230,6 +230,17 @@ class ProfileController extends Controller
         }
     }
 
+    /**
+     * Tampilkan catatan pembinaan dari TPPBM untuk bruder muda.
+     */
+    public function notes(): View
+    {
+        $user = auth()->user();
+        $notes = $user->bruderNotes()->with('author')->latest()->get();
+
+        return view('user.profil.catatan', compact('user', 'notes'));
+    }
+
     private function isServableProfilePhoto(mixed $path): bool
     {
         return $this->isProfilePhotoPath($path) && Storage::disk('public')->exists($path);

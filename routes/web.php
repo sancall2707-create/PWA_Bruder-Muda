@@ -104,6 +104,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/profil', [ProfileController::class, 'update'])->name('profil.update');
         Route::get('/profil/kata-sandi', [ProfileController::class, 'editPassword'])->name('profil.kata-sandi');
         Route::post('/profil/kata-sandi', [ProfileController::class, 'updatePassword'])->name('profil.kata-sandi.update');
+        Route::get('/profil/catatan', [ProfileController::class, 'notes'])->name('profil.catatan');
 
         // 16. Pesan Khusus Privat (Satu Arah) dari Pimpinan / TPPBM
         Route::get('/pesan-khusus', [UserDirectMessageController::class, 'index'])->name('pesan.index');

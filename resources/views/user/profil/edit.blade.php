@@ -32,8 +32,17 @@
 <form action="{{ route('profil.update') }}" method="POST" enctype="multipart/form-data" style="display:flex; flex-direction:column; gap:14px;">
     @csrf
 
+    <!-- TAB JUMP NAVIGATION UNTUK MOBILE -->
+    <div style="position:sticky; top:12px; z-index:40; background:rgba(255,255,255,0.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-radius:14px; padding:6px; box-shadow:0 4px 12px rgba(0,62,151,0.08); border:1px solid rgba(20,85,192,0.15); display:flex; gap:6px; overflow-x:auto;">
+        <button type="button" onclick="document.getElementById('sec-pokok').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#EFF8FF; color:#1455C0; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">1. Pokok</button>
+        <button type="button" onclick="document.getElementById('sec-keluarga').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">2. Keluarga</button>
+        <button type="button" onclick="document.getElementById('sec-pendidikan').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">3. Pendidikan</button>
+        <button type="button" onclick="document.getElementById('sec-formasi').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">4. Formasi</button>
+        <button type="button" onclick="document.getElementById('sec-penugasan').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">5. Penugasan</button>
+    </div>
+
     <!-- SECTION 1: DATA AKUN & PRIBADI -->
-    <div class="card" style="padding:20px 16px;">
+    <div class="card" id="sec-pokok" style="padding:20px 16px;">
         <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 16px; text-align:center;">
             1. Data Pokok &amp; Kontak
         </h3>
@@ -110,7 +119,7 @@
     </div>
 
     <!-- SECTION 2: DATA KELUARGA & NARAHUBUNG -->
-    <div class="card" style="padding:16px;">
+    <div class="card" id="sec-keluarga" style="padding:16px;">
         <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px; text-align:center;">
             2. Data Keluarga &amp; Narahubung
         </h3>
@@ -194,7 +203,7 @@
     </div>
 
     <!-- SECTION 3: RIWAYAT PENDIDIKAN FORMAL -->
-    <div class="card" style="padding:16px;">
+    <div class="card" id="sec-pendidikan" style="padding:16px;">
         <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px; text-align:center;">
             3. Riwayat Pendidikan Formal
         </h3>
@@ -294,7 +303,7 @@
     </div>
 
     <!-- SECTION 4: RIWAYAT FORMASI BRUDER FIC -->
-    <div class="card" style="padding:16px;">
+    <div class="card" id="sec-formasi" style="padding:16px;">
         <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px; text-align:center;">
             4. Riwayat Formasi Bruder FIC
         </h3>
@@ -388,7 +397,7 @@
     </div>
 
     <!-- SECTION 5: RIWAYAT PENUGASAN KOMUNITAS -->
-    <div class="card" style="padding:16px;">
+    <div class="card" id="sec-penugasan" style="padding:16px;">
         <h3 style="font-size:14px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin:0 0 14px; text-align:center;">
             5. Riwayat Komunitas &amp; Penugasan
         </h3>

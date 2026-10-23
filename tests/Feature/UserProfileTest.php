@@ -543,6 +543,32 @@ class UserProfileTest extends TestCase
         $this->actingAs($user)->get(route('profil.foto'))->assertOk();
     }
 
+    public function test_user_can_view_tppbm_notes_on_profile(): void
+    {
+        $user = User::factory()->create();
+        $admin = User::factory()->create(['role' => 'admin', 'name' => 'Br. Formator FIC']);
+
+        $user->bruderNotes()->create([
+            'author_id' => $admin->id,
+            'category' => 'Catatan Hidup Pribadi',
+            'content' => 'Tetap bersemangat dalam proses formasi dan refleksi diri.',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('profil'))
+            ->assertOk()
+            ->assertSee('Catatan Pembinaan TPPBM')
+            ->assertSee('1 catatan');
+
+        $this->actingAs($user)
+            ->get(route('profil.catatan'))
+            ->assertOk()
+            ->assertSee('Catatan Pembinaan Bruder Muda')
+            ->assertSee('1. Hidup Pribadi')
+            ->assertSee('Tetap bersemangat dalam proses formasi dan refleksi diri.')
+            ->assertSee('Br. Formator FIC');
+    }
+
     private function tinyJpeg(): string
     {
         return base64_decode('/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=');

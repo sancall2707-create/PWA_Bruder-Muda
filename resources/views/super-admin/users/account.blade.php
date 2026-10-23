@@ -62,8 +62,18 @@
             @csrf
             <input type="hidden" name="update_biodata" value="1">
 
+            <!-- TAB JUMP NAVIGATION UNTUK MOBILE -->
+            <div style="position:sticky; top:12px; z-index:40; background:rgba(255,255,255,0.92); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-radius:14px; padding:6px; box-shadow:0 4px 12px rgba(0,62,151,0.08); border:1px solid rgba(20,85,192,0.15); display:flex; gap:6px; overflow-x:auto;">
+                <button type="button" onclick="document.getElementById('sec-sa-akun').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#EFF8FF; color:#1455C0; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">1. Akun</button>
+                <button type="button" onclick="document.getElementById('sec-sa-pokok').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">2. Pokok</button>
+                <button type="button" onclick="document.getElementById('sec-sa-keluarga').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">3. Keluarga</button>
+                <button type="button" onclick="document.getElementById('sec-sa-pendidikan').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">4. Pendidikan</button>
+                <button type="button" onclick="document.getElementById('sec-sa-formasi').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">5. Formasi</button>
+                <button type="button" onclick="document.getElementById('sec-sa-penugasan').scrollIntoView({behavior:'smooth', block:'start'})" style="border:none; background:#F8F9FC; color:#344054; padding:6px 10px; border-radius:8px; font-size:11px; font-weight:800; white-space:nowrap; cursor:pointer;">6. Penugasan</button>
+            </div>
+
             <!-- SEKSI 1: IDENTITAS & AKSES AKUN -->
-            <div class="form-section">
+            <div class="form-section" id="sec-sa-akun">
                 <div class="section-label">1. Identitas, Foto &amp; Akses Akun</div>
 
                 <!-- Avatar & Foto Profil -->
@@ -140,7 +150,7 @@
             </div>
 
             <!-- SEKSI 2: DATA POKOK & KONTAK -->
-            <div class="form-section">
+            <div class="form-section" id="sec-sa-pokok">
                 <div class="section-label">2. Data Pokok &amp; Kontak</div>
 
                 <div class="field">
@@ -176,7 +186,7 @@
             </div>
 
             <!-- SEKSI 3: DATA KELUARGA & NARAHUBUNG -->
-            <div class="form-section">
+            <div class="form-section" id="sec-sa-keluarga">
                 <div class="section-label">3. Data Keluarga &amp; Narahubung</div>
 
                 <div style="font-size:12px; font-weight:800; color:#344054; text-transform:uppercase;">Data Ayah</div>
@@ -254,7 +264,7 @@
             </div>
 
             <!-- SEKSI 4: RIWAYAT PENDIDIKAN FORMAL -->
-            <div class="form-section">
+            <div class="form-section" id="sec-sa-pendidikan">
                 <div class="section-label">4. Riwayat Pendidikan Formal</div>
 
                 <div style="font-size:12px; font-weight:800; color:#344054; text-transform:uppercase;">SD</div>
@@ -346,8 +356,8 @@
                 </div>
             </div>
 
-            <!-- SEKSI 5: RIWAYAT FORMASI FIC -->
-            <div class="form-section">
+            <!-- SEKSI 5: RIWAYAT FORMASI BRUDER FIC -->
+            <div class="form-section" id="sec-sa-formasi">
                 <div class="section-label">5. Riwayat Formasi Bruder FIC</div>
 
                 <div style="font-size:12px; font-weight:800; color:#344054; text-transform:uppercase;">1. Postulat</div>
@@ -389,7 +399,7 @@
             </div>
 
             <!-- SEKSI 6: RIWAYAT PENUGASAN KOMUNITAS -->
-            <div class="form-section">
+            <div class="form-section" id="sec-sa-penugasan">
                 <div class="section-label">6. Riwayat Komunitas &amp; Penugasan</div>
 
                 @for($t = 1; $t <= 6; $t++)

@@ -163,39 +163,107 @@ class DashboardController extends Controller
     }
 
     /**
-     * Hitung statistik pembinaan bulanan user.
+     * Hitung statistik pembinaan bulanan dan tahunan user.
+     * Aturan: Pembinaan maksimal 2 kali per bulan (Bimbingan Rohani & Wawanhati),
+     * setahun = 2 x 12 = 24 kali.
      */
     private function getMonthlyStats(int $userId): array
     {
         $start = now()->startOfMonth();
         $end = now()->endOfMonth();
+        $yearStart = now()->startOfYear();
+        $yearEnd = now()->endOfYear();
 
-        $bimbinganSelesai = SpiritualGuidanceReport::where('user_id', $userId)
+        $counted = ['completed', 'approved', 'published', 'submitted'];
+
+        $bimbinganBulan = SpiritualGuidanceReport::where('user_id', $userId)
             ->whereBetween('meeting_at', [$start, $end])
-            ->whereIn('status', ['completed', 'approved', 'published', 'submitted'])
+            ->whereIn('status', $counted)
             ->count();
 
-        $wawanhatiSelesai = WawanhatiReport::where('user_id', $userId)
+        $wawanhatiBulan = WawanhatiReport::where('user_id', $userId)
             ->whereBetween('meeting_at', [$start, $end])
-            ->whereIn('status', ['completed', 'approved', 'published', 'submitted'])
+            ->whereIn('status', $counted)
             ->count();
 
-        $jurnalSelesai = SelfDevelopmentJournal::where('user_id', $userId)
-            ->whereBetween('activity_date', [$start, $end])
-            ->whereIn('status', ['completed', 'approved', 'published', 'submitted'])
+        $jurnalBulan = SelfDevelopmentJournal::where('user_id', $userId)
+            ->whereBetween('activity_date', [$start->toDateString(), $end->toDateString()])
+            ->whereIn('status', $counted)
             ->count();
 
-        $totalSelesai = $bimbinganSelesai + $wawanhatiSelesai + $jurnalSelesai;
-        $target = 3; // minimal 3 laporan per bulan
-        $persentase = min(100, round(($totalSelesai / $target) * 100));
+        $bimbinganTahun = SpiritualGuidanceReport::where('user_id', $userId)
+            ->whereBetween('meeting_at', [$yearStart, $yearEnd])
+            ->whereIn('status', $counted)
+            ->count();
+
+        $wawanhatiTahun = WawanhatiReport::where('user_id', $userId)
+            ->whereBetween('meeting_at', [$yearStart, $yearEnd])
+            ->whereIn('status', $counted)
+            ->count();
+
+        $jurnalTahun = SelfDevelopmentJournal::where('user_id', $userId)
+            ->whereBetween('activity_date', [$yearStart->toDateString(), $yearEnd->toDateString()])
+            ->whereIn('status', $counted)
+            ->count();
+
+        // Pembinaan = Bimbingan + Wawanhati (Maksimal 2x per bulan)
+        $pembinaanBulan = $bimbinganBulan + $wawanhatiBulan;
+        $targetBulan = 2; // Maksimal 2 kali dalam sebulan
+        $persentase = min(100, (int) round(($pembinaanBulan / $targetBulan) * 100));
+
+        // Pembinaan Tahunan = 2 x 12 = 24 dalam satu tahun
+        $pembinaanTahun = $bimbinganTahun + $wawanhatiTahun;
+        $targetTahun = 24;
+        $persentaseTahun = min(100, (int) round(($pembinaanTahun / $targetTahun) * 100));
+
+        $latestBimbingan = SpiritualGuidanceReport::where('user_id', $userId)
+            ->whereBetween('meeting_at', [$start, $end])
+            ->whereIn('status', $counted)
+            ->latest('meeting_at')
+            ->first();
+
+        $latestWawanhati = WawanhatiReport::where('user_id', $userId)
+            ->whereBetween('meeting_at', [$start, $end])
+            ->whereIn('status', $counted)
+            ->latest('meeting_at')
+            ->first();
+
+        $latestJurnal = SelfDevelopmentJournal::where('user_id', $userId)
+            ->whereBetween('activity_date', [$start->toDateString(), $end->toDateString()])
+            ->whereIn('status', $counted)
+            ->latest('activity_date')
+            ->first();
 
         return [
-            'bimbingan' => $bimbinganSelesai,
-            'wawanhati' => $wawanhatiSelesai,
-            'jurnal' => $jurnalSelesai,
-            'total' => $totalSelesai,
-            'target' => $target,
+            'bimbingan' => $bimbinganBulan,
+            'wawanhati' => $wawanhatiBulan,
+            'jurnal' => $jurnalBulan,
+            'total' => $pembinaanBulan,
+            'target' => $targetBulan,
             'persentase' => $persentase,
+            'pembinaan_bulan' => $pembinaanBulan,
+            'target_bulan' => $targetBulan,
+            'pembinaan_tahun' => $pembinaanTahun,
+            'target_tahun' => $targetTahun,
+            'persentase_tahun' => $persentaseTahun,
+            'jurnal_tahun' => $jurnalTahun,
+            'checklist' => [
+                'bimbingan' => [
+                    'done' => $bimbinganBulan > 0,
+                    'count' => $bimbinganBulan,
+                    'item' => $latestBimbingan,
+                ],
+                'wawanhati' => [
+                    'done' => $wawanhatiBulan > 0,
+                    'count' => $wawanhatiBulan,
+                    'item' => $latestWawanhati,
+                ],
+                'jurnal' => [
+                    'done' => $jurnalBulan > 0,
+                    'count' => $jurnalBulan,
+                    'item' => $latestJurnal,
+                ],
+            ],
         ];
     }
 }
