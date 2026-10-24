@@ -26,11 +26,20 @@
             justify-content: center;
         }
 
+        body:has(.sa-container) {
+            height: 100dvh;
+            overflow: hidden;
+        }
+
         .sa-container {
             width: 100%;
             max-width: 480px;
             background: linear-gradient(180deg, rgba(20, 85, 192, 0.1) 0%, rgba(234, 243, 255, 0.55) 180px, rgba(247, 249, 252, 0.88) 100%);
-            min-height: 100vh;
+            min-height: 0;
+            height: 100dvh;
+            max-height: 100dvh;
+            overflow-x: hidden;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             box-shadow: 0 0 30px rgba(0, 62, 151, 0.08);
@@ -39,6 +48,9 @@
         }
 
         .sa-header {
+            position: sticky;
+            top: 0;
+            z-index: 40;
             background: linear-gradient(135deg, rgba(0, 62, 151, 0.9) 0%, rgba(20, 85, 192, 0.78) 100%);
             color: #ffffff;
             padding: 20px 18px;
@@ -106,6 +118,8 @@
                 margin: 0 !important;
                 padding: 0 !important;
                 width: 100% !important;
+                height: auto !important;
+                overflow: visible !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 color-adjust: exact !important;
@@ -113,7 +127,10 @@
             .sa-container {
                 max-width: 100% !important;
                 width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
                 min-height: auto !important;
+                overflow: visible !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 box-shadow: none !important;
