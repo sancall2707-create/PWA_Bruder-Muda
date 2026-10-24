@@ -459,13 +459,15 @@
                                 <span class="badge-pill badge-belum">✘ BELUM / TIDAK TERLAKSANA</span>
                             @endif
                         </div>
-                        <div style="display:flex; flex-wrap:wrap; gap:12px; font-size:10.5px; margin-bottom:4px; color:#4B5563;">
-                            <div><strong>Tgl:</strong> {{ $b['date'] !== '-' ? $b['date'] . ' ' . ucfirst(strtolower($b['bulan'])) : '-' }}</div>
-                            @if($b['done'] && filled($b['mentor']))
-                                <div><strong>Pembimbing:</strong> {{ $b['mentor'] }}</div>
-                            @endif
-                            <div><strong>Tempat:</strong> {{ $b['location'] }}</div>
-                        </div>
+                        @if($b['done'])
+                            <div style="display:flex; flex-wrap:wrap; gap:12px; font-size:10.5px; margin-bottom:4px; color:#4B5563;">
+                                <div><strong>Tgl:</strong> {{ $b['date'] !== '-' ? $b['date'] . ' ' . ucfirst(strtolower($b['bulan'])) : '-' }}</div>
+                                @if(filled($b['mentor']))
+                                    <div><strong>Pembimbing:</strong> {{ $b['mentor'] }}</div>
+                                @endif
+                                <div><strong>Tempat:</strong> {{ $b['location'] }}</div>
+                            </div>
+                        @endif
                         <div style="font-size:11px; color:#1F2937; line-height:1.4;">
                             @if($b['done'])
                                 <strong>Refleksi:</strong> {{ $b['content'] }}
@@ -490,13 +492,15 @@
                                 <span class="badge-pill badge-belum">✘ BELUM / TIDAK TERLAKSANA</span>
                             @endif
                         </div>
-                        <div style="display:flex; flex-wrap:wrap; gap:12px; font-size:10.5px; margin-bottom:4px; color:#4B5563;">
-                            <div><strong>Tgl:</strong> {{ $w['date'] !== '-' ? $w['date'] . ' ' . ucfirst(strtolower($w['bulan'])) : '-' }}</div>
-                            @if($w['done'] && filled($w['leader']))
-                                <div><strong>Pimpinan Lokal:</strong> {{ $w['leader'] }}</div>
-                            @endif
-                            <div><strong>Tempat:</strong> {{ $w['location'] }}</div>
-                        </div>
+                        @if($w['done'])
+                            <div style="display:flex; flex-wrap:wrap; gap:12px; font-size:10.5px; margin-bottom:4px; color:#4B5563;">
+                                <div><strong>Tgl:</strong> {{ $w['date'] !== '-' ? $w['date'] . ' ' . ucfirst(strtolower($w['bulan'])) : '-' }}</div>
+                                @if(filled($w['leader']))
+                                    <div><strong>Pimpinan Lokal:</strong> {{ $w['leader'] }}</div>
+                                @endif
+                                <div><strong>Tempat:</strong> {{ $w['location'] }}</div>
+                            </div>
+                        @endif
                         <div style="font-size:11px; color:#1F2937; line-height:1.4;">
                             @if($w['done'])
                                 <strong>Refleksi:</strong> {{ $w['content'] }}

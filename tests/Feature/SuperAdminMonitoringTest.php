@@ -345,6 +345,7 @@ class SuperAdminMonitoringTest extends TestCase
             ->assertSee('BELUM / TIDAK TERLAKSANA')
             ->assertDontSee('Pembimbing:')
             ->assertDontSee('Pimpinan Lokal:')
+            ->assertDontSee('Tgl:')
             ->assertDontSee('Br. Yohanes Apaelagei, FIC')
             ->assertDontSee('Frater/Bruder')
             ->assertDontSee('page-break-after: always')
