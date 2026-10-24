@@ -30,8 +30,17 @@
         box-sizing: border-box;
     }
     .agenda-add .plus {
-        font-size: 16px;
-        line-height: 1;
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        background: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2px;
+    }
+    .agenda-add .plus svg {
+        display: block;
     }
     .agenda-add .bimbingan { background: #EFF4FF; color: #1455C0; }
     .agenda-add .wawanhati { background: #E0F7FA; color: #0E7490; }
@@ -90,15 +99,15 @@
 
     <div class="agenda-add">
         <a href="{{ route('agenda.bimbingan.create') }}" class="bimbingan">
-            <span class="plus">+</span>
+            <span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
             <span>Bimbingan Rohani</span>
         </a>
         <a href="{{ route('agenda.wawanhati.create') }}" class="wawanhati">
-            <span class="plus">+</span>
+            <span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
             <span>Wawanhati Piko</span>
         </a>
         <a href="{{ route('agenda.lainnya.create') }}" class="lainnya">
-            <span class="plus">+</span>
+            <span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
             <span>Agenda Lainnya</span>
         </a>
     </div>
