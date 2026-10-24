@@ -7,7 +7,7 @@
 
 <div class="progress-stat-card">
     <div class="stat-header">
-        <span class="stat-title">Statistik Pembinaan Formatif</span>
+        <span class="stat-title">Statistik Pembinaan</span>
         <span class="badge badge-scheduled">{{ $stats['label_bulan'] }} {{ now('Asia/Jakarta')->year }}</span>
     </div>
 
