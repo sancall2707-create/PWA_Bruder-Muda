@@ -1,4 +1,43 @@
 {{-- Dua cincin formasi di tengah, catatan singkat di bawah, lalu baris akumulasi tahun. --}}
+{{-- Aturan ini ikut di halaman agar posisi cincin tetap bersebelahan meski CSS lama masih tersimpan di ponsel. --}}
+<style>
+    .progress-stat-card .stat-rings {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 18px;
+    }
+    .progress-stat-card .stat-ring-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        width: auto;
+        flex: 1 1 0;
+        max-width: 148px;
+        min-width: 0;
+    }
+    .progress-stat-card .stat-ring {
+        position: relative;
+        width: 76px;
+        height: 76px;
+        flex-shrink: 0;
+    }
+    .progress-stat-card .stat-ring-label,
+    .progress-stat-card .stat-ring-count {
+        display: block;
+        text-align: center;
+    }
+    .progress-stat-card .stat-year-summary {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+</style>
 @php
     $ringOffsetTahun = 201 - (201 * (($stats['persentase_tahun'] ?? 0) / 100));
     $ringOffsetBulan = 201 - (201 * (($stats['persentase_bulan'] ?? 0) / 100));
