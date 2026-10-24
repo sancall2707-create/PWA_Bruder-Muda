@@ -6,9 +6,74 @@
 @endphp
 
 @section('content')
-<!-- Header Month Selector & Legend -->
+<style>
+    .agenda-add {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 14px;
+    }
+    .agenda-add a {
+        min-height: 62px;
+        border-radius: 12px;
+        padding: 8px 6px;
+        text-align: center;
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.25;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        box-sizing: border-box;
+    }
+    .agenda-add .plus {
+        font-size: 16px;
+        line-height: 1;
+    }
+    .agenda-add .bimbingan { background: #EFF4FF; color: #1455C0; }
+    .agenda-add .wawanhati { background: #E0F7FA; color: #0E7490; }
+    .agenda-add .lainnya { background: #FFF6E8; color: #B57900; }
+    .agenda-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid #EAECF0;
+    }
+    .agenda-actions a,
+    .agenda-actions button {
+        width: auto;
+        min-height: 32px;
+        padding: 0 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        font-family: inherit;
+        cursor: pointer;
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+    .agenda-actions a {
+        background: #fff;
+        color: #344054;
+        border: 1px solid #D0D5DD;
+    }
+    .agenda-actions button {
+        background: #FEF3F2;
+        color: #B42318;
+        border: 1px solid #FECDCA;
+    }
+</style>
+
 <div class="card" style="padding: 16px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
         <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--fic-text-muted); letter-spacing: 0.5px;">
             Periode Agenda
         </span>
@@ -23,17 +88,19 @@
         </div>
     </div>
 
-    <!-- Category Indicators -->
-    <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 11px;">
-        <span class="badge badge-scheduled" style="display: flex; align-items: center; gap: 4px;">
-            <span class="dot blue"></span> Bimbingan Rohani
-        </span>
-        <span class="badge badge-cyan" style="display: flex; align-items: center; gap: 4px;">
-            <span class="dot cyan"></span> Wawanhati Piko
-        </span>
-        <span class="badge badge-gold" style="display: flex; align-items: center; gap: 4px;">
-            <span class="dot gold"></span> Agenda Lainnya
-        </span>
+    <div class="agenda-add">
+        <a href="{{ route('agenda.bimbingan.create') }}" class="bimbingan">
+            <span class="plus">+</span>
+            <span>Bimbingan Rohani</span>
+        </a>
+        <a href="{{ route('agenda.wawanhati.create') }}" class="wawanhati">
+            <span class="plus">+</span>
+            <span>Wawanhati Piko</span>
+        </a>
+        <a href="{{ route('agenda.lainnya.create') }}" class="lainnya">
+            <span class="plus">+</span>
+            <span>Agenda Lainnya</span>
+        </a>
     </div>
 </div>
 
@@ -43,35 +110,7 @@
     </div>
 @endif
 
-<!-- 3 Action CTA Buttons -->
-<div style="display: flex; flex-direction: column; gap: 8px;">
-    <a href="{{ route('agenda.bimbingan.create') }}" class="btn-primary" style="font-size: 13px;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        TAMBAH JADWAL BIMBINGAN ROHANI
-    </a>
-
-    <a href="{{ route('agenda.wawanhati.create') }}" class="btn-primary" style="background-color: var(--fic-cyan); font-size: 13px;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        TAMBAH JADWAL WAWANHATI / PIKO
-    </a>
-
-    <a href="{{ route('agenda.lainnya.create') }}" class="btn-primary" style="background-color: #B57900; font-size: 13px;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        TAMBAH AGENDA LAINNYA
-    </a>
-</div>
-
-<!-- Chronological Agenda List -->
-<div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px;">
+<div style="display: flex; flex-direction: column; gap: 12px;">
     @forelse($agendas as $agenda)
         @php
             $leftBorderColor = match($agenda->category) {
@@ -114,14 +153,12 @@
                 </div>
             @endif
 
-            <div style="display: flex; gap: 8px; margin-top: 12px;">
-                <a href="{{ route('agenda.edit', ['type' => $agenda->category, 'schedule' => $agenda->id]) }}" class="btn-secondary" style="flex: 1; min-height: 40px; padding: 8px 12px; font-size: 13px;">
-                    Edit
-                </a>
-                <form method="POST" action="{{ route('agenda.destroy', ['type' => $agenda->category, 'schedule' => $agenda->id]) }}" onsubmit="return confirm('Hapus agenda ini dari jadwal Anda?');" style="flex: 1; margin: 0;">
+            <div class="agenda-actions">
+                <a href="{{ route('agenda.edit', ['type' => $agenda->category, 'schedule' => $agenda->id]) }}">Edit</a>
+                <form method="POST" action="{{ route('agenda.destroy', ['type' => $agenda->category, 'schedule' => $agenda->id]) }}" onsubmit="return confirm('Hapus agenda ini dari jadwal Anda?');" style="margin: 0;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn-danger" style="min-height: 40px; padding: 8px 12px; font-size: 13px;">Hapus</button>
+                    <button type="submit">Hapus</button>
                 </form>
             </div>
         </div>
