@@ -13,9 +13,16 @@
         gap: 8px;
         margin-top: 14px;
     }
+    .agenda-sheet.card,
+    .agenda-list .item-card {
+        background-color: #ffffff;
+        border: 1px solid #7C93B5;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 10px 22px rgba(15, 46, 99, 0.12);
+    }
     .agenda-add a {
         min-height: 62px;
         border-radius: 12px;
+        border: 1px solid transparent;
         padding: 8px 6px;
         text-align: center;
         font-size: 11px;
@@ -42,9 +49,9 @@
     .agenda-add .plus svg {
         display: block;
     }
-    .agenda-add .bimbingan { background: #EFF4FF; color: #1455C0; }
-    .agenda-add .wawanhati { background: #E0F7FA; color: #0E7490; }
-    .agenda-add .lainnya { background: #FFF6E8; color: #B57900; }
+    .agenda-add .bimbingan { background: #D6E4FF; color: #1455C0; border-color: #5B8ADF; }
+    .agenda-add .wawanhati { background: #C6EEF4; color: #0E7490; border-color: #2E94A6; }
+    .agenda-add .lainnya { background: #FFE6C2; color: #B57900; border-color: #C48A12; }
     .agenda-actions {
         display: flex;
         justify-content: flex-end;
@@ -81,7 +88,7 @@
     }
 </style>
 
-<div class="card" style="padding: 16px;">
+<div class="card agenda-sheet" style="padding: 16px;">
     <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
         <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--fic-text-muted); letter-spacing: 0.5px;">
             Periode Agenda
@@ -119,7 +126,7 @@
     </div>
 @endif
 
-<div style="display: flex; flex-direction: column; gap: 12px;">
+<div class="agenda-list" style="display: flex; flex-direction: column; gap: 12px;">
     @forelse($agendas as $agenda)
         @php
             $leftBorderColor = match($agenda->category) {
