@@ -1,14 +1,14 @@
 /* Cache PWA Bruder FIC.
  * Naikkan CACHE_VERSION setiap kali aset statis berubah agar cache lama dibuang.
  */
-const CACHE_VERSION = '20261024d';
+const CACHE_VERSION = '20261024e';
 const STATIC_CACHE = `pwa-static-${CACHE_VERSION}`;
 const IMAGE_CACHE = `pwa-images-${CACHE_VERSION}`;
 const PAGE_CACHE = `pwa-pages-${CACHE_VERSION}`;
 const IMAGE_CACHE_LIMIT = 80;
 
 const PRECACHE_URLS = [
-    '/css/fic-pwa.css?v=20261024d',
+    '/css/fic-pwa.css?v=20261024e',
     '/images/logo-fic.png',
     '/images/logo-tppbm.png',
     '/images/icons/favicon-32.png',

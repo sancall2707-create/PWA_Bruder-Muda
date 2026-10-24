@@ -91,6 +91,19 @@ h1, h2, h3, h4, h5, h6, p {
     box-shadow: 0 0 30px rgba(0, 62, 151, 0.08);
 }
 
+body:has(.app-container) {
+    height: 100dvh;
+    overflow: hidden;
+}
+
+body:has(.app-container) .app-container {
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 /* App Header */
 .app-header {
     background: linear-gradient(135deg, rgba(0, 62, 151, 0.9) 0%, rgba(20, 85, 192, 0.78) 100%);
@@ -211,8 +224,8 @@ h1, h2, h3, h4, h5, h6, p {
     font-weight: 700;
     text-decoration: none;
     position: sticky;
-    top: 0;
-    z-index: 40;
+    top: var(--app-header-height, 0px);
+    z-index: 35;
 }
 
 .tppbm-return svg {
@@ -230,8 +243,8 @@ h1, h2, h3, h4, h5, h6, p {
     align-items: center;
     gap: 12px;
     position: sticky;
-    top: 0;
-    z-index: 30;
+    top: calc(var(--app-header-height, 0px) + var(--tppbm-return-height, 0px));
+    z-index: 34;
     width: 100%;
 }
 
@@ -1236,13 +1249,25 @@ a.calendar-day.selected:hover {
     body {
         padding: 24px 0;
     }
-    .app-container {
-        border-radius: 20px;
+    body:has(.app-container) {
+        height: 100dvh;
         overflow: hidden;
-        min-height: calc(100vh - 48px);
-        min-height: calc(100dvh - 48px);
+    }
+    body:has(.app-container) .app-container {
+        border-radius: 20px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        height: calc(100dvh - 48px);
+        max-height: calc(100dvh - 48px);
+        min-height: 0;
+    }
+    .app-header {
+        position: sticky;
+        top: 0;
+        z-index: 40;
     }
     .bottom-nav {
+        bottom: 24px;
         border-bottom-left-radius: 20px;
         border-bottom-right-radius: 20px;
     }

@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- FIC PWA Core Design System -->
-    <link rel="stylesheet" href="/css/fic-pwa.css?v=20261024d">
+    <link rel="stylesheet" href="/css/fic-pwa.css?v=20261024e">
 
     @stack('styles')
 </head>
@@ -147,6 +147,17 @@
     </div>
 
     <script>
+        (function () {
+            function syncStickyOffsets() {
+                var header = document.querySelector('.app-header');
+                var kembali = document.querySelector('.tppbm-return');
+                document.documentElement.style.setProperty('--app-header-height', header ? header.offsetHeight + 'px' : '0px');
+                document.documentElement.style.setProperty('--tppbm-return-height', kembali ? kembali.offsetHeight + 'px' : '0px');
+            }
+            syncStickyOffsets();
+            window.addEventListener('resize', syncStickyOffsets);
+        })();
+
         // Loading state otomatis pada seluruh formulir saat disubmit
         document.addEventListener('submit', function(e) {
             var submitBtn = e.target.querySelector('button[type="submit"]:not([data-no-loading])');
