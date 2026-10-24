@@ -38,7 +38,11 @@ class SuperAdminAccountTest extends TestCase
             ->get(route('superadmin.dashboard'))
             ->assertOk()
             ->assertSee('50%')
-            ->assertSee('1 dari 2 laporan selesai')
+            ->assertSee('Akumulasi Tahunan')
+            ->assertSee('Bulan Berjalan')
+            ->assertSee('stat-year-summary', false)
+            ->assertSee('1/2')
+            ->assertSee('1 / 24', false)
             ->assertSee('Br. Uji Kepatuhan')
             ->assertSee('Komunitas Uji')
             ->assertSee('1/2 bulan ini')
@@ -135,7 +139,9 @@ class SuperAdminAccountTest extends TestCase
         $this->assertFalse($bruder->fresh()->is_active);
         $this->actingAs($admin)
             ->get(route('superadmin.dashboard'))
-            ->assertSee('0 dari 0 laporan selesai')
+            ->assertSee('Akumulasi Tahunan')
+            ->assertSee('Bulan Berjalan')
+            ->assertSee('0 / 0', false)
             ->assertSee('Nonaktif');
 
         $this->actingAs($admin)

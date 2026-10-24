@@ -14,7 +14,13 @@ use Illuminate\Support\Carbon;
 class SuperAdminOverviewService
 {
     /**
-     * Ringkasan dashboard Super Admin untuk bulan berjalan.
+     * Ringkasan dashboard admin untuk bulan berjalan dan akumulasi tahunan.
+     *
+     * Bulan berjalan memakai rumus yang sudah ada: jumlah sesi wajib
+     * (bimbingan rohani + wawanhati) bruder aktif dibanding target 2 × bruder aktif.
+     * Akumulasi tahunan memakai aturan yang sama dengan kartu bruder, diagregasi:
+     * sesi wajib sejak 1 Januari sampai saat ini (Asia/Jakarta) dibanding target
+     * 24 × bruder aktif. Jurnal tidak masuk target. Persentase dibatasi 100.
      *
      * @return array<string, mixed>
      */
@@ -23,6 +29,8 @@ class SuperAdminOverviewService
         $month = $month ? $month->copy()->setTimezone('Asia/Jakarta') : Carbon::now('Asia/Jakarta');
         $start = $month->copy()->startOfMonth();
         $end = $month->copy()->endOfMonth();
+        $startOfYear = $month->copy()->startOfYear();
+        $counted = ['submitted', 'published', 'completed', 'approved'];
 
         $activeIds = User::where('role', 'user')->where('is_active', true)->pluck('id');
         $activeBruders = $activeIds->count();
@@ -31,12 +39,12 @@ class SuperAdminOverviewService
 
         $bimbinganSubmitted = SpiritualGuidanceReport::whereIn('user_id', $activeIds)
             ->whereBetween('meeting_at', [$start, $end])
-            ->whereIn('status', ['submitted', 'published', 'completed', 'approved'])
+            ->whereIn('status', $counted)
             ->count();
 
         $wawanhatiSubmitted = WawanhatiReport::whereIn('user_id', $activeIds)
             ->whereBetween('meeting_at', [$start, $end])
-            ->whereIn('status', ['submitted', 'published', 'completed', 'approved'])
+            ->whereIn('status', $counted)
             ->count();
 
         $journalPublished = SelfDevelopmentJournal::whereIn('user_id', $activeIds)
@@ -49,6 +57,24 @@ class SuperAdminOverviewService
         $completionPercent = $expectedReports === 0
             ? 0
             : min(100, (int) round(($completedReports / $expectedReports) * 100));
+
+        $bimbinganTahun = SpiritualGuidanceReport::whereIn('user_id', $activeIds)
+            ->whereBetween('meeting_at', [$startOfYear, $month])
+            ->whereIn('status', $counted)
+            ->count();
+
+        $wawanhatiTahun = WawanhatiReport::whereIn('user_id', $activeIds)
+            ->whereBetween('meeting_at', [$startOfYear, $month])
+            ->whereIn('status', $counted)
+            ->count();
+
+        $pembinaanTahun = $bimbinganTahun + $wawanhatiTahun;
+        $targetTahun = $activeBruders * 24;
+        $persentaseTahun = $targetTahun === 0
+            ? 0
+            : min(100, (int) round(($pembinaanTahun / $targetTahun) * 100));
+
+        $namaBulan = $month->copy()->locale('id')->translatedFormat('F');
 
         return [
             'period_label' => $month->translatedFormat('F Y'),
@@ -64,6 +90,14 @@ class SuperAdminOverviewService
             'upcoming_bimbingan' => SpiritualGuidanceSchedule::where('scheduled_at', '>=', now())->count(),
             'upcoming_wawanhati' => WawanhatiSchedule::where('scheduled_at', '>=', now())->count(),
             'upcoming_agendas' => PersonalAgenda::where('start_at', '>=', now())->count(),
+            'pembinaan_bulan' => $completedReports,
+            'target_bulan' => $expectedReports,
+            'persentase_bulan' => $completionPercent,
+            'pembinaan_tahun' => $pembinaanTahun,
+            'target_tahun' => $targetTahun,
+            'persentase_tahun' => $persentaseTahun,
+            'label_tahunan' => "Januari – {$namaBulan} {$month->year}",
+            'label_bulan' => "Bulan {$namaBulan}",
         ];
     }
 

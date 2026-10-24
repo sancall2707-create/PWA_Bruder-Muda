@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\WawanhatiReport;
 use App\Models\WawanhatiSchedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 class AdminDashboardTest extends TestCase
@@ -131,5 +132,102 @@ class AdminDashboardTest extends TestCase
         $this->actingAs($bruder)->get(route('dashboard'))
             ->assertOk()
             ->assertDontSee('Kembali ke Beranda TPPBM');
+    }
+
+    public function test_admin_and_super_admin_dashboards_show_aggregated_formation_rings(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-10-24 10:00:00', 'Asia/Jakarta'));
+
+        try {
+            $admin = User::factory()->create(['role' => 'admin']);
+            $superAdmin = User::factory()->create(['role' => 'super_admin']);
+            $bruderTahun = User::factory()->create(['role' => 'user', 'is_active' => true, 'name' => 'Br. Tahunan']);
+            $bruderBulan = User::factory()->create(['role' => 'user', 'is_active' => true, 'name' => 'Br. Bulanan']);
+            $bruderNonaktif = User::factory()->create(['role' => 'user', 'is_active' => false, 'name' => 'Br. Nonaktif']);
+
+            SpiritualGuidanceReport::query()->create([
+                'user_id' => $bruderTahun->id,
+                'mentor_name' => 'Rm. Januari',
+                'meeting_at' => Carbon::parse('2026-01-15 09:00:00', 'Asia/Jakarta'),
+                'location' => 'Kapel',
+                'report_content' => 'Bimbingan Januari yang hanya masuk akumulasi tahunan.',
+                'status' => 'submitted',
+                'submitted_at' => Carbon::parse('2026-01-15 09:00:00', 'Asia/Jakarta'),
+            ]);
+
+            SpiritualGuidanceReport::query()->create([
+                'user_id' => $bruderTahun->id,
+                'mentor_name' => 'Rm. Draf',
+                'meeting_at' => Carbon::parse('2026-10-10 09:00:00', 'Asia/Jakarta'),
+                'location' => 'Kapel',
+                'report_content' => 'Draf tidak dihitung.',
+                'status' => 'draft',
+            ]);
+
+            SpiritualGuidanceReport::query()->create([
+                'user_id' => $bruderTahun->id,
+                'mentor_name' => 'Rm. Lama',
+                'meeting_at' => Carbon::parse('2025-12-20 09:00:00', 'Asia/Jakarta'),
+                'location' => 'Kapel',
+                'report_content' => 'Laporan tahun lalu tidak dihitung.',
+                'status' => 'submitted',
+                'submitted_at' => Carbon::parse('2025-12-20 09:00:00', 'Asia/Jakarta'),
+            ]);
+
+            WawanhatiReport::query()->create([
+                'user_id' => $bruderBulan->id,
+                'local_leader_name' => 'Br. Pimpinan',
+                'meeting_at' => Carbon::parse('2026-10-10 09:00:00', 'Asia/Jakarta'),
+                'location' => 'Komunitas',
+                'report_content' => 'Wawanhati bulan berjalan ikut akumulasi tahunan.',
+                'status' => 'submitted',
+                'submitted_at' => Carbon::parse('2026-10-10 09:00:00', 'Asia/Jakarta'),
+            ]);
+
+            SpiritualGuidanceReport::query()->create([
+                'user_id' => $bruderNonaktif->id,
+                'mentor_name' => 'Rm. Nonaktif',
+                'meeting_at' => Carbon::parse('2026-10-12 09:00:00', 'Asia/Jakarta'),
+                'location' => 'Kapel',
+                'report_content' => 'Laporan bruder nonaktif tidak masuk agregat.',
+                'status' => 'submitted',
+                'submitted_at' => Carbon::parse('2026-10-12 09:00:00', 'Asia/Jakarta'),
+            ]);
+
+            SelfDevelopmentJournal::query()->create([
+                'user_id' => $bruderBulan->id,
+                'activity_date' => '2026-10-11',
+                'activity_name' => 'Lokakarya',
+                'description' => 'Jurnal tidak masuk target 2/24.',
+                'reflection' => 'Refleksi jurnal tidak dihitung sebagai sesi wajib.',
+                'status' => 'published',
+                'published_at' => Carbon::parse('2026-10-11 09:00:00', 'Asia/Jakarta'),
+            ]);
+
+            $label = 'Akumulasi Januari – '.now('Asia/Jakarta')->locale('id')->translatedFormat('F Y');
+
+            foreach ([
+                route('admin.dashboard') => $admin,
+                route('superadmin.dashboard') => $superAdmin,
+            ] as $url => $actor) {
+                $this->actingAs($actor)->get($url)
+                    ->assertOk()
+                    ->assertSee('Akumulasi Tahunan')
+                    ->assertSee('Bulan Berjalan')
+                    ->assertSee('stat-year-summary', false)
+                    ->assertSee('progress-stat-card', false)
+                    ->assertSee('stroke-dasharray:201', false)
+                    ->assertSee($label, false)
+                    ->assertSee('2/48')
+                    ->assertSee('1/4')
+                    ->assertSee('2 / 48', false)
+                    ->assertSee('4%')
+                    ->assertSee('25%')
+                    ->assertDontSee('Tingkat Kepatuhan Laporan')
+                    ->assertDontSee('Persentase Kepatuhan');
+            }
+        } finally {
+            Carbon::setTestNow();
+        }
     }
 }

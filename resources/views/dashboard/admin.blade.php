@@ -22,27 +22,7 @@
     </div>
 </div>
 
-<!-- Kartu Kepatuhan Pembinaan Bulanan -->
-<div class="card" style="padding: 16px 18px; background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%); border-color: #B9E6FE; border-radius: 16px; border-style: solid; border-width: 1px;">
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-        <div>
-            <div style="font-size: 11px; font-weight: 700; color: #667085; text-transform: uppercase; letter-spacing: 0.5px;">
-                Pembinaan Bulan {{ $stats['period_label'] ?? now()->translatedFormat('F Y') }}
-            </div>
-            <div style="font-size: 14px; font-weight: 800; color: #101828; margin-top: 2px;">
-                Tingkat Kepatuhan Laporan
-            </div>
-        </div>
-        <div style="color: #1455C0; font-size: 30px; font-weight: 800;">{{ $stats['completion_percent'] }}%</div>
-    </div>
-    <div style="height: 8px; background: #E0F2FE; border-radius: 999px; overflow: hidden;">
-        <div style="width: {{ $stats['completion_percent'] }}%; height: 100%; background: linear-gradient(90deg, #1455C0, #003E97); border-radius: 999px; transition: width 0.6s ease;"></div>
-    </div>
-    <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: #667085;">
-        <span>{{ $stats['completed_reports'] }} dari {{ $stats['expected_reports'] }} laporan selesai</span>
-        <span>{{ $stats['active_bruders'] }} bruder aktif</span>
-    </div>
-</div>
+@include('partials.formation-stat-card')
 
 <!-- 4 Grid Metrik TPPBM -->
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
