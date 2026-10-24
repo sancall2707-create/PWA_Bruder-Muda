@@ -36,7 +36,7 @@ class JournalController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'activity_date' => ['required', 'date'],
+            'activity_date' => ['required', 'date', 'before_or_equal:today'],
             'activity_name' => ['required', 'string', 'max:255'],
             'organizer' => ['required', 'string', 'max:255'],
             'speaker' => ['required', 'string', 'max:255'],
@@ -44,6 +44,7 @@ class JournalController extends Controller
             'reflection' => ['required', 'string', 'min:200', 'max:500'],
         ], [
             'activity_date.required' => 'Hari dan tanggal kegiatan wajib diisi.',
+            'activity_date.before_or_equal' => 'Tanggal kegiatan tidak boleh melebihi hari ini (hanya dapat memilih hari ini atau tanggal yang sudah lewat).',
             'activity_name.required' => 'Nama kegiatan wajib diisi.',
             'organizer.required' => 'Penyelenggara wajib diisi.',
             'speaker.required' => 'Narasumber wajib diisi.',
@@ -66,5 +67,84 @@ class JournalController extends Controller
         ]);
 
         return redirect()->route('jurnal.index')->with('success', 'Jurnal pengembangan diri berhasil dipublikasikan.');
+    }
+
+    /**
+     * Formulir edit jurnal pengembangan diri.
+     */
+    public function edit(SelfDevelopmentJournal $journal): View
+    {
+        abort_unless($journal->user_id === auth()->id(), 404);
+
+        return view('user.jurnal.edit', compact('journal'));
+    }
+
+    /**
+     * Perbarui jurnal pengembangan diri.
+     */
+    public function update(Request $request, SelfDevelopmentJournal $journal): RedirectResponse
+    {
+        abort_unless($journal->user_id === auth()->id(), 404);
+
+        $validated = $request->validate([
+            'activity_date' => ['required', 'date', 'before_or_equal:today'],
+            'activity_name' => ['required', 'string', 'max:255'],
+            'organizer' => ['required', 'string', 'max:255'],
+            'speaker' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'reflection' => ['required', 'string', 'min:200', 'max:500'],
+        ], [
+            'activity_date.required' => 'Hari dan tanggal kegiatan wajib diisi.',
+            'activity_date.before_or_equal' => 'Tanggal kegiatan tidak boleh melebihi hari ini (hanya dapat memilih hari ini atau tanggal yang sudah lewat).',
+            'activity_name.required' => 'Nama kegiatan wajib diisi.',
+            'organizer.required' => 'Penyelenggara wajib diisi.',
+            'speaker.required' => 'Narasumber wajib diisi.',
+            'description.required' => 'Deskripsi kegiatan wajib diisi.',
+            'reflection.required' => 'Refleksi singkat wajib diisi.',
+            'reflection.min' => 'Refleksi singkat minimal 200 karakter.',
+            'reflection.max' => 'Refleksi singkat maksimal 500 karakter.',
+        ]);
+
+        $journal->update($validated);
+
+        return redirect()->route('jurnal.index')->with('success', 'Jurnal pengembangan diri berhasil diperbarui.');
+    }
+
+    /**
+     * Hapus jurnal pengembangan diri.
+     */
+    public function destroy(SelfDevelopmentJournal $journal): RedirectResponse
+    {
+        abort_unless($journal->user_id === auth()->id(), 404);
+
+        $journal->delete();
+
+        return redirect()->route('jurnal.index')->with('success', 'Jurnal pengembangan diri berhasil dihapus.');
+    }
+
+    /**
+     * Hapus banyak jurnal sekaligus (bulk delete).
+     * Hanya memproses jurnal milik user yang sedang login.
+     */
+    public function destroyBulk(Request $request): RedirectResponse
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids) || ! is_array($ids)) {
+            return redirect()->route('jurnal.index')->with('error', 'Tidak ada jurnal yang dipilih.');
+        }
+
+        // Cast ke integer agar query aman
+        $ids = array_map('intval', $ids);
+
+        // Pastikan hanya jurnal milik user sendiri yang dihapus — keamanan berlapis
+        $deleted = SelfDevelopmentJournal::whereIn('id', $ids)
+            ->where('user_id', auth()->id())
+            ->delete();
+
+        return redirect()->route('jurnal.index')->with(
+            'success',
+            "{$deleted} jurnal pengembangan diri berhasil dihapus."
+        );
     }
 }

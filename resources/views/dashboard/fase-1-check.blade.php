@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    @include('partials.fic-icons')
     <title>Pengecekan Fase 1 - PWA BRUDER FIC INDONESIA</title>
 
     <!-- Google Fonts: Plus Jakarta Sans & Inter -->
@@ -15,7 +16,8 @@
 
     <style>
         body {
-            background-color: #EEF2F6;
+            background-color: #e7f0fb;
+            background-image: linear-gradient(180deg, #d5e4f8 0%, #eef3fb 46%, #f7f9fc 100%);
             font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             color: #1B2430;
             margin: 0;
@@ -28,21 +30,24 @@
         .check-container {
             width: 100%;
             max-width: 480px;
-            background-color: #F6F8FC;
+            background: linear-gradient(180deg, rgba(20, 85, 192, 0.1) 0%, rgba(234, 243, 255, 0.55) 180px, rgba(247, 249, 252, 0.88) 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 0 30px rgba(0, 62, 151, 0.08);
             position: relative;
         }
 
         .check-header {
-            background: linear-gradient(135deg, #003E97 0%, #1455C0 100%);
+            background: linear-gradient(135deg, rgba(0, 62, 151, 0.9) 0%, rgba(20, 85, 192, 0.78) 100%);
             color: #ffffff;
             padding: 24px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.28);
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
-            box-shadow: 0 4px 16px rgba(0, 62, 151, 0.15);
+            box-shadow: 0 8px 20px rgba(0, 62, 151, 0.12);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
         .check-badge {
@@ -84,10 +89,12 @@
         }
 
         .user-card {
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.66);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border-radius: 16px;
-            border: 1px solid #E4E7EC;
-            box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.84);
+            box-shadow: 0 8px 24px rgba(0, 62, 151, 0.08);
             padding: 16px 18px;
             display: flex;
             flex-direction: column;
@@ -127,6 +134,7 @@
         }
 
         .role-super_admin { background: #FEF3F2; color: #B42318; border: 1px solid #FECDCA; }
+        .role-admin_ketua_tppbm { background: #FDF2FA; color: #C11574; border: 1px solid #FCCEEE; }
         .role-admin { background: #F0F9FF; color: #026AA2; border: 1px solid #B9E6FE; }
         .role-user { background: #ECFDF3; color: #027A48; border: 1px solid #ABEFC6; }
 
@@ -246,7 +254,7 @@
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
-                    <span>Kembali ke Dashboard Super Admin</span>
+                    <span>Kembali ke Beranda Super Admin</span>
                 </a>
             </div>
         </div>

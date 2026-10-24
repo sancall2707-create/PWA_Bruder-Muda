@@ -1,0 +1,37 @@
+{
+    "name": "PWA Bruder FIC Indonesia",
+    "short_name": "Bruder FIC",
+    "description": "Aplikasi Pendampingan Bruder Muda FIC Indonesia",
+    "lang": "id",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#F6F8FC",
+    "theme_color": "#003E97",
+    "icons": [
+        {
+            "src": "/images/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/images/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/images/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/images/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}

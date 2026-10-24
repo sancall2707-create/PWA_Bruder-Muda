@@ -42,7 +42,7 @@
                 $dayDate = $month->copy()->day($day)->toDateString();
                 $isSelected = $selectedDate->day === $day;
             @endphp
-            <a href="{{ route('kalender', ['month' => $monthKey, 'date' => $dayDate]) }}" class="calendar-day {{ $isSelected ? 'selected' : '' }}" style="text-decoration: none; color: inherit;">
+            <a href="{{ route('kalender', ['month' => $monthKey, 'date' => $dayDate]) }}" class="calendar-day {{ $isSelected ? 'selected' : '' }}">
                 <span>{{ $day }}</span>
                 <div class="calendar-dots">
                     @if(!empty($dots['bimbingan'][$day]))
@@ -119,6 +119,15 @@
                     </svg>
                     <span>{{ $agenda->location }}</span>
                 </div>
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <a href="{{ route('agenda.edit', ['type' => $agenda->category, 'schedule' => $agenda->id]) }}" class="btn-secondary" style="flex: 1; min-height: 40px; padding: 8px 12px; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
+                    Edit
+                </a>
+                <form method="POST" action="{{ route('agenda.destroy', ['type' => $agenda->category, 'schedule' => $agenda->id]) }}" onsubmit="return confirm('Hapus agenda ini dari jadwal Anda?');" style="flex: 1; margin: 0;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn-danger" style="width: 100%; min-height: 40px; padding: 8px 12px; font-size: 13px;">Hapus</button>
+                </form>
             </div>
         </div>
     @empty

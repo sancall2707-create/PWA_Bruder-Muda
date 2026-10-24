@@ -20,6 +20,7 @@ class PersonalScheduleQuery
             ->where('status', '!=', 'cancelled')
             ->get()
             ->map(fn (SpiritualGuidanceSchedule $schedule) => $this->item(
+                id: $schedule->id,
                 category: 'bimbingan',
                 title: 'Bimbingan Rohani',
                 person: $schedule->mentor_name,
@@ -34,6 +35,7 @@ class PersonalScheduleQuery
             ->where('status', '!=', 'cancelled')
             ->get()
             ->map(fn (WawanhatiSchedule $schedule) => $this->item(
+                id: $schedule->id,
                 category: 'wawanhati',
                 title: 'Wawanhati Pimpinan Lokal',
                 person: $schedule->local_leader_name,
@@ -48,6 +50,7 @@ class PersonalScheduleQuery
             ->where('status', '!=', 'cancelled')
             ->get()
             ->map(fn (PersonalAgenda $agenda) => $this->item(
+                id: $agenda->id,
                 category: 'lainnya',
                 title: $agenda->title,
                 person: 'Agenda pribadi',
@@ -57,9 +60,10 @@ class PersonalScheduleQuery
                 status: $agenda->status,
             ));
 
-        return $bimbingan
-            ->merge($wawanhati)
-            ->merge($personal)
+        return collect()
+            ->concat($bimbingan)
+            ->concat($wawanhati)
+            ->concat($personal)
             ->sortBy(fn (object $item) => $item->starts_at->getTimestamp())
             ->values();
     }
@@ -82,6 +86,7 @@ class PersonalScheduleQuery
     }
 
     private function item(
+        int $id,
         string $category,
         string $title,
         string $person,
@@ -93,6 +98,7 @@ class PersonalScheduleQuery
         $startsAt = $startsAt->copy()->locale('id');
 
         return (object) [
+            'id' => $id,
             'category' => $category,
             'title' => $title,
             'target_person' => $person,

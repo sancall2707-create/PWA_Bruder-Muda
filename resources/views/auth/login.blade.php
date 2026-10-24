@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    @include('partials.fic-icons')
     <title>Login - PWA BRUDER FIC INDONESIA</title>
 
     <!-- Google Fonts: Plus Jakarta Sans & Inter with safe system fallbacks -->
@@ -11,11 +12,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- FIC PWA Core Design System -->
-    <link rel="stylesheet" href="/css/fic-pwa.css">
+    <link rel="stylesheet" href="/css/fic-pwa.css?v=20261024e">
 
     <style>
         body {
-            background: linear-gradient(180deg, #EBF3FC 0%, #F6F8FC 100%);
+            background: linear-gradient(180deg, #d5e4f8 0%, #f7f9fc 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -25,10 +26,12 @@
         .login-card {
             width: 100%;
             max-width: 420px;
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.68);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-radius: 20px;
-            box-shadow: 0 12px 32px -4px rgba(16, 24, 40, 0.08), 0 4px 12px -2px rgba(16, 24, 40, 0.04);
-            border: 1px solid #E4E7EC;
+            box-shadow: 0 12px 32px -4px rgba(0, 62, 151, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.84);
             padding: 32px 24px;
             box-sizing: border-box;
             display: flex;
@@ -42,20 +45,15 @@
             margin-bottom: 28px;
         }
         .brand-emblem {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, var(--fic-dark-blue) 0%, var(--fic-primary) 100%);
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            box-shadow: 0 8px 16px rgba(20, 85, 192, 0.25);
+            width: 96px;
+            height: 96px;
+            object-fit: contain;
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            display: block;
             margin-bottom: 14px;
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            border: 2px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 16px rgba(16, 24, 40, 0.12);
         }
         .brand-title-main {
             font-size: 18px;
@@ -86,8 +84,10 @@
             text-transform: uppercase;
         }
         .alert-error {
-            background-color: #FEF3F2;
-            border: 1px solid #FECDCA;
+            background-color: rgba(254, 243, 242, 0.84);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(254, 205, 202, 0.9);
             border-radius: 12px;
             padding: 12px 14px;
             color: #B42318;
@@ -151,10 +151,8 @@
                 border-radius: 16px;
             }
             .brand-emblem {
-                width: 52px;
-                height: 52px;
-                font-size: 20px;
-                border-radius: 14px;
+                width: 80px;
+                height: 80px;
                 margin-bottom: 10px;
             }
             .brand-header {
@@ -167,9 +165,7 @@
     <div class="login-card">
         <!-- Brand Identity -->
         <div class="brand-header">
-            <div class="brand-emblem" aria-hidden="true">
-                FIC
-            </div>
+            <img src="/images/logo-fic.png?v=2" alt="Lambang Kongregasi Bruder FIC" class="brand-emblem" width="96" height="96">
             <div class="brand-title-main">BRUDER FIC</div>
             <div class="brand-title-sub">INDONESIA</div>
             <p class="brand-tagline">“Hidup kita bagi Allah dan Sesama”</p>

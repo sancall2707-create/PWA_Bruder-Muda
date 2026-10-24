@@ -17,7 +17,7 @@
                 {{ $summary['selesai'] }} Selesai &bull; {{ $summary['terkirim'] }} Terkirim
             </div>
         </div>
-        <span class="badge badge-cyan">Pimpinan Lokal (Piko)</span>
+        <span class="badge badge-cyan">Pimpinan Lokal (Pilok)</span>
     </div>
 </div>
 
@@ -43,7 +43,7 @@
             <div class="item-card-header">
                 <div>
                     <div class="item-card-title">{{ $report->local_leader_name }}</div>
-                    <div style="font-size: 11px; color: var(--fic-text-muted);">Pimpinan Komunitas / Lokal</div>
+                    <div style="font-size: 11px; color: var(--fic-text-muted);">Pimpinan Lokal</div>
                 </div>
                 <x-status-badge :status="$report->status" />
             </div>
@@ -73,13 +73,26 @@
             @endif
 
             @if($report->proof_file)
-                <a href="{{ route('wawanhati.proof', $report) }}" style="font-size: 12px; font-weight: 700; color: var(--fic-cyan);">Unduh logbook</a>
+                <div style="margin-top: 8px;">
+                    <a href="{{ route('wawanhati.proof', $report) }}" style="font-size: 12px; font-weight: 700; color: var(--fic-cyan);">Unduh logbook</a>
+                </div>
             @endif
+
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <a href="{{ route('wawanhati.edit', $report) }}" class="btn-secondary" style="flex: 1; min-height: 40px; padding: 8px 12px; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
+                    Edit
+                </a>
+                <form method="POST" action="{{ route('wawanhati.destroy', $report) }}" onsubmit="return confirm('Hapus laporan wawanhati ini?');" style="flex: 1; margin: 0;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn-danger" style="width: 100%; min-height: 40px; padding: 8px 12px; font-size: 13px;">Hapus</button>
+                </form>
+            </div>
         </div>
     @empty
         <x-empty-state
             title="Belum ada laporan Wawanhati"
-            message="Catat hasil wawanhati bersama pimpinan komunitas lokal Anda."
+            message="Catat hasil wawanhati bersama pimpinan lokal Anda."
         />
     @endforelse
 </div>

@@ -6,9 +6,90 @@
 @endphp
 
 @section('content')
-<!-- Header Month Selector & Legend -->
-<div class="card" style="padding: 16px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+<style>
+    .agenda-add {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 14px;
+    }
+    .agenda-sheet.card,
+    .agenda-list .item-card {
+        background-color: #ffffff;
+        border: 1px solid #7C93B5;
+        box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 10px 22px rgba(15, 46, 99, 0.12);
+    }
+    .agenda-add a {
+        min-height: 62px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        padding: 8px 6px;
+        text-align: center;
+        font-size: 11px;
+        font-weight: 800;
+        line-height: 1.25;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        box-sizing: border-box;
+    }
+    .agenda-add .plus {
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        background: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2px;
+    }
+    .agenda-add .plus svg {
+        display: block;
+    }
+    .agenda-add .bimbingan { background: #D6E4FF; color: #1455C0; border-color: #5B8ADF; }
+    .agenda-add .wawanhati { background: #C6EEF4; color: #0E7490; border-color: #2E94A6; }
+    .agenda-add .lainnya { background: #FFE6C2; color: #B57900; border-color: #C48A12; }
+    .agenda-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid #EAECF0;
+    }
+    .agenda-actions a,
+    .agenda-actions button {
+        width: auto;
+        min-height: 32px;
+        padding: 0 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        font-family: inherit;
+        cursor: pointer;
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+    .agenda-actions a {
+        background: #fff;
+        color: #344054;
+        border: 1px solid #D0D5DD;
+    }
+    .agenda-actions button {
+        background: #FEF3F2;
+        color: #B42318;
+        border: 1px solid #FECDCA;
+    }
+</style>
+
+<div class="card agenda-sheet" style="padding: 16px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
         <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--fic-text-muted); letter-spacing: 0.5px;">
             Periode Agenda
         </span>
@@ -23,17 +104,19 @@
         </div>
     </div>
 
-    <!-- Category Indicators -->
-    <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 11px;">
-        <span class="badge badge-scheduled" style="display: flex; align-items: center; gap: 4px;">
-            <span class="dot blue"></span> Bimbingan Rohani
-        </span>
-        <span class="badge badge-cyan" style="display: flex; align-items: center; gap: 4px;">
-            <span class="dot cyan"></span> Wawanhati Piko
-        </span>
-        <span class="badge badge-gold" style="display: flex; align-items: center; gap: 4px;">
-            <span class="dot gold"></span> Agenda Lainnya
-        </span>
+    <div class="agenda-add">
+        <a href="{{ route('agenda.bimbingan.create') }}" class="bimbingan">
+            <span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            <span>Bimbingan Rohani</span>
+        </a>
+        <a href="{{ route('agenda.wawanhati.create') }}" class="wawanhati">
+            <span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            <span>Wawanhati Pilok</span>
+        </a>
+        <a href="{{ route('agenda.lainnya.create') }}" class="lainnya">
+            <span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+            <span>Agenda Lainnya</span>
+        </a>
     </div>
 </div>
 
@@ -43,35 +126,7 @@
     </div>
 @endif
 
-<!-- 3 Action CTA Buttons -->
-<div style="display: flex; flex-direction: column; gap: 8px;">
-    <a href="{{ route('agenda.bimbingan.create') }}" class="btn-primary" style="font-size: 13px;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        TAMBAH JADWAL BIMBINGAN ROHANI
-    </a>
-
-    <a href="{{ route('agenda.wawanhati.create') }}" class="btn-primary" style="background-color: var(--fic-cyan); font-size: 13px;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        TAMBAH JADWAL WAWANHATI / PIKO
-    </a>
-
-    <a href="{{ route('agenda.lainnya.create') }}" class="btn-primary" style="background-color: #B57900; font-size: 13px;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        TAMBAH AGENDA LAINNYA
-    </a>
-</div>
-
-<!-- Chronological Agenda List -->
-<div style="display: flex; flex-direction: column; gap: 12px; margin-top: 6px;">
+<div class="agenda-list" style="display: flex; flex-direction: column; gap: 12px;">
     @forelse($agendas as $agenda)
         @php
             $leftBorderColor = match($agenda->category) {
@@ -113,6 +168,15 @@
                     {{ $agenda->notes }}
                 </div>
             @endif
+
+            <div class="agenda-actions">
+                <a href="{{ route('agenda.edit', ['type' => $agenda->category, 'schedule' => $agenda->id]) }}">Edit</a>
+                <form method="POST" action="{{ route('agenda.destroy', ['type' => $agenda->category, 'schedule' => $agenda->id]) }}" onsubmit="return confirm('Hapus agenda ini dari jadwal Anda?');" style="margin: 0;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit">Hapus</button>
+                </form>
+            </div>
         </div>
     @empty
         <x-empty-state

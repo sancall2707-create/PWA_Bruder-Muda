@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    @include('partials.fic-icons')
     <title>{{ $title ?? 'Bruder FIC Indonesia' }} - PWA Pendampingan</title>
 
     <!-- Google Fonts: Plus Jakarta Sans & Inter with safe fallbacks -->
@@ -11,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- FIC PWA Core Design System -->
-    <link rel="stylesheet" href="/css/fic-pwa.css">
+    <link rel="stylesheet" href="/css/fic-pwa.css?v=20261024e">
 
     @stack('styles')
 </head>
@@ -24,7 +25,7 @@
             <header class="app-header">
                 <div class="header-top">
                     <div class="identity-brand">
-                        <div class="identity-logo" aria-label="Logo FIC">FIC</div>
+                        <img src="/images/logo-fic.png?v=2" alt="Lambang FIC" class="identity-logo" width="38" height="38">
                         <div class="identity-titles">
                             <span class="identity-title-main">BRUDER FIC</span>
                             <span class="identity-title-sub">INDONESIA</span>
@@ -38,15 +39,43 @@
                                 $words = explode(' ', trim($user->name));
                                 $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : ''));
                             }
+                            $photoPath = $user->profile_photo ?? null;
+                            $userPhotoVersion = $photoPath ? substr(md5($photoPath), 0, 8) : '0';
+                            $hasProfilePhoto = is_string($photoPath)
+                                && str_starts_with($photoPath, 'profil/')
+                                && $photoPath !== 'profil/'
+                                && ! str_contains($photoPath, '..')
+                                && ! str_contains($photoPath, '\\')
+                                && ! str_ends_with($photoPath, '/');
                         @endphp
-                        {{ $initials }}
+                        @if ($hasProfilePhoto)
+                            <img src="{{ route('profil.foto', ['v' => $userPhotoVersion]) }}" alt="Foto profil" class="header-user-photo" width="42" height="42">
+                        @else
+                            {{ $initials }}
+                        @endif
                     </a>
                 </div>
                 <div class="header-greeting">
-                    <span class="header-greeting-label">{{ $headerGreetingLabel ?? 'Dashboard Bruder Muda' }}</span>
+                    <span class="header-greeting-label">{{ $headerGreetingLabel ?? 'Beranda Bruder Muda' }}</span>
                     <h1 class="header-greeting-name">{{ auth()->user()->name ?? 'Bruder' }}</h1>
                 </div>
             </header>
+        @endif
+
+        @if(in_array(auth()->user()?->role, ['admin', 'admin_ketua_tppbm']))
+            <a href="{{ route('admin.dashboard') }}" class="tppbm-return">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Kembali ke Beranda TPPBM
+            </a>
+        @elseif(auth()->user()?->role === 'super_admin')
+            <a href="{{ route('superadmin.dashboard') }}" class="tppbm-return">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Kembali ke Beranda Super Admin
+            </a>
         @endif
 
         @if(isset($backUrl) || View::hasSection('subheader'))
@@ -116,6 +145,36 @@
         </nav>
         @endif
     </div>
+
+    <script>
+        (function () {
+            function syncStickyOffsets() {
+                var header = document.querySelector('.app-header');
+                var kembali = document.querySelector('.tppbm-return');
+                document.documentElement.style.setProperty('--app-header-height', header ? header.offsetHeight + 'px' : '0px');
+                document.documentElement.style.setProperty('--tppbm-return-height', kembali ? kembali.offsetHeight + 'px' : '0px');
+            }
+            syncStickyOffsets();
+            window.addEventListener('resize', syncStickyOffsets);
+        })();
+
+        // Loading state otomatis pada seluruh formulir saat disubmit
+        document.addEventListener('submit', function(e) {
+            var submitBtn = e.target.querySelector('button[type="submit"]:not([data-no-loading])');
+            if (submitBtn && !submitBtn.disabled) {
+                setTimeout(function() {
+                    submitBtn.disabled = true;
+                    submitBtn.dataset.originalHtml = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<span style="display:inline-flex; align-items:center; justify-content:center; gap:6px;"><svg style="animation:ficSpin 0.9s linear infinite; width:16px; height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg> Menyimpan...</span>';
+                    submitBtn.style.opacity = '0.82';
+                    submitBtn.style.cursor = 'not-allowed';
+                }, 30);
+            }
+        });
+    </script>
+    <style>
+        @keyframes ficSpin { 100% { transform: rotate(360deg); } }
+    </style>
 
     @stack('scripts')
 </body>

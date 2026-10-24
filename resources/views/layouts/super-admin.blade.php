@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    @include('partials.fic-icons')
     <title>{{ $title ?? 'Super Admin' }} - PWA BRUDER FIC</title>
 
     <!-- Google Fonts -->
@@ -11,11 +12,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- FIC PWA Core Design System -->
-    <link rel="stylesheet" href="/css/fic-pwa.css">
+    <link rel="stylesheet" href="/css/fic-pwa.css?v=20261024e">
 
     <style>
         body {
-            background-color: #EEF2F6;
+            background-color: #e7f0fb;
+            background-image: linear-gradient(180deg, #d5e4f8 0%, #eef3fb 46%, #f7f9fc 100%);
             font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
             margin: 0;
             padding: 0;
@@ -24,25 +26,40 @@
             justify-content: center;
         }
 
+        body:has(.sa-container) {
+            height: 100dvh;
+            overflow: hidden;
+        }
+
         .sa-container {
             width: 100%;
             max-width: 480px;
-            background-color: #F6F8FC;
-            min-height: 100vh;
+            background: linear-gradient(180deg, rgba(20, 85, 192, 0.1) 0%, rgba(234, 243, 255, 0.55) 180px, rgba(247, 249, 252, 0.88) 100%);
+            min-height: 0;
+            height: 100dvh;
+            max-height: 100dvh;
+            overflow-x: hidden;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 0 30px rgba(0, 62, 151, 0.08);
             position: relative;
-            padding-bottom: 72px;
+            padding-bottom: 76px;
         }
 
         .sa-header {
-            background: linear-gradient(135deg, #003E97 0%, #1455C0 100%);
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: linear-gradient(135deg, rgba(0, 62, 151, 0.9) 0%, rgba(20, 85, 192, 0.78) 100%);
             color: #ffffff;
             padding: 20px 18px;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
-            box-shadow: 0 4px 16px rgba(0, 62, 151, 0.15);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+            box-shadow: 0 8px 20px rgba(0, 62, 151, 0.12);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
         .sa-header-top {
@@ -80,49 +97,55 @@
         }
 
         .sa-body {
-            padding: 20px 16px;
+            padding: 20px 16px 28px;
             flex: 1;
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
 
-        .sa-bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 480px;
-            background: #ffffff;
-            border-top: 1px solid #E4E7EC;
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 0;
-            z-index: 100;
-            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
-        }
+        @if(!empty($wideLayout))
+            @media (min-width: 860px) {
+                .sa-container {
+                    max-width: 880px;
+                }
+            }
+        @endif
 
-        .sa-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            text-decoration: none;
-            color: #667085;
-            font-size: 11px;
-            font-weight: 600;
-            width: 25%;
-        }
-
-        .sa-nav-item.active {
-            color: #1455C0;
-            font-weight: 800;
-        }
-
-        .sa-nav-item svg {
-            width: 20px;
-            height: 20px;
+        @media print {
+            html, body {
+                background: #ffffff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                height: auto !important;
+                overflow: visible !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            .sa-container {
+                max-width: 100% !important;
+                width: 100% !important;
+                height: auto !important;
+                max-height: none !important;
+                min-height: auto !important;
+                overflow: visible !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                background: transparent !important;
+            }
+            .sa-header, .sa-bottom-nav, .sa-menu-toggle, .sa-menu, .no-print, header, nav {
+                display: none !important;
+            }
+            .sa-body {
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                gap: 0 !important;
+            }
         }
     </style>
 </head>
@@ -132,17 +155,27 @@
         <div class="sa-header">
             <div class="sa-header-top">
                 <div class="sa-badge">
-                    <span>👑</span> SUPER ADMIN
+                    {{ auth()->user()->role === 'admin_ketua_tppbm' ? 'KETUA TPPBM' : (auth()->user()->role === 'admin' ? 'TIM PENDAMPING TPPBM' : 'SUPER ADMIN') }}
                 </div>
-                <form action="{{ route('logout') }}" method="POST" style="margin:0;">
-                    @csrf
-                    <button type="submit" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer;">
-                        LOGOUT
-                    </button>
-                </form>
+                <div style="display:flex; align-items:center; gap:8px; margin-left:auto;">
+                    <a href="{{ route('superadmin.profil') }}" title="Profil &amp; Akun Saya" style="display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,0.2); border:1.5px solid rgba(255,255,255,0.4); color:#fff; text-decoration:none; font-size:13px; font-weight:800; overflow:hidden;">
+                        @php
+                            $saUser = auth()->user();
+                            $saWords = explode(' ', trim($saUser->name ?? 'SA'));
+                            $saInitials = strtoupper(substr($saWords[0], 0, 1) . (isset($saWords[1]) ? substr($saWords[1], 0, 1) : ''));
+                            $saPhotoVersion = $saUser->profile_photo ? substr(md5($saUser->profile_photo), 0, 8) : '0';
+                        @endphp
+                        @if ($saUser->profile_photo && \Illuminate\Support\Facades\Storage::disk('public')->exists($saUser->profile_photo))
+                            <img src="{{ route('profil.foto', ['v' => $saPhotoVersion]) }}" alt="Foto profil" style="width:100%; height:100%; object-fit:cover;">
+                        @else
+                            {{ $saInitials }}
+                        @endif
+                    </a>
+                    @include('layouts.partials.sa-menu-toggle')
+                </div>
             </div>
-            <h1 class="sa-title">{{ $headerTitle ?? 'Dashboard Super Admin' }}</h1>
-            <p class="sa-subtitle">{{ $headerSubtitle ?? 'Kelola pembinaan, bruder muda, & sapaan' }}</p>
+            <h1 class="sa-title">{{ $headerTitle ?? (in_array(auth()->user()->role, ['admin', 'admin_ketua_tppbm']) ? 'Beranda TPPBM' : 'Beranda Super Admin') }}</h1>
+            <p class="sa-subtitle">{{ $headerSubtitle ?? (in_array(auth()->user()->role, ['admin', 'admin_ketua_tppbm']) ? 'Pemantauan formasi rohani & pembinaan bruder muda' : 'Kelola pembinaan, bruder muda, & sapaan') }}</p>
         </div>
 
         <!-- Body Content -->
@@ -156,25 +189,30 @@
             @yield('content')
         </div>
 
-        <!-- Bottom Navigation Bar for Super Admin -->
-        <nav class="sa-bottom-nav">
-            <a href="{{ route('superadmin.dashboard') }}" class="sa-nav-item {{ request()->routeIs('superadmin.dashboard') ? 'active' : '' }}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-                <span>Dashboard</span>
-            </a>
-            <a href="{{ route('superadmin.users.index') }}" class="sa-nav-item {{ request()->routeIs('superadmin.users*') ? 'active' : '' }}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                <span>Bruder</span>
-            </a>
-            <a href="{{ route('superadmin.monitoring.index') }}" class="sa-nav-item {{ request()->routeIs('superadmin.monitoring*') ? 'active' : '' }}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                <span>Monitoring</span>
-            </a>
-            <a href="{{ route('superadmin.sapaan.index') }}" class="sa-nav-item {{ request()->routeIs('superadmin.sapaan*') ? 'active' : '' }}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                <span>Sapaan</span>
-            </a>
-        </nav>
+        @if(empty($hideBottomNav))
+            @include('layouts.partials.sa-bottom-nav')
+        @endif
+
+        @include('layouts.partials.sa-menu')
     </div>
+
+    <script>
+        // Loading state otomatis pada formulir saat disubmit
+        document.addEventListener('submit', function(e) {
+            var submitBtn = e.target.querySelector('button[type="submit"]:not([data-no-loading])');
+            if (submitBtn && !submitBtn.disabled) {
+                setTimeout(function() {
+                    submitBtn.disabled = true;
+                    submitBtn.dataset.originalHtml = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<span style="display:inline-flex; align-items:center; justify-content:center; gap:6px;"><svg style="animation:ficSpin 0.9s linear infinite; width:16px; height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg> Menyimpan...</span>';
+                    submitBtn.style.opacity = '0.82';
+                    submitBtn.style.cursor = 'not-allowed';
+                }, 30);
+            }
+        });
+    </script>
+    <style>
+        @keyframes ficSpin { 100% { transform: rotate(360deg); } }
+    </style>
 </body>
 </html>

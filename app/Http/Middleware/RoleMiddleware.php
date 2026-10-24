@@ -22,6 +22,11 @@ class RoleMiddleware
             return redirect()->guest(route('login'));
         }
 
+        // Role admin_ketua_tppbm mewarisi semua hak akses admin
+        if ($user->role === 'admin_ketua_tppbm' && in_array('admin', $roles, true)) {
+            return $next($request);
+        }
+
         if (! in_array($user->role, $roles, true)) {
             abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini.');
         }

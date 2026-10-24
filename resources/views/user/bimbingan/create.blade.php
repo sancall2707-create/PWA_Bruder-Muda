@@ -35,9 +35,11 @@
                 id="meeting_date"
                 name="meeting_date"
                 value="{{ old('meeting_date', date('Y-m-d')) }}"
+                max="{{ date('Y-m-d') }}"
                 class="form-input"
                 required
             >
+            <span class="form-help">Hanya dapat memilih hari ini atau tanggal yang sudah lewat.</span>
         </div>
 
         <!-- Nama Pembimbing -->
@@ -49,7 +51,7 @@
                 type="text"
                 id="mentor_name"
                 name="mentor_name"
-                value="{{ old('mentor_name', 'Br. Yohanes Subagio, FIC') }}"
+                value="{{ old('mentor_name') }}"
                 placeholder="Contoh: Br. Yohanes Subagio, FIC"
                 class="form-input"
                 required

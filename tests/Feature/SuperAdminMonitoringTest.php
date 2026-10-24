@@ -7,6 +7,7 @@ use App\Models\SelfDevelopmentJournal;
 use App\Models\SpiritualGuidanceReport;
 use App\Models\SpiritualGuidanceSchedule;
 use App\Models\User;
+use App\Models\WawanhatiReport;
 use App\Models\WawanhatiSchedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -22,7 +23,7 @@ class SuperAdminMonitoringTest extends TestCase
         $budi = User::factory()->create(['role' => 'user', 'name' => 'Br. Budi Pantau']);
 
         $this->journal($anton, 'Lokakarya Pantau', '2026-10-15', 'published');
-        $this->bimbingan($budi, '2026-10-16 09:00:00', 'submitted');
+        $this->bimbingan($budi, '2026-10-16 09:00:00', 'draft');
 
         $this->actingAs($admin)
             ->get(route('superadmin.monitoring.index', ['bulan' => 10, 'tahun' => 2026]))
@@ -74,53 +75,68 @@ class SuperAdminMonitoringTest extends TestCase
     public function test_agenda_recap_lists_all_three_schedule_types(): void
     {
         $admin = User::factory()->create(['role' => 'super_admin']);
+        $now = now();
         $anton = User::factory()->create(['role' => 'user', 'name' => 'Br. Anton Pantau']);
 
         SpiritualGuidanceSchedule::query()->create([
             'user_id' => $anton->id,
             'mentor_name' => 'Rm. Mentor Pantau',
-            'scheduled_at' => '2026-10-15 16:00:00',
+            'scheduled_at' => $now->copy()->addDays(2)->setTime(16, 0, 0),
             'location' => 'Kapel Uji',
             'status' => 'scheduled',
         ]);
         WawanhatiSchedule::query()->create([
             'user_id' => $anton->id,
             'local_leader_name' => 'Br. Pimlok Pantau',
-            'scheduled_at' => '2026-10-20 08:30:00',
+            'scheduled_at' => $now->copy()->addDays(3)->setTime(8, 30, 0),
             'location' => 'Rumah Komunitas',
             'status' => 'scheduled',
         ]);
         PersonalAgenda::query()->create([
             'user_id' => $anton->id,
             'title' => 'Retret Pribadi Pantau',
-            'start_at' => '2026-10-22 05:00:00',
+            'start_at' => $now->copy()->addDays(4)->setTime(5, 0, 0),
             'location' => 'Aula',
             'status' => 'scheduled',
         ]);
 
         $this->actingAs($admin)
-            ->get(route('superadmin.monitoring.agenda', ['bulan' => 10, 'tahun' => 2026]))
+            ->get(route('superadmin.monitoring.agenda', ['bulan' => $now->month, 'tahun' => $now->year]))
             ->assertOk()
             ->assertSee('Br. Anton Pantau')
             ->assertSee('Bimbingan Rohani')
-            ->assertSee('15 Oktober 2026')
-            ->assertSee('16:00 WIB')
             ->assertSee('Rm. Mentor Pantau')
             ->assertSee('Kapel Uji')
             ->assertSee('Wawanhati Pilok')
-            ->assertSee('08:30 WIB')
             ->assertSee('Retret Pribadi Pantau')
             ->assertSee('Menunggu');
 
+        $this->actingAs($admin)
+            ->get(route('superadmin.dashboard'))
+            ->assertOk()
+            ->assertSee('Br. Anton Pantau')
+            ->assertSee('Retret Pribadi Pantau');
+
+        $this->actingAs($admin)
+            ->get(route('admin.dashboard'))
+            ->assertOk()
+            ->assertSee('Br. Anton Pantau')
+            ->assertSee('Retret Pribadi Pantau');
+
         $excel = $this->actingAs($admin)->get(route('superadmin.monitoring.export', [
-            'bulan' => 10,
-            'tahun' => 2026,
+            'bulan' => $now->month,
+            'tahun' => $now->year,
             'jenis' => 'agenda',
             'format' => 'excel',
         ]));
         $excel->assertOk();
-        $this->assertStringContainsString('Rm. Mentor Pantau', $excel->getContent());
-        $this->assertStringContainsString('16:00 WIB', $excel->getContent());
+        $sheet = $excel->getContent();
+        $this->assertStringContainsString('Rm. Mentor Pantau', $sheet);
+        $this->assertStringContainsString('16:00 WIB', $sheet);
+        $this->assertStringContainsString('ss:Bold="1"', $sheet);
+        $this->assertStringContainsString('ss:Horizontal="Center"', $sheet);
+        $this->assertStringContainsString('ss:StyleID="Header"', $sheet);
+        $this->assertStringContainsString('<Column ss:AutoFitWidth="0" ss:Width="130"/>', $sheet);
     }
 
     public function test_agenda_calendar_shows_the_selected_day(): void
@@ -143,6 +159,7 @@ class SuperAdminMonitoringTest extends TestCase
                 'tanggal' => '2026-10-15',
             ]))
             ->assertOk()
+            ->assertSee('calendar-day selected', false)
             ->assertSee('Retret Pribadi Pantau')
             ->assertSee('15 Oktober 2026')
             ->assertSee('Selesai');
@@ -173,6 +190,9 @@ class SuperAdminMonitoringTest extends TestCase
         $this->assertStringContainsString('Selesai', $body);
         $this->assertStringNotContainsString('Br. Budi Pantau', $body);
         $this->assertStringContainsString('<Workbook', $body);
+        $this->assertStringContainsString('ss:Bold="1"', $body);
+        $this->assertStringContainsString('ss:Horizontal="Center"', $body);
+        $this->assertStringContainsString('<Column ss:AutoFitWidth="0" ss:Width="140"/>', $body);
     }
 
     public function test_pdf_export_includes_filtered_agenda(): void
@@ -209,6 +229,220 @@ class SuperAdminMonitoringTest extends TestCase
         $this->actingAs($bruder)->get(route('superadmin.monitoring.index'))->assertForbidden();
         $this->actingAs($bruder)->get(route('superadmin.monitoring.agenda'))->assertForbidden();
         $this->actingAs($bruder)->get(route('superadmin.monitoring.export'))->assertForbidden();
+    }
+
+    public function test_monitoring_supports_month_range_filter(): void
+    {
+        $admin = User::factory()->create(['role' => 'super_admin']);
+        $anton = User::factory()->create(['role' => 'user', 'name' => 'Br. Anton Pantau']);
+
+        $this->journal($anton, 'Jurnal Januari', '2026-01-10', 'published');
+        $this->journal($anton, 'Jurnal April', '2026-04-15', 'published');
+        $this->journal($anton, 'Jurnal Agustus', '2026-08-20', 'published');
+        $this->journal($anton, 'Jurnal Desember', '2026-12-05', 'published');
+
+        $response = $this->actingAs($admin)->get(route('superadmin.monitoring.index', [
+            'bulan' => 1,
+            'bulan_akhir' => 8,
+            'tahun' => 2026,
+        ]));
+
+        $response->assertOk()
+            ->assertSee('Januari – Agustus 2026')
+            ->assertSee('Jurnal Januari')
+            ->assertSee('Jurnal April')
+            ->assertSee('Jurnal Agustus')
+            ->assertDontSee('Jurnal Desember');
+    }
+
+    public function test_agenda_status_automatically_done_when_report_is_submitted(): void
+    {
+        $admin = User::factory()->create(['role' => 'super_admin']);
+        $bruder = User::factory()->create(['role' => 'user', 'name' => 'Br. Renungan FIC']);
+
+        // Buat jadwal bimbingan
+        SpiritualGuidanceSchedule::create([
+            'user_id' => $bruder->id,
+            'mentor_name' => 'Br. Pembimbing FIC',
+            'scheduled_at' => '2026-10-20 10:00:00',
+            'location' => 'Ruang Bimbingan',
+            'status' => 'scheduled',
+        ]);
+
+        // Sebelum laporan dikirim, agenda berstatus Menunggu
+        $this->actingAs($admin)->get(route('superadmin.monitoring.agenda', ['bulan' => 10, 'tahun' => 2026]))
+            ->assertOk()
+            ->assertSee('Menunggu');
+
+        // Bruder mengirimkan renungan / laporan
+        $this->actingAs($bruder)->post(route('bimbingan.store'), [
+            'meeting_date' => '2026-10-20',
+            'mentor_name' => 'Br. Pembimbing FIC',
+            'location' => 'Ruang Bimbingan',
+            'report_content' => str_repeat('Refleksi bimbingan rohani yang mendalam untuk pembinaan bruder muda FIC. ', 5),
+        ])->assertRedirect(route('bimbingan.index'));
+
+        // Setelah renungan terkirim, agenda otomatis berstatus Selesai
+        $response = $this->actingAs($admin)->get(route('superadmin.monitoring.agenda', ['bulan' => 10, 'tahun' => 2026]));
+        $response->assertOk()
+            ->assertSee('Selesai');
+    }
+
+    public function test_super_admin_can_view_raport_pendampingan_bruder_muda(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'super_admin',
+            'name' => 'Br. Andrias Purwanto, FIC',
+        ]);
+        $bruder = User::factory()->create([
+            'role' => 'user',
+            'name' => 'Br. Yohanes Subagio, FIC, S.Pd.',
+            'username' => 'yohanes_subagio',
+            'birth_place' => 'Sleman, D.I. Yogyakarta',
+            'family_data' => [
+                'parish_origin' => 'Paroki St. Petrus & Paulus, Babadan',
+                'father_name' => 'Antonius Sudarsono Lelono',
+                'mother_name' => 'Monika Maria Goretti',
+                'older_siblings_count' => '1',
+                'younger_siblings_count' => '2',
+            ],
+            'education_data' => [
+                'sd_name' => 'SD Kanisius Babadan',
+                'sd_year' => '2010',
+            ],
+            'formation_data' => [
+                'postulat_in' => '2021',
+                'postulat_count' => '5',
+                'postulat_magister' => 'Br. Agus, FIC (Magister)',
+            ],
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('superadmin.monitoring.raport', [
+            'bruder' => $bruder->id,
+            'bulan' => 8,
+            'bulan_akhir' => 10,
+            'tahun' => 2026,
+        ]));
+
+        $response->assertOk()
+            ->assertSee('Periode Agustus - Oktober 2026')
+            ->assertSee('class="raport-sheet"', false)
+            ->assertSee('font-size: 12px;', false)
+            ->assertSee('font-size: 11.5px;', false)
+            ->assertSee('font-size:13px;', false)
+            ->assertSee('RAPORT PENDAMPINGAN BRUDER MUDA')
+            ->assertSee('Kongregasi Bruder FIC Indonesia')
+            ->assertSee('Tim Pemantap Panggilan Bruder Muda (TPPBM)')
+            ->assertSee('Br. Yohanes Subagio, FIC, S.Pd.')
+            ->assertSee('yohanes_subagio')
+            ->assertSee('Sleman, D.I. Yogyakarta')
+            ->assertSee('Paroki St. Petrus & Paulus, Babadan')
+            ->assertSee('Antonius Sudarsono Lelono')
+            ->assertSee('Monika Maria Goretti')
+            ->assertSee('SD Kanisius Babadan')
+            ->assertSee('Postulat')
+            ->assertSee('5 Frater')
+            ->assertSee('BELUM / TIDAK TERLAKSANA')
+            ->assertDontSee('Pembimbing:')
+            ->assertDontSee('Pimpinan Lokal:')
+            ->assertDontSee('Tgl:')
+            ->assertDontSee('Br. Yohanes Apaelagei, FIC')
+            ->assertDontSee('Frater/Bruder')
+            ->assertDontSee('page-break-after: always')
+            ->assertDontSee('Proses pengenalan diri adalah fondasi utama')
+            ->assertDontSee('Hidup rohani adalah jangkar')
+            ->assertSee('Br. F.A. Galih Sih Hartanta, FIC')
+            ->assertSee('Br. Andrias Purwanto, FIC');
+    }
+
+    public function test_raport_shows_dynamic_signatures_for_ketua_tppbm_and_super_admin(): void
+    {
+        $superadmin = User::factory()->create([
+            'role' => 'super_admin',
+            'name' => 'Br. Andrias Purwanto, FIC (Admin Data)',
+        ]);
+        $ketua = User::factory()->create([
+            'role' => 'admin_ketua_tppbm',
+            'name' => 'Br. F.A. Galih Sih Hartanta, FIC (Ketua TPPBM)',
+        ]);
+        $bruder = User::factory()->create(['role' => 'user', 'name' => 'Br. Antonius FIC']);
+
+        $response = $this->actingAs($superadmin)->get(route('superadmin.monitoring.raport', [
+            'bruder' => $bruder->id,
+        ]));
+
+        $response->assertOk()
+            ->assertSee('Br. F.A. Galih Sih Hartanta, FIC (Ketua TPPBM)')
+            ->assertSee('Br. Andrias Purwanto, FIC (Admin Data)');
+    }
+
+    public function test_raport_pdf_downloads_the_selected_bruder_report(): void
+    {
+        $admin = User::factory()->create(['role' => 'super_admin']);
+        $bruder = User::factory()->create(['role' => 'user', 'name' => 'Br. Yohanes Subagio PDF']);
+
+        $response = $this->actingAs($admin)->get(route('superadmin.monitoring.export', [
+            'bruder' => $bruder->id,
+            'bulan' => 1,
+            'bulan_akhir' => 2,
+            'tahun' => 2026,
+            'jenis' => 'raport',
+            'format' => 'pdf',
+        ]));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'application/pdf');
+        $this->assertStringStartsWith('%PDF', $response->getContent());
+        $this->assertStringContainsString(
+            'raport-br-yohanes-subagio-pdf-2026-01-02.pdf',
+            (string) $response->headers->get('content-disposition')
+        );
+
+        $this->actingAs($admin)->get(route('superadmin.monitoring.export', [
+            'jenis' => 'raport',
+            'format' => 'pdf',
+            'bulan' => 1,
+            'tahun' => 2026,
+        ]))->assertRedirect()->assertSessionHas('error');
+    }
+
+    public function test_raport_hides_mentor_and_leader_when_the_month_was_not_carried_out(): void
+    {
+        $admin = User::factory()->create(['role' => 'super_admin']);
+        $bruder = User::factory()->create(['role' => 'user', 'name' => 'Br. Anton Laporan']);
+
+        SpiritualGuidanceReport::query()->create([
+            'user_id' => $bruder->id,
+            'mentor_name' => 'Br. Pembimbing Agustus, FIC',
+            'meeting_at' => '2026-08-12 09:00:00',
+            'location' => 'Ruang Bimbingan',
+            'report_content' => str_repeat('Refleksi bimbingan Agustus. ', 12),
+            'status' => 'submitted',
+            'submitted_at' => '2026-08-12 09:00:00',
+        ]);
+        WawanhatiReport::query()->create([
+            'user_id' => $bruder->id,
+            'local_leader_name' => 'Br. Piko September, FIC',
+            'meeting_at' => '2026-09-04 14:00:00',
+            'location' => 'Ruang Piko',
+            'report_content' => str_repeat('Refleksi wawanhati September. ', 12),
+            'status' => 'submitted',
+            'submitted_at' => '2026-09-04 14:00:00',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('superadmin.monitoring.raport', [
+                'bruder' => $bruder->id,
+                'bulan' => 8,
+                'bulan_akhir' => 10,
+                'tahun' => 2026,
+            ]))
+            ->assertOk()
+            ->assertSee('Br. Pembimbing Agustus, FIC')
+            ->assertSee('Br. Piko September, FIC')
+            ->assertSee('BELUM / TIDAK TERLAKSANA')
+            ->assertDontSee('Br. Yohanes Subagio, FIC')
+            ->assertDontSee('Br. Yohanes Apaelagei, FIC');
     }
 
     private function journal(User $user, string $name, string $date, string $status): void

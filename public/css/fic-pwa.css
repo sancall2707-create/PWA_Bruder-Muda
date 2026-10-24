@@ -13,12 +13,16 @@
     --fic-green-soft: #EBF8F0;
     --fic-cyan: #0284C7;
     --fic-cyan-soft: #E0F2FE;
-    --fic-bg: #F6F8FC;
-    --fic-surface: #FFFFFF;
+    --fic-bg: #F4F7FC;
+    --fic-surface: rgba(255, 255, 255, 0.66);
+    --fic-glass: rgba(255, 255, 255, 0.66);
+    --fic-glass-strong: rgba(255, 255, 255, 0.78);
+    --fic-glass-border: rgba(255, 255, 255, 0.84);
+    --fic-glass-blur: 14px;
     --fic-text-primary: #1B2430;
     --fic-text-secondary: #667085;
     --fic-text-muted: #98A2B3;
-    --fic-border: #E4E7EC;
+    --fic-border: rgba(176, 196, 220, 0.55);
     --fic-danger: #BA1A1A;
     --fic-danger-soft: #FDF2F2;
 
@@ -26,9 +30,9 @@
     --radius-control: 12px;
     --radius-badge: 9999px;
 
-    --shadow-subtle: 0 1px 3px rgba(16, 24, 40, 0.05), 0 1px 2px rgba(16, 24, 40, 0.03);
-    --shadow-card: 0 4px 12px -2px rgba(16, 24, 40, 0.06), 0 2px 6px -2px rgba(16, 24, 40, 0.03);
-    --shadow-elevated: 0 10px 24px -4px rgba(16, 24, 40, 0.1), 0 4px 8px -2px rgba(16, 24, 40, 0.04);
+    --shadow-subtle: 0 1px 2px rgba(0, 62, 151, 0.05);
+    --shadow-card: 0 8px 24px rgba(0, 62, 151, 0.08);
+    --shadow-elevated: 0 14px 32px rgba(0, 62, 151, 0.12);
 }
 
 /* --------------------------------------------------------------------------
@@ -53,7 +57,8 @@ html {
 
 body {
     font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #EEF2F6;
+    background-color: #e7f0fb;
+    background-image: linear-gradient(180deg, #d5e4f8 0%, #eef3fb 46%, #f7f9fc 100%);
     color: var(--fic-text-primary);
     line-height: 1.5;
     min-height: 100vh;
@@ -79,22 +84,38 @@ h1, h2, h3, h4, h5, h6, p {
     max-width: 480px;
     min-height: 100vh;
     min-height: 100dvh;
-    background-color: var(--fic-bg);
+    background: linear-gradient(180deg, rgba(20, 85, 192, 0.1) 0%, rgba(234, 243, 255, 0.55) 180px, rgba(247, 249, 252, 0.88) 100%);
     display: flex;
     flex-direction: column;
     position: relative;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0 30px rgba(0, 62, 151, 0.08);
+}
+
+body:has(.app-container) {
+    height: 100dvh;
+    overflow: hidden;
+}
+
+body:has(.app-container) .app-container {
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 /* App Header */
 .app-header {
-    background: linear-gradient(135deg, var(--fic-dark-blue) 0%, var(--fic-primary) 100%);
+    background: linear-gradient(135deg, rgba(0, 62, 151, 0.9) 0%, rgba(20, 85, 192, 0.78) 100%);
     color: #ffffff;
     padding: 16px 20px 20px;
     position: sticky;
     top: 0;
     z-index: 40;
-    box-shadow: 0 4px 12px rgba(0, 62, 151, 0.15);
+    box-shadow: 0 8px 20px rgba(0, 62, 151, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     width: 100%;
 }
 
@@ -114,16 +135,12 @@ h1, h2, h3, h4, h5, h6, p {
 .identity-logo {
     width: 38px;
     height: 38px;
-    background-color: rgba(255, 255, 255, 0.16);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    font-weight: 800;
-    font-size: 14px;
-    letter-spacing: 0.5px;
+    object-fit: contain;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.92);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: block;
     flex-shrink: 0;
 }
 
@@ -162,6 +179,16 @@ h1, h2, h3, h4, h5, h6, p {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     text-decoration: none;
     flex-shrink: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+.header-user-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    display: block;
 }
 
 .header-greeting {
@@ -183,17 +210,41 @@ h1, h2, h3, h4, h5, h6, p {
     overflow-wrap: break-word;
 }
 
+.tppbm-return {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(239, 248, 255, 0.72);
+    border-bottom: 1px solid rgba(178, 221, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #1455C0;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    position: sticky;
+    top: var(--app-header-height, 0px);
+    z-index: 35;
+}
+
+.tppbm-return svg {
+    flex-shrink: 0;
+}
+
 /* Page Subheader with Back Button */
 .page-subheader {
-    background-color: var(--fic-surface);
-    border-bottom: 1px solid var(--fic-border);
+    background-color: var(--fic-glass-strong);
+    border-bottom: 1px solid var(--fic-glass-border);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     padding: 14px 20px;
     display: flex;
     align-items: center;
     gap: 12px;
     position: sticky;
-    top: 0;
-    z-index: 30;
+    top: calc(var(--app-header-height, 0px) + var(--tppbm-return-height, 0px));
+    z-index: 34;
     width: 100%;
 }
 
@@ -201,8 +252,8 @@ h1, h2, h3, h4, h5, h6, p {
     width: 38px;
     height: 38px;
     border-radius: 10px;
-    background-color: var(--fic-bg);
-    border: 1px solid var(--fic-border);
+    background-color: rgba(255, 255, 255, 0.55);
+    border: 1px solid var(--fic-glass-border);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -249,10 +300,10 @@ h1, h2, h3, h4, h5, h6, p {
     max-width: 480px;
     min-height: 68px;
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    background-color: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-top: 1px solid var(--fic-border);
+    background-color: rgba(255, 255, 255, 0.62);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255, 255, 255, 0.84);
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     z-index: 50;
@@ -296,8 +347,10 @@ h1, h2, h3, h4, h5, h6, p {
    -------------------------------------------------------------------------- */
 .card {
     background-color: var(--fic-surface);
+    backdrop-filter: blur(var(--fic-glass-blur));
+    -webkit-backdrop-filter: blur(var(--fic-glass-blur));
     border-radius: var(--radius-card);
-    border: 1px solid var(--fic-border);
+    border: 1px solid var(--fic-glass-border);
     padding: 20px;
     box-shadow: var(--shadow-card);
     width: 100%;
@@ -324,8 +377,10 @@ h1, h2, h3, h4, h5, h6, p {
    SECTION 1: PROGRESS STAT CARD
    -------------------------------------------------------------------------- */
 .progress-stat-card {
-    background: linear-gradient(135deg, #ffffff 0%, #F8FAFD 100%);
-    border: 1px solid var(--fic-border);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.74) 0%, rgba(234, 243, 255, 0.52) 100%);
+    backdrop-filter: blur(var(--fic-glass-blur));
+    -webkit-backdrop-filter: blur(var(--fic-glass-blur));
+    border: 1px solid var(--fic-glass-border);
     border-radius: var(--radius-card);
     padding: 20px;
     box-shadow: var(--shadow-card);
@@ -341,11 +396,68 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 .stat-title {
+    flex: 1;
+    min-width: 0;
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
+    line-height: 1.35;
     text-transform: uppercase;
     color: var(--fic-text-secondary);
+}
+
+.stat-rings {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 18px;
+}
+
+.stat-ring-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: auto;
+    flex: 1 1 0;
+    max-width: 148px;
+    min-width: 0;
+}
+
+.stat-ring-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #475467;
+    text-align: center;
+    line-height: 1.25;
+}
+
+.stat-ring-count {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 999px;
+    line-height: 1.3;
+}
+
+.stat-ring-count.year {
+    color: #1455C0;
+    background: #EFF4FF;
+}
+
+.stat-ring-count.month {
+    color: #00838F;
+    background: #E0F7FA;
+}
+
+.stat-note {
+    margin: 14px 0 0;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.45;
+    color: #475467;
 }
 
 .stat-body {
@@ -419,12 +531,43 @@ h1, h2, h3, h4, h5, h6, p {
     color: var(--fic-text-secondary);
 }
 
+.stat-year-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(20, 85, 192, 0.18);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: #1455C0;
+}
+
+.stat-year-summary span {
+    min-width: 0;
+}
+
+.stat-year-summary strong {
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 800;
+    color: #1455C0;
+    background: #EFF4FF;
+    border-radius: 999px;
+    padding: 4px 10px;
+    white-space: nowrap;
+}
+
 /* --------------------------------------------------------------------------
    SECTION 2: REMINDER CARD
    -------------------------------------------------------------------------- */
 .reminder-card {
     background-color: var(--fic-surface);
-    border: 1px solid var(--fic-border);
+    backdrop-filter: blur(var(--fic-glass-blur));
+    -webkit-backdrop-filter: blur(var(--fic-glass-blur));
+    border: 1px solid var(--fic-glass-border);
     border-left: 4px solid var(--fic-primary);
     border-radius: var(--radius-card);
     padding: 18px;
@@ -517,8 +660,10 @@ h1, h2, h3, h4, h5, h6, p {
 
 .menu-card {
     background-color: var(--fic-surface);
+    backdrop-filter: blur(var(--fic-glass-blur));
+    -webkit-backdrop-filter: blur(var(--fic-glass-blur));
     border-radius: var(--radius-card);
-    border: 1px solid var(--fic-border);
+    border: 1px solid var(--fic-glass-border);
     padding: 18px 16px;
     display: flex;
     flex-direction: column;
@@ -662,9 +807,11 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 .btn-secondary {
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.58);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     color: var(--fic-text-primary);
-    border: 1px solid var(--fic-border);
+    border: 1px solid var(--fic-glass-border);
     border-radius: var(--radius-control);
     padding: 12px 18px;
     font-size: 14px;
@@ -786,9 +933,11 @@ h1, h2, h3, h4, h5, h6, p {
 .form-input, .form-textarea, .form-select {
     width: 100%;
     padding: 12px 14px;
-    border: 1px solid var(--fic-border);
+    border: 1px solid var(--fic-glass-border);
     border-radius: var(--radius-control);
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     font-size: 14px;
     font-family: inherit;
     color: var(--fic-text-primary);
@@ -815,15 +964,19 @@ h1, h2, h3, h4, h5, h6, p {
 
 /* Upload Dropzone */
 .file-upload-box {
-    border: 2px dashed var(--fic-border);
+    border: 2px dashed rgba(255, 255, 255, 0.9);
     border-radius: var(--radius-control);
     padding: 24px 16px;
     text-align: center;
-    background-color: #FAFCFF;
+    background-color: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     cursor: pointer;
     transition: border-color 0.2s ease, background-color 0.2s ease;
     display: block;
     width: 100%;
+    position: relative;
+    overflow: hidden;
 }
 
 .file-upload-box:hover {
@@ -850,13 +1003,38 @@ h1, h2, h3, h4, h5, h6, p {
     margin-top: 4px;
 }
 
+.file-upload-filename:not([hidden]) {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--fic-primary);
+    overflow-wrap: anywhere;
+}
+
+.file-upload-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+    border: 0;
+    z-index: 2;
+}
+
 /* --------------------------------------------------------------------------
    ITEM LISTS & CARDS
    -------------------------------------------------------------------------- */
 .item-card {
     background-color: var(--fic-surface);
+    backdrop-filter: blur(var(--fic-glass-blur));
+    -webkit-backdrop-filter: blur(var(--fic-glass-blur));
     border-radius: var(--radius-card);
-    border: 1px solid var(--fic-border);
+    border: 1px solid var(--fic-glass-border);
     padding: 18px;
     box-shadow: var(--shadow-card);
     display: flex;
@@ -898,7 +1076,7 @@ h1, h2, h3, h4, h5, h6, p {
 .item-card-preview {
     font-size: 13px;
     color: #475467;
-    background-color: #F8FAFC;
+    background-color: rgba(255, 255, 255, 0.5);
     border-radius: 8px;
     padding: 12px;
     line-height: 1.5;
@@ -910,9 +1088,11 @@ h1, h2, h3, h4, h5, h6, p {
 .empty-state {
     text-align: center;
     padding: 36px 20px;
-    background-color: var(--fic-surface);
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(var(--fic-glass-blur));
+    -webkit-backdrop-filter: blur(var(--fic-glass-blur));
     border-radius: var(--radius-card);
-    border: 1px dashed var(--fic-border);
+    border: 1px dashed rgba(255, 255, 255, 0.9);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -948,8 +1128,10 @@ h1, h2, h3, h4, h5, h6, p {
    -------------------------------------------------------------------------- */
 .calendar-card {
     background-color: var(--fic-surface);
+    backdrop-filter: blur(var(--fic-glass-blur));
+    -webkit-backdrop-filter: blur(var(--fic-glass-blur));
     border-radius: var(--radius-card);
-    border: 1px solid var(--fic-border);
+    border: 1px solid var(--fic-glass-border);
     padding: 18px;
     box-shadow: var(--shadow-card);
     width: 100%;
@@ -1005,7 +1187,22 @@ h1, h2, h3, h4, h5, h6, p {
     cursor: default;
 }
 
-.calendar-day.selected {
+a.calendar-day {
+    text-decoration: none;
+    color: var(--fic-text-primary);
+}
+
+.calendar-day.selected,
+a.calendar-day.selected {
+    background-color: var(--fic-primary);
+    color: #ffffff;
+}
+
+a.calendar-day.selected span {
+    color: #ffffff;
+}
+
+a.calendar-day.selected:hover {
     background-color: var(--fic-primary);
     color: #ffffff;
 }
@@ -1052,14 +1249,108 @@ h1, h2, h3, h4, h5, h6, p {
     body {
         padding: 24px 0;
     }
-    .app-container {
-        border-radius: 20px;
+    body:has(.app-container) {
+        height: 100dvh;
         overflow: hidden;
-        min-height: calc(100vh - 48px);
-        min-height: calc(100dvh - 48px);
+    }
+    body:has(.app-container) .app-container {
+        border-radius: 20px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        height: calc(100dvh - 48px);
+        max-height: calc(100dvh - 48px);
+        min-height: 0;
+    }
+    .app-header {
+        position: sticky;
+        top: 0;
+        z-index: 40;
     }
     .bottom-nav {
+        bottom: 24px;
         border-bottom-left-radius: 20px;
         border-bottom-right-radius: 20px;
     }
+}
+
+/* --------------------------------------------------------------------------
+   TEMA KACA — permukaan putih yang masih ditulis inline di blade
+   Tidak mengubah ukuran, urutan, atau posisi elemen.
+   -------------------------------------------------------------------------- */
+[style*="background:#fff"],
+[style*="background: #fff"],
+[style*="background:#ffffff"],
+[style*="background: #ffffff"],
+[style*="background-color:#fff"],
+[style*="background-color: #fff"],
+[style*="background-color:#ffffff"],
+[style*="background-color: #ffffff"] {
+    background-color: rgba(255, 255, 255, 0.66) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-color: rgba(255, 255, 255, 0.84) !important;
+}
+
+[style*="background: linear-gradient(135deg, #F0F9FF"],
+[style*="background:linear-gradient(135deg,#F0F9FF"] {
+    background: linear-gradient(135deg, rgba(240, 249, 255, 0.62), rgba(224, 242, 254, 0.48)) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-color: rgba(255, 255, 255, 0.84) !important;
+}
+
+[style*="background:#ECFDF3"],
+[style*="background: #ECFDF3"],
+[style*="background-color:#ECFDF3"],
+[style*="background-color: #ECFDF3"] {
+    background-color: rgba(236, 253, 243, 0.8) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+[style*="background:#FEF3F2"],
+[style*="background: #FEF3F2"],
+[style*="background-color:#FEF3F2"],
+[style*="background-color: #FEF3F2"] {
+    background-color: rgba(254, 243, 242, 0.84) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+[style*="background: #F2F4F7"],
+[style*="background:#F2F4F7"] {
+    background-color: rgba(255, 255, 255, 0.46) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+[style*="background:#EFF8FF"],
+[style*="background: #EFF8FF"],
+[style*="background:#EFF4FF"],
+[style*="background: #EFF4FF"] {
+    background-color: rgba(239, 244, 255, 0.74) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+[style*="background: #FFF8E1"],
+[style*="background:#FFF8E1"] {
+    background-color: rgba(255, 248, 225, 0.74) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-color: rgba(255, 217, 102, 0.85) !important;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"],
+input[type="time"],
+input[type="email"],
+input[type="search"],
+input[type="number"],
+select,
+textarea {
+    background-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }

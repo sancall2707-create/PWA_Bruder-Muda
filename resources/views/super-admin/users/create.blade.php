@@ -3,26 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    @include('partials.fic-icons')
     <title>Tambah Bruder Baru - PWA BRUDER FIC</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/fic-pwa.css">
     <style>
-        body { background:#EEF2F6; font-family:'Plus Jakarta Sans','Inter',sans-serif; margin:0; padding:0; min-height:100vh; display:flex; justify-content:center; }
-        .container { width:100%; max-width:480px; background:#F6F8FC; min-height:100vh; display:flex; flex-direction:column; box-shadow:0 0 30px rgba(0,0,0,0.08); }
-        .header { background:linear-gradient(135deg,#003E97 0%,#1455C0 100%); color:#fff; padding:20px; border-bottom-left-radius:20px; border-bottom-right-radius:20px; box-shadow:0 4px 16px rgba(0,62,151,0.15); }
+        body { background:#e7f0fb; background-image:linear-gradient(180deg,#d5e4f8 0%,#eef3fb 46%,#f7f9fc 100%); font-family:'Plus Jakarta Sans','Inter',sans-serif; margin:0; padding:0; min-height:100vh; display:flex; justify-content:center; }
+        .container { width:100%; max-width:480px; background:linear-gradient(180deg,rgba(20,85,192,0.1) 0%,rgba(234,243,255,0.55) 180px,rgba(247,249,252,0.88) 100%); min-height:100vh; display:flex; flex-direction:column; box-shadow:0 0 30px rgba(0,62,151,0.08); padding-bottom:72px; box-sizing:border-box; }
+        .header { background:linear-gradient(135deg,rgba(0,62,151,0.9) 0%,rgba(20,85,192,0.78) 100%); color:#fff; padding:20px; border-bottom:1px solid rgba(255,255,255,0.28); border-bottom-left-radius:20px; border-bottom-right-radius:20px; box-shadow:0 8px 20px rgba(0,62,151,0.12); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); }
         .header-nav { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
-        .btn-header-back { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.3); border-radius:10px; color:#fff; text-decoration:none; font-size:16px; }
+        .btn-header-back { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; padding:0; line-height:0; background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.3); border-radius:10px; color:#fff; text-decoration:none; }
+        .btn-header-back svg { display:block; }
         .badge { display:inline-flex; gap:6px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; text-transform:uppercase; }
         .title { font-size:20px; font-weight:800; margin:0 0 4px; }
         .subtitle { font-size:13px; color:rgba(255,255,255,.85); margin:0; }
-        .body { padding:20px 16px 40px; flex:1; display:flex; flex-direction:column; gap:16px; }
-        .form-section { background:#fff; border-radius:16px; border:1px solid #E4E7EC; padding:18px; box-shadow:0 2px 8px rgba(16,24,40,0.04); display:flex; flex-direction:column; gap:14px; }
+        .body { padding:20px 16px 96px; flex:1; display:flex; flex-direction:column; gap:16px; }
+        .form-section { background:rgba(255,255,255,0.66); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-radius:16px; border:1px solid rgba(255,255,255,0.84); padding:18px; box-shadow:0 8px 24px rgba(0,62,151,0.08); display:flex; flex-direction:column; gap:14px; }
         .section-label { font-size:12px; font-weight:800; color:#1455C0; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #F2F4F7; padding-bottom:8px; margin-bottom:4px; }
         .field { display:flex; flex-direction:column; gap:6px; }
         .field label { font-size:12px; font-weight:700; color:#475467; text-transform:uppercase; letter-spacing:0.4px; }
-        .field input, .field textarea, .field select { width:100%; box-sizing:border-box; padding:12px 14px; border-radius:12px; border:1px solid #D0D5DD; font-size:14px; background:#fff; font-family:inherit; color:#101828; }
+        .field input, .field textarea, .field select { width:100%; box-sizing:border-box; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,0.84); font-size:14px; background:rgba(255,255,255,0.72); backdrop-filter:blur(12px); font-family:inherit; color:#101828; }
         .field input:focus, .field textarea:focus { border-color:#1455C0; outline:none; box-shadow:0 0 0 3px rgba(20,85,192,0.12); }
         .btn-submit { border:none; border-radius:14px; padding:15px; font-weight:800; font-size:15px; background:linear-gradient(135deg, #1455C0 0%, #003E97 100%); color:#fff; cursor:pointer; box-shadow:0 4px 12px rgba(20,85,192,0.25); width:100%; }
         .back-link { display:block; text-align:center; margin-top:8px; color:#1455C0; text-decoration:none; font-weight:700; font-size:13px; }
@@ -32,8 +34,9 @@
 <div class="container">
     <div class="header">
         <div class="header-nav">
-            <a href="{{ route('superadmin.users.index') }}" class="btn-header-back" aria-label="Kembali">←</a>
+            <a href="{{ route('superadmin.users.index') }}" class="btn-header-back" aria-label="Kembali"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg></a>
             <div class="badge"><span>👤</span> PEMBUATAN AKUN</div>
+            @include('layouts.partials.sa-menu-toggle')
         </div>
         <h1 class="title">Tambah Bruder Baru</h1>
         <p class="subtitle">Isi kredensial akun &amp; data diri Bruder Muda.</p>
@@ -55,7 +58,16 @@
                 <div class="section-label">1. Kredensial Akun Login</div>
 
                 <div class="field">
-                    <label for="name">Nama Lengkap &amp; Gelar</label>
+                    <label for="role">Peran (Role) Akses</label>
+                    <select id="role" name="role" required>
+                        <option value="user" {{ old('role', 'user') === 'user' ? 'selected' : '' }}>Bruder Muda (User)</option>
+                        <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin (TPPBM)</option>
+                        <option value="admin_ketua_tppbm" {{ old('role') === 'admin_ketua_tppbm' ? 'selected' : '' }}>Admin Ketua TPPBM</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="name">Nama Lengkap</label>
                     <input type="text" id="name" name="name" value="{{ old('name') }}" placeholder="Contoh: Br. Fransiskus Xaverius FIC" required>
                 </div>
 
@@ -78,6 +90,11 @@
             <!-- Form Card 2: Data Diri & Keanggotaan Bruder -->
             <div class="form-section" style="margin-top: 14px;">
                 <div class="section-label">2. Data Diri &amp; Keanggotaan Bruder</div>
+
+                <div class="field">
+                    <label for="birth_place">Tempat Lahir</label>
+                    <input type="text" id="birth_place" name="birth_place" value="{{ old('birth_place') }}" placeholder="Contoh: Semarang">
+                </div>
 
                 <div class="field">
                     <label for="birth_date">Tanggal Lahir</label>
@@ -110,8 +127,8 @@
                 </div>
 
                 <div class="field">
-                    <label for="bio">Bio / Catatan Pembinaan</label>
-                    <textarea id="bio" name="bio" rows="3" placeholder="Catatan singkat perihal bruder muda...">{{ old('bio') }}</textarea>
+                    <label for="bio">Catatan Pembinaan Awal</label>
+                    <textarea id="bio" name="bio" rows="3" placeholder="Catatan awal pada saat pembuatan akun bruder...">{{ old('bio') }}</textarea>
                 </div>
             </div>
 
@@ -122,6 +139,7 @@
             </div>
         </form>
     </div>
+        @include('layouts.partials.sa-menu')
 </div>
 </body>
 </html>
