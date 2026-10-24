@@ -461,7 +461,9 @@
                         </div>
                         <div style="display:flex; flex-wrap:wrap; gap:12px; font-size:10.5px; margin-bottom:4px; color:#4B5563;">
                             <div><strong>Tgl:</strong> {{ $b['date'] !== '-' ? $b['date'] . ' ' . ucfirst(strtolower($b['bulan'])) : '-' }}</div>
-                            <div><strong>Pembimbing:</strong> {{ $b['mentor'] }}</div>
+                            @if($b['done'] && filled($b['mentor']))
+                                <div><strong>Pembimbing:</strong> {{ $b['mentor'] }}</div>
+                            @endif
                             <div><strong>Tempat:</strong> {{ $b['location'] }}</div>
                         </div>
                         <div style="font-size:11px; color:#1F2937; line-height:1.4;">
@@ -490,7 +492,9 @@
                         </div>
                         <div style="display:flex; flex-wrap:wrap; gap:12px; font-size:10.5px; margin-bottom:4px; color:#4B5563;">
                             <div><strong>Tgl:</strong> {{ $w['date'] !== '-' ? $w['date'] . ' ' . ucfirst(strtolower($w['bulan'])) : '-' }}</div>
-                            <div><strong>Pimpinan Lokal:</strong> {{ $w['leader'] }}</div>
+                            @if($w['done'] && filled($w['leader']))
+                                <div><strong>Pimpinan Lokal:</strong> {{ $w['leader'] }}</div>
+                            @endif
                             <div><strong>Tempat:</strong> {{ $w['location'] }}</div>
                         </div>
                         <div style="font-size:11px; color:#1F2937; line-height:1.4;">

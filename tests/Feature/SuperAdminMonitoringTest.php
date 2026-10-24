@@ -7,6 +7,7 @@ use App\Models\SelfDevelopmentJournal;
 use App\Models\SpiritualGuidanceReport;
 use App\Models\SpiritualGuidanceSchedule;
 use App\Models\User;
+use App\Models\WawanhatiReport;
 use App\Models\WawanhatiSchedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -341,6 +342,10 @@ class SuperAdminMonitoringTest extends TestCase
             ->assertSee('SD Kanisius Babadan')
             ->assertSee('Postulat')
             ->assertSee('5 Frater')
+            ->assertSee('BELUM / TIDAK TERLAKSANA')
+            ->assertDontSee('Pembimbing:')
+            ->assertDontSee('Pimpinan Lokal:')
+            ->assertDontSee('Br. Yohanes Apaelagei, FIC')
             ->assertDontSee('Frater/Bruder')
             ->assertDontSee('page-break-after: always')
             ->assertDontSee('Proses pengenalan diri adalah fondasi utama')
@@ -398,6 +403,45 @@ class SuperAdminMonitoringTest extends TestCase
             'bulan' => 1,
             'tahun' => 2026,
         ]))->assertRedirect()->assertSessionHas('error');
+    }
+
+    public function test_raport_hides_mentor_and_leader_when_the_month_was_not_carried_out(): void
+    {
+        $admin = User::factory()->create(['role' => 'super_admin']);
+        $bruder = User::factory()->create(['role' => 'user', 'name' => 'Br. Anton Laporan']);
+
+        SpiritualGuidanceReport::query()->create([
+            'user_id' => $bruder->id,
+            'mentor_name' => 'Br. Pembimbing Agustus, FIC',
+            'meeting_at' => '2026-08-12 09:00:00',
+            'location' => 'Ruang Bimbingan',
+            'report_content' => str_repeat('Refleksi bimbingan Agustus. ', 12),
+            'status' => 'submitted',
+            'submitted_at' => '2026-08-12 09:00:00',
+        ]);
+        WawanhatiReport::query()->create([
+            'user_id' => $bruder->id,
+            'local_leader_name' => 'Br. Piko September, FIC',
+            'meeting_at' => '2026-09-04 14:00:00',
+            'location' => 'Ruang Piko',
+            'report_content' => str_repeat('Refleksi wawanhati September. ', 12),
+            'status' => 'submitted',
+            'submitted_at' => '2026-09-04 14:00:00',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('superadmin.monitoring.raport', [
+                'bruder' => $bruder->id,
+                'bulan' => 8,
+                'bulan_akhir' => 10,
+                'tahun' => 2026,
+            ]))
+            ->assertOk()
+            ->assertSee('Br. Pembimbing Agustus, FIC')
+            ->assertSee('Br. Piko September, FIC')
+            ->assertSee('BELUM / TIDAK TERLAKSANA')
+            ->assertDontSee('Br. Yohanes Subagio, FIC')
+            ->assertDontSee('Br. Yohanes Apaelagei, FIC');
     }
 
     private function journal(User $user, string $name, string $date, string $status): void

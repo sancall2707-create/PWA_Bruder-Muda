@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\SelfDevelopmentJournal;
+use App\Models\SpiritualGuidanceReport;
 use App\Models\User;
+use App\Models\WawanhatiReport;
 use App\Services\MonitoringExport;
 use App\Services\MonitoringQuery;
 use App\Services\RaportPdfPrinter;
@@ -43,10 +46,10 @@ class MonitoringController extends Controller
     public function destroyReportSingle(Request $request, string $type, int $id): RedirectResponse
     {
         $model = match ($type) {
-            'bimbingan' => \App\Models\SpiritualGuidanceReport::class,
-            'wawanhati' => \App\Models\WawanhatiReport::class,
-            'jurnal'    => \App\Models\SelfDevelopmentJournal::class,
-            default     => null,
+            'bimbingan' => SpiritualGuidanceReport::class,
+            'wawanhati' => WawanhatiReport::class,
+            'jurnal' => SelfDevelopmentJournal::class,
+            default => null,
         };
 
         if (! $model) {
@@ -92,23 +95,23 @@ class MonitoringController extends Controller
             match ($cat) {
                 'bimbingan' => $bimbinganIds[] = $id,
                 'wawanhati' => $wawanhatiIds[] = $id,
-                'jurnal'    => $jurnalIds[] = $id,
-                default     => null,
+                'jurnal' => $jurnalIds[] = $id,
+                default => null,
             };
         }
 
         $totalDeleted = 0;
 
         if (! empty($bimbinganIds)) {
-            $totalDeleted += \App\Models\SpiritualGuidanceReport::whereIn('id', $bimbinganIds)->delete();
+            $totalDeleted += SpiritualGuidanceReport::whereIn('id', $bimbinganIds)->delete();
         }
 
         if (! empty($wawanhatiIds)) {
-            $totalDeleted += \App\Models\WawanhatiReport::whereIn('id', $wawanhatiIds)->delete();
+            $totalDeleted += WawanhatiReport::whereIn('id', $wawanhatiIds)->delete();
         }
 
         if (! empty($jurnalIds)) {
-            $totalDeleted += \App\Models\SelfDevelopmentJournal::whereIn('id', $jurnalIds)->delete();
+            $totalDeleted += SelfDevelopmentJournal::whereIn('id', $jurnalIds)->delete();
         }
 
         return redirect()->back()->with('success', "{$totalDeleted} laporan berhasil dihapus.");
@@ -139,7 +142,7 @@ class MonitoringController extends Controller
         $bruders = $this->bruders();
         $selectedBruderId = $request->input('bruder') ? (int) $request->input('bruder') : null;
 
-        $query = \App\Models\SelfDevelopmentJournal::with('user')
+        $query = SelfDevelopmentJournal::with('user')
             ->whereHas('user', fn ($q) => $q->where('role', 'user')->where('is_active', true));
 
         if ($selectedBruderId) {
@@ -149,11 +152,11 @@ class MonitoringController extends Controller
         $journals = $query->orderByDesc('activity_date')->get();
 
         return view('super-admin.monitoring.jurnal', [
-            'journals'          => $journals,
-            'bruders'           => $bruders,
-            'selectedBruderId'  => $selectedBruderId,
-            'headerTitle'       => 'Jurnal Pengembangan Diri',
-            'headerSubtitle'    => 'Kelola dan hapus jurnal seluruh bruder muda',
+            'journals' => $journals,
+            'bruders' => $bruders,
+            'selectedBruderId' => $selectedBruderId,
+            'headerTitle' => 'Jurnal Pengembangan Diri',
+            'headerSubtitle' => 'Kelola dan hapus jurnal seluruh bruder muda',
         ]);
     }
 
@@ -172,7 +175,7 @@ class MonitoringController extends Controller
         $ids = array_map('intval', $ids);
 
         // Hapus jurnal yang dipilih
-        $deleted = \App\Models\SelfDevelopmentJournal::whereIn('id', $ids)->delete();
+        $deleted = SelfDevelopmentJournal::whereIn('id', $ids)->delete();
 
         return redirect()->route('superadmin.monitoring.jurnal.index', $request->only('bruder'))
             ->with('success', "{$deleted} jurnal berhasil dihapus.");
@@ -458,7 +461,7 @@ class MonitoringController extends Controller
                 'bulan' => $monthName,
                 'done' => (bool) $rep,
                 'date' => $rep ? $rep->meeting_at->format('d') : '-',
-                'mentor' => $rep ? $rep->mentor_name : 'Br. Yohanes Subagio, FIC',
+                'mentor' => $rep?->mentor_name,
                 'location' => $rep ? ($rep->location ?: '-') : '-',
                 'content' => $rep ? $rep->report_content : '-',
             ];
@@ -478,7 +481,7 @@ class MonitoringController extends Controller
                 'bulan' => $monthName,
                 'done' => (bool) $rep,
                 'date' => $rep ? $rep->meeting_at->format('d') : '-',
-                'leader' => $rep ? $rep->local_leader_name : 'Br. Yohanes Apaelagei, FIC',
+                'leader' => $rep?->local_leader_name,
                 'location' => $rep ? ($rep->location ?: '-') : '-',
                 'content' => $rep ? $rep->report_content : '-',
             ];
