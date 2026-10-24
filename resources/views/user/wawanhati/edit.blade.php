@@ -46,7 +46,7 @@
         <!-- Nama Pimpinan Lokal -->
         <div class="form-group">
             <label for="local_leader_name" class="form-label">
-                Nama Pimpinan Lokal (Piko) <span class="required">*</span>
+                Nama Pimpinan Lokal (Pilok) <span class="required">*</span>
             </label>
             <input
                 type="text"
@@ -69,7 +69,7 @@
                 id="location"
                 name="location"
                 value="{{ old('location', $report->location) }}"
-                placeholder="Contoh: Ruang Pimpinan Komunitas Solo"
+                placeholder="Contoh: Ruang Pimpinan Lokal Solo"
                 class="form-input"
                 required
             >
@@ -93,7 +93,7 @@
                 maxlength="500"
                 required
             >{{ old('report_content', $report->report_content) }}</textarea>
-            <span class="form-help">Wawanhati adalah dialog persaudaraan dan evaluasi pembinaan bersama Piko. Minimal 200 karakter, maksimal 500 karakter.</span>
+            <span class="form-help">Wawanhati adalah dialog persaudaraan dan evaluasi pembinaan bersama Pilok. Minimal 200 karakter, maksimal 500 karakter.</span>
         </div>
 
         <!-- Upload Bukti Logbook / Catatan Fisik -->

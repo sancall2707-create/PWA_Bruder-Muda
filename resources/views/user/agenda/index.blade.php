@@ -111,7 +111,7 @@
         </a>
         <a href="{{ route('agenda.wawanhati.create') }}" class="wawanhati">
             <span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
-            <span>Wawanhati Piko</span>
+            <span>Wawanhati Pilok</span>
         </a>
         <a href="{{ route('agenda.lainnya.create') }}" class="lainnya">
             <span class="plus" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 3v8M3 7h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>

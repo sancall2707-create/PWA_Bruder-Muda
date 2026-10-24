@@ -10,7 +10,7 @@
     <div style="margin-bottom: 20px;">
         <h2 style="font-size: 16px; font-weight: 700; color: var(--fic-text-primary);">Formulir Laporan Wawanhati Pimpinan Lokal</h2>
         <p style="font-size: 12px; color: var(--fic-text-secondary); margin-top: 4px;">
-            Isi laporan berkala dialog pembinaan bersama Pimpinan Komunitas Lokal (Piko).
+            Isi laporan berkala dialog pembinaan bersama Pimpinan Lokal (Pilok).
         </p>
     </div>
 
@@ -45,7 +45,7 @@
         <!-- Nama Pimpinan Lokal -->
         <div class="form-group">
             <label for="local_leader_name" class="form-label">
-                Nama Pimpinan Lokal (Piko) <span class="required">*</span>
+                Nama Pimpinan Lokal (Pilok) <span class="required">*</span>
             </label>
             <input
                 type="text"
@@ -68,7 +68,7 @@
                 id="location"
                 name="location"
                 value="{{ old('location') }}"
-                placeholder="Contoh: Ruang Pimpinan Komunitas Solo"
+                placeholder="Contoh: Ruang Pimpinan Lokal Solo"
                 class="form-input"
                 required
             >
@@ -92,7 +92,7 @@
                 maxlength="500"
                 required
             >{{ old('report_content') }}</textarea>
-            <span class="form-help">Wawanhati adalah dialog persaudaraan dan evaluasi pembinaan bersama Piko. Minimal 200 karakter, maksimal 500 karakter.</span>
+            <span class="form-help">Wawanhati adalah dialog persaudaraan dan evaluasi pembinaan bersama Pilok. Minimal 200 karakter, maksimal 500 karakter.</span>
         </div>
 
         <!-- Upload Bukti Logbook / Catatan Fisik -->

@@ -3,7 +3,7 @@
 @php
     $editing = isset($schedule);
     $backUrl = route('agenda.index');
-    $pageTitle = $editing ? 'Ubah Jadwal Wawanhati Piko' : 'Jadwal Wawanhati Piko';
+    $pageTitle = $editing ? 'Ubah Jadwal Wawanhati Pilok' : 'Jadwal Wawanhati Pilok';
 @endphp
 
 @section('content')
@@ -11,7 +11,7 @@
     <div style="margin-bottom: 20px;">
         <h2 style="font-size: 16px; font-weight: 700; color: var(--fic-text-primary);">{{ $editing ? 'Ubah Jadwal Wawanhati Pimpinan Lokal' : 'Tambah Jadwal Wawanhati Pimpinan Lokal' }}</h2>
         <p style="font-size: 12px; color: var(--fic-text-secondary); margin-top: 4px;">
-            Jadwalkan dialog pembinaan bersama Pimpinan Komunitas Lokal (Piko).
+            Jadwalkan dialog pembinaan bersama Pimpinan Lokal (Pilok).
         </p>
     </div>
 
@@ -34,7 +34,7 @@
         <!-- Nama Pimpinan Lokal -->
         <div class="form-group">
             <label for="local_leader_name" class="form-label">
-                Nama Pimpinan Lokal (Piko) <span class="required">*</span>
+                Nama Pimpinan Lokal (Pilok) <span class="required">*</span>
             </label>
             <input
                 type="text"
@@ -87,7 +87,7 @@
                 id="location"
                 name="location"
                 value="{{ old('location', $editing ? $schedule->location : '') }}"
-                placeholder="Contoh: Ruang Piko Komunitas Solo"
+                placeholder="Contoh: Ruang Pimpinan Lokal Solo"
                 class="form-input"
                 required
             >

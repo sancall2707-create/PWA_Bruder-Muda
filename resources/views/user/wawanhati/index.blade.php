@@ -17,7 +17,7 @@
                 {{ $summary['selesai'] }} Selesai &bull; {{ $summary['terkirim'] }} Terkirim
             </div>
         </div>
-        <span class="badge badge-cyan">Pimpinan Lokal (Piko)</span>
+        <span class="badge badge-cyan">Pimpinan Lokal (Pilok)</span>
     </div>
 </div>
 
@@ -43,7 +43,7 @@
             <div class="item-card-header">
                 <div>
                     <div class="item-card-title">{{ $report->local_leader_name }}</div>
-                    <div style="font-size: 11px; color: var(--fic-text-muted);">Pimpinan Komunitas / Lokal</div>
+                    <div style="font-size: 11px; color: var(--fic-text-muted);">Pimpinan Lokal</div>
                 </div>
                 <x-status-badge :status="$report->status" />
             </div>
@@ -92,7 +92,7 @@
     @empty
         <x-empty-state
             title="Belum ada laporan Wawanhati"
-            message="Catat hasil wawanhati bersama pimpinan komunitas lokal Anda."
+            message="Catat hasil wawanhati bersama pimpinan lokal Anda."
         />
     @endforelse
 </div>
