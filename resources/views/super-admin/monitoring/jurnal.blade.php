@@ -20,23 +20,67 @@
 
 {{-- Filter Bruder --}}
 <form method="GET" style="margin-bottom:12px;">
-    <div style="display:flex; gap:8px; align-items:flex-end;">
-        <div style="flex:1;">
-            <label style="font-size:10px; font-weight:700; color:#667085; text-transform:uppercase; display:block; margin-bottom:4px;">Filter Bruder</label>
-            <select name="bruder" onchange="this.form.submit()" style="width:100%; padding:9px 8px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; font-size:12px; font-weight:600;">
+    <div style="display:flex; flex-direction:column; gap:4px;">
+        <label style="font-size:10px; font-weight:700; color:#667085; text-transform:uppercase;">Filter Bruder</label>
+        <input type="text"
+               id="filterJurnalBruderSearch"
+               placeholder="🔍 Cari nama bruder pada pilihan..."
+               autocomplete="off"
+               style="width:100%; box-sizing:border-box; padding:8px 12px; border-radius:8px; border:1px solid #D0D5DD; background:#fff; font-size:12px; font-family:inherit;">
+        <div style="display:flex; gap:8px; align-items:center;">
+            <select id="selectJurnalBruder" name="bruder" onchange="this.form.submit()" style="flex:1; padding:9px 8px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; font-size:12px; font-weight:600;">
                 <option value="">Semua Bruder</option>
                 @foreach($bruders as $b)
                     <option value="{{ $b->id }}" {{ $selectedBruderId == $b->id ? 'selected' : '' }}>{{ $b->name }}</option>
                 @endforeach
             </select>
+            @if($selectedBruderId)
+                <a href="{{ route('superadmin.monitoring.jurnal.index') }}" style="padding:9px 12px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; font-size:12px; font-weight:700; color:#667085; text-decoration:none; white-space:nowrap;">
+                    Reset
+                </a>
+            @endif
         </div>
-        @if($selectedBruderId)
-            <a href="{{ route('superadmin.monitoring.jurnal.index') }}" style="padding:9px 12px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; font-size:12px; font-weight:700; color:#667085; text-decoration:none; white-space:nowrap;">
-                Reset
-            </a>
-        @endif
     </div>
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('filterJurnalBruderSearch');
+    const select = document.getElementById('selectJurnalBruder');
+    if (!searchInput || !select) return;
+
+    const originalOptions = Array.from(select.options).map(opt => ({
+        value: opt.value,
+        text: opt.text,
+        selected: opt.selected
+    }));
+
+    searchInput.addEventListener('input', function () {
+        const term = this.value.trim().toLowerCase();
+        select.innerHTML = '';
+
+        const matched = originalOptions.filter(opt =>
+            opt.value === '' || opt.text.toLowerCase().includes(term)
+        );
+
+        if (matched.length === 0) {
+            const noOpt = document.createElement('option');
+            noOpt.value = '';
+            noOpt.text = 'Tidak ada nama yang cocok';
+            noOpt.disabled = true;
+            select.appendChild(noOpt);
+        } else {
+            matched.forEach(opt => {
+                const el = document.createElement('option');
+                el.value = opt.value;
+                el.text = opt.text;
+                el.selected = opt.selected;
+                select.appendChild(el);
+            });
+        }
+    });
+});
+</script>
 
 {{-- Notifikasi --}}
 @if(session('success'))

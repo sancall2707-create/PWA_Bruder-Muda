@@ -33,6 +33,10 @@ class UserManagementController extends Controller
             ->paginate(10)
             ->withQueryString();
 
+        if ($request->ajax()) {
+            return view('super-admin.users._list', compact('users', 'search'));
+        }
+
         return view('super-admin.users.index', compact('users', 'search'));
     }
 

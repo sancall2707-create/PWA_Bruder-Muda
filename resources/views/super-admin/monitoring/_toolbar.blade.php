@@ -57,13 +57,59 @@
             </select>
         </div>
     </div>
-    <select name="bruder" onchange="this.form.submit()" aria-label="Bruder" style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; font-size:13px;">
-        <option value="">Semua Bruder</option>
-        @foreach($bruders as $bruder)
-            <option value="{{ $bruder->id }}" {{ (int) $filters['bruder'] === $bruder->id ? 'selected' : '' }}>{{ $bruder->name }}</option>
-        @endforeach
-    </select>
+    <div style="position:relative;">
+        <input type="text"
+               id="filterBruderSearch"
+               placeholder="🔍 Cari nama bruder pada pilihan..."
+               autocomplete="off"
+               style="width:100%; box-sizing:border-box; padding:8px 12px; margin-bottom:4px; border-radius:8px; border:1px solid #D0D5DD; background:#fff; font-size:12px; font-family:inherit;">
+        <select id="selectBruderFilter" name="bruder" onchange="this.form.submit()" aria-label="Bruder" style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; font-size:13px;">
+            <option value="">Semua Bruder</option>
+            @foreach($bruders as $bruder)
+                <option value="{{ $bruder->id }}" {{ (int) $filters['bruder'] === $bruder->id ? 'selected' : '' }}>{{ $bruder->name }}</option>
+            @endforeach
+        </select>
+    </div>
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('filterBruderSearch');
+    const select = document.getElementById('selectBruderFilter');
+    if (!searchInput || !select) return;
+
+    const originalOptions = Array.from(select.options).map(opt => ({
+        value: opt.value,
+        text: opt.text,
+        selected: opt.selected
+    }));
+
+    searchInput.addEventListener('input', function () {
+        const term = this.value.trim().toLowerCase();
+        select.innerHTML = '';
+
+        const matched = originalOptions.filter(opt =>
+            opt.value === '' || opt.text.toLowerCase().includes(term)
+        );
+
+        if (matched.length === 0) {
+            const noOpt = document.createElement('option');
+            noOpt.value = '';
+            noOpt.text = 'Tidak ada nama bruder yang cocok';
+            noOpt.disabled = true;
+            select.appendChild(noOpt);
+        } else {
+            matched.forEach(opt => {
+                const el = document.createElement('option');
+                el.value = opt.value;
+                el.text = opt.text;
+                el.selected = opt.selected;
+                select.appendChild(el);
+            });
+        }
+    });
+});
+</script>
 
 @if($exportKind === 'agenda')
     <div style="margin-top:12px;">
@@ -80,6 +126,23 @@
         @if($exportKind !== 'raport')
             <a href="{{ route('superadmin.monitoring.export', array_merge($queryBase, ['jenis' => $exportKind, 'format' => 'excel'])) }}" style="flex:1; text-align:center; padding:12px 8px; background:#B57900; color:#fff; border-radius:12px; font-weight:700; font-size:13px; text-decoration:none;">Excel</a>
         @endif
-        <a href="{{ route('superadmin.monitoring.export', array_merge($queryBase, ['jenis' => $exportKind, 'format' => 'pdf'])) }}" style="flex:1; text-align:center; padding:12px 8px; background:#1455C0; color:#fff; border-radius:12px; font-weight:700; font-size:13px; text-decoration:none;">PDF</a>
+        <a href="{{ route('superadmin.monitoring.export', array_merge($queryBase, ['jenis' => $exportKind, 'format' => 'pdf'])) }}" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:6px; text-align:center; padding:12px 8px; background:#1455C0; color:#fff; border-radius:12px; font-weight:700; font-size:13px; text-decoration:none; box-sizing:border-box;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Unduh PDF
+        </a>
+        @if($exportKind === 'raport')
+            <button id="btnPrintRaport" onclick="window.print()" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:#0E3366; color:#fff; border:none; padding:12px 8px; border-radius:12px; font-weight:700; font-size:13px; cursor:pointer; box-sizing:border-box; font-family:inherit;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+                Cetak Raport
+            </button>
+        @endif
     </div>
 @endif

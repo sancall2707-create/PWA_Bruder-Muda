@@ -238,17 +238,6 @@
         </div>
     @endif
     @include('super-admin.monitoring._toolbar', ['exportKind' => 'raport'])
-
-    <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
-        <button id="btnPrintRaport" onclick="window.print()" style="background:#0E3366; color:#fff; border:none; padding:10px 18px; border-radius:10px; font-weight:700; font-size:12px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; box-shadow:0 2px 6px rgba(14,51,102,0.25);">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                <rect x="6" y="14" width="12" height="8"></rect>
-            </svg>
-            Cetak / Simpan PDF Raport
-        </button>
-    </div>
 </div>
 
 @if(!$selectedBruder)
