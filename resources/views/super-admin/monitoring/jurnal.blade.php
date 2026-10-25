@@ -111,7 +111,7 @@
                 </div>
                 <div>
                     <div style="font-size:13px; font-weight:700; color:#101828;">{{ $journal->user->name ?? '-' }}</div>
-                    <div style="font-size:11px; color:#667085;">@{{ $journal->user->username ?? '' }}</div>
+                    <div style="font-size:11px; color:#667085;">{{ '@' . ($journal->user->username ?? '') }}</div>
                 </div>
             </div>
 
