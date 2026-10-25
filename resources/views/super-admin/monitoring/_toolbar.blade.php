@@ -60,7 +60,7 @@
     <div style="position:relative;">
         <input type="text"
                id="filterBruderSearch"
-               placeholder="🔍 Cari nama bruder pada pilihan..."
+               placeholder="Cari nama bruder pada pilihan..."
                autocomplete="off"
                style="width:100%; box-sizing:border-box; padding:8px 12px; margin-bottom:4px; border-radius:8px; border:1px solid #D0D5DD; background:#fff; font-size:12px; font-family:inherit;">
         <select id="selectBruderFilter" name="bruder" onchange="this.form.submit()" aria-label="Bruder" style="width:100%; padding:10px 12px; border-radius:10px; border:1px solid #E4E7EC; background:#fff; font-size:13px;">

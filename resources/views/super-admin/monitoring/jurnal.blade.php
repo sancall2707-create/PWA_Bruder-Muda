@@ -24,7 +24,7 @@
         <label style="font-size:10px; font-weight:700; color:#667085; text-transform:uppercase;">Filter Bruder</label>
         <input type="text"
                id="filterJurnalBruderSearch"
-               placeholder="🔍 Cari nama bruder pada pilihan..."
+               placeholder="Cari nama bruder pada pilihan..."
                autocomplete="off"
                style="width:100%; box-sizing:border-box; padding:8px 12px; border-radius:8px; border:1px solid #D0D5DD; background:#fff; font-size:12px; font-family:inherit;">
         <div style="display:flex; gap:8px; align-items:center;">
