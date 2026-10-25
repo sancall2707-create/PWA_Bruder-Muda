@@ -144,6 +144,7 @@ class MonitoringQuery
             $status = $hasReport ? 'completed' : $schedule->status;
 
             return $this->row(
+                id: (int) $schedule->id,
                 bruder: $this->bruderName($schedule->user),
                 type: 'Bimbingan Rohani',
                 category: 'bimbingan',
@@ -168,6 +169,7 @@ class MonitoringQuery
             $status = $hasReport ? 'completed' : $schedule->status;
 
             return $this->row(
+                id: (int) $schedule->id,
                 bruder: $this->bruderName($schedule->user),
                 type: 'Wawanhati Pilok',
                 category: 'wawanhati',
@@ -184,6 +186,7 @@ class MonitoringQuery
             $filters,
             'start_at',
         )->get()->map(fn (PersonalAgenda $agenda) => $this->row(
+            id: (int) $agenda->id,
             bruder: $this->bruderName($agenda->user),
             type: $agenda->title,
             category: 'lainnya',

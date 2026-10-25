@@ -151,7 +151,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/monitoring', [MonitoringController::class, 'index'])->name('monitoring.index');
         Route::delete('/monitoring/laporan/bulk', [MonitoringController::class, 'destroyReportBulk'])->name('monitoring.laporan.destroyBulk');
         Route::delete('/monitoring/laporan/{type}/{id}', [MonitoringController::class, 'destroyReportSingle'])->name('monitoring.laporan.destroySingle');
+        Route::get('/monitoring/agenda/tambah', [MonitoringController::class, 'agendaCreate'])->name('monitoring.agenda.create');
+        Route::post('/monitoring/agenda', [MonitoringController::class, 'agendaStore'])->name('monitoring.agenda.store');
         Route::get('/monitoring/agenda', [MonitoringController::class, 'agenda'])->name('monitoring.agenda');
+        Route::delete('/monitoring/agenda/{category}/{id}', [MonitoringController::class, 'destroyAgendaSingle'])->name('monitoring.agenda.destroySingle');
         Route::get('/monitoring/export', [MonitoringController::class, 'export'])->name('monitoring.export');
         Route::get('/monitoring/jurnal', [MonitoringController::class, 'jurnalIndex'])->name('monitoring.jurnal.index');
         Route::delete('/monitoring/jurnal/bulk', [MonitoringController::class, 'jurnalDestroyBulk'])->name('monitoring.jurnal.destroyBulk');

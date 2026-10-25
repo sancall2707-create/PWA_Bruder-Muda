@@ -65,9 +65,21 @@
     </select>
 </form>
 
-<div style="display:flex; gap:8px; margin-top:12px;">
-    @if($exportKind !== 'raport')
-        <a href="{{ route('superadmin.monitoring.export', array_merge($queryBase, ['jenis' => $exportKind, 'format' => 'excel'])) }}" style="flex:1; text-align:center; padding:12px 8px; background:#B57900; color:#fff; border-radius:12px; font-weight:700; font-size:13px; text-decoration:none;">Excel</a>
-    @endif
-    <a href="{{ route('superadmin.monitoring.export', array_merge($queryBase, ['jenis' => $exportKind, 'format' => 'pdf'])) }}" style="flex:1; text-align:center; padding:12px 8px; background:#1455C0; color:#fff; border-radius:12px; font-weight:700; font-size:13px; text-decoration:none;">PDF</a>
-</div>
+@if($exportKind === 'agenda')
+    <div style="margin-top:12px;">
+        <a href="{{ route('superadmin.monitoring.agenda.create') }}" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:12px 14px; background:linear-gradient(135deg, #1455C0 0%, #003E97 100%); color:#fff; border-radius:12px; font-weight:700; font-size:13px; text-decoration:none; box-shadow:0 4px 12px rgba(20,85,192,0.25); box-sizing:border-box;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            + Tambah Agenda
+        </a>
+    </div>
+@else
+    <div style="display:flex; gap:8px; margin-top:12px;">
+        @if($exportKind !== 'raport')
+            <a href="{{ route('superadmin.monitoring.export', array_merge($queryBase, ['jenis' => $exportKind, 'format' => 'excel'])) }}" style="flex:1; text-align:center; padding:12px 8px; background:#B57900; color:#fff; border-radius:12px; font-weight:700; font-size:13px; text-decoration:none;">Excel</a>
+        @endif
+        <a href="{{ route('superadmin.monitoring.export', array_merge($queryBase, ['jenis' => $exportKind, 'format' => 'pdf'])) }}" style="flex:1; text-align:center; padding:12px 8px; background:#1455C0; color:#fff; border-radius:12px; font-weight:700; font-size:13px; text-decoration:none;">PDF</a>
+    </div>
+@endif

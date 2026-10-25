@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\PersonalAgenda;
 use App\Models\SelfDevelopmentJournal;
 use App\Models\SpiritualGuidanceReport;
+use App\Models\SpiritualGuidanceSchedule;
 use App\Models\User;
 use App\Models\WawanhatiReport;
+use App\Models\WawanhatiSchedule;
 use App\Services\MonitoringExport;
 use App\Services\MonitoringQuery;
 use App\Services\RaportPdfPrinter;
@@ -132,6 +135,87 @@ class MonitoringController extends Controller
             'headerTitle' => 'Rekapitulasi Agenda',
             'headerSubtitle' => $filters['period_label'],
         ]);
+    }
+
+    /**
+     * Formulir tambah agenda bersama untuk seluruh Bruder Muda.
+     */
+    public function agendaCreate(): View
+    {
+        return view('super-admin.monitoring.agenda-create', [
+            'headerTitle' => 'Tambah Agenda',
+            'headerSubtitle' => 'Agenda otomatis masuk ke seluruh akun Bruder Muda',
+            'hideBottomNav' => true,
+        ]);
+    }
+
+    /**
+     * Simpan agenda bersama dan masukkan otomatis ke seluruh akun Bruder Muda.
+     */
+    public function agendaStore(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'start_date' => ['required', 'date'],
+            'start_time' => ['required', 'date_format:H:i'],
+            'location' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:2000'],
+        ], [
+            'title.required' => 'Nama / Judul Kegiatan wajib diisi.',
+            'start_date.required' => 'Hari & Tanggal Pelaksanaan wajib diisi.',
+            'start_time.required' => 'Waktu Pelaksanaan wajib diisi.',
+            'location.required' => 'Lokasi / Tempat Pelaksanaan wajib diisi.',
+        ]);
+
+        $startAt = Carbon::createFromFormat('Y-m-d H:i', "{$validated['start_date']} {$validated['start_time']}");
+
+        $users = User::where('role', 'user')->where('is_active', true)->get();
+        if ($users->isEmpty()) {
+            $users = User::where('role', 'user')->get();
+        }
+
+        $count = 0;
+        foreach ($users as $user) {
+            PersonalAgenda::create([
+                'user_id' => $user->id,
+                'title' => $validated['title'],
+                'start_at' => $startAt,
+                'location' => $validated['location'],
+                'description' => $validated['description'] ?? null,
+                'status' => 'scheduled',
+            ]);
+            $count++;
+        }
+
+        return redirect()->route('superadmin.monitoring.agenda', [
+            'bulan' => $startAt->month,
+            'tahun' => $startAt->year,
+        ])->with('success', "Agenda '{$validated['title']}' berhasil ditambahkan ke {$count} akun Bruder Muda.");
+    }
+
+    /**
+     * Hapus satu agenda dari rekapitulasi monitoring.
+     */
+    public function destroyAgendaSingle(Request $request, string $category, int $id): RedirectResponse
+    {
+        $model = match ($category) {
+            'bimbingan' => SpiritualGuidanceSchedule::class,
+            'wawanhati' => WawanhatiSchedule::class,
+            'lainnya'   => PersonalAgenda::class,
+            default     => null,
+        };
+
+        if (! $model) {
+            return redirect()->back()->with('error', 'Kategori agenda tidak valid.');
+        }
+
+        $deleted = $model::where('id', $id)->delete();
+
+        if ($deleted) {
+            return redirect()->back()->with('success', 'Agenda berhasil dihapus.');
+        }
+
+        return redirect()->back()->with('error', 'Agenda tidak ditemukan atau gagal dihapus.');
     }
 
     /**
