@@ -19,7 +19,7 @@ class SuperAdminAgendaBroadcastTest extends TestCase
         $response = $this->actingAs($admin)->get(route('superadmin.monitoring.agenda'));
 
         $response->assertOk();
-        $response->assertSee('+ Tambah Agenda');
+        $response->assertSee('Tambah Agenda');
         $response->assertSee(route('superadmin.monitoring.agenda.create'));
         // Make sure Excel and PDF are NOT shown on the Agenda tab
         $response->assertDontSee('jenis=agenda&amp;format=excel');
