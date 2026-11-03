@@ -20,7 +20,17 @@ class AgendaController extends Controller
     public function index(): View
     {
         $month = now();
-        $agendas = app(PersonalScheduleQuery::class)->inMonth(auth()->id(), $month);
+        $now = now();
+
+        // Urutan: agenda yang akan datang (terdekat dulu), lalu yang sudah lewat (terbaru dulu).
+        $all = app(PersonalScheduleQuery::class)->inMonth(auth()->id(), $month);
+        $agendas = $all->filter(fn (object $item) => $item->starts_at->greaterThanOrEqualTo($now))
+            ->sortBy(fn (object $item) => $item->starts_at->getTimestamp())
+            ->concat(
+                $all->filter(fn (object $item) => $item->starts_at->lessThan($now))
+                    ->sortByDesc(fn (object $item) => $item->starts_at->getTimestamp())
+            )
+            ->values();
         $monthLabel = $month->locale('id')->translatedFormat('F Y');
 
         return view('user.agenda.index', compact('agendas', 'monthLabel'));
