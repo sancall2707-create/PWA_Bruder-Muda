@@ -187,6 +187,13 @@ class MonitoringController extends Controller
             $count++;
         }
 
+        try {
+            app(\App\Services\WebPushService::class)
+                ->broadcast('Agenda Bersama Baru', $validated['title'], '/agenda', 'agenda');
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Push agenda gagal: '.$e->getMessage());
+        }
+
         return redirect()->route('superadmin.monitoring.agenda', [
             'bulan' => $startAt->month,
             'tahun' => $startAt->year,

@@ -40,6 +40,14 @@ class ProvincialMessageManagementController extends Controller
         $message = ProvincialMessage::query()->create($this->attributes($request, $validated));
         $message->retireOtherSapaan();
 
+        try {
+            $label = $message->kind === 'pengumuman' ? 'Pengumuman Baru' : 'Sapaan Provinsial Baru';
+            app(\App\Services\WebPushService::class)
+                ->broadcast($label, $validated['title'], '/sapaan-provinsial', 'sapaan');
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Push sapaan gagal: '.$e->getMessage());
+        }
+
         return redirect()->route('superadmin.sapaan.index')
             ->with('success', $message->kind === 'pengumuman'
                 ? 'Pengumuman masuk ke pengingat bruder muda.'

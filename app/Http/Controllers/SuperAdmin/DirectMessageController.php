@@ -49,6 +49,13 @@ class DirectMessageController extends Controller
             'content' => $validated['content'],
         ]);
 
+        try {
+            app(\App\Services\WebPushService::class)
+                ->sendToUser($user->id, 'Pesan Khusus Baru', $validated['title'], '/pesan-khusus', 'pesan');
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Push gagal: '.$e->getMessage());
+        }
+
         return redirect()->route('superadmin.users.index')
             ->with('success', "Pesan khusus berhasil dikirimkan ke {$user->name}.");
     }

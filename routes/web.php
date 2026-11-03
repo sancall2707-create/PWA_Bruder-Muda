@@ -109,6 +109,9 @@ Route::middleware('auth')->group(function () {
 
         // 16. Pesan Khusus Privat (Satu Arah) dari Pimpinan / TPPBM
         Route::get('/notifikasi/ringkasan', [\App\Http\Controllers\User\NotificationSummaryController::class, 'summary'])->name('notifikasi.ringkasan');
+        Route::get('/push/vapid-key', [\App\Http\Controllers\User\PushSubscriptionController::class, 'vapidKey'])->name('push.vapid');
+        Route::post('/push/subscribe', [\App\Http\Controllers\User\PushSubscriptionController::class, 'store'])->name('push.subscribe');
+        Route::post('/push/unsubscribe', [\App\Http\Controllers\User\PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');
         Route::get('/pesan-khusus', [UserDirectMessageController::class, 'index'])->name('pesan.index');
         Route::get('/pesan-khusus/{message}', [UserDirectMessageController::class, 'show'])->name('pesan.show');
     });

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('partials.fic-icons')
     <title>{{ $title ?? 'Bruder FIC Indonesia' }} - PWA Pendampingan</title>
 
@@ -12,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- FIC PWA Core Design System -->
-    <link rel="stylesheet" href="/css/fic-pwa.css?v=20261103f">
+    <link rel="stylesheet" href="/css/fic-pwa.css?v=20261103g">
 
     @stack('styles')
 </head>
@@ -68,6 +69,9 @@
                     <div class="notif-panel-head">Notifikasi</div>
                     <div id="notifList" class="notif-list"></div>
                     <div id="notifKosong" class="notif-kosong">Tidak ada notifikasi baru.</div>
+                    <div class="notif-panel-foot">
+                        <button type="button" id="pushToggle" class="notif-push-btn" hidden>Aktifkan Notifikasi</button>
+                    </div>
                 </div>
                 <div class="header-greeting">
                     <span class="header-greeting-label">{{ $headerGreetingLabel ?? 'Beranda Bruder Muda' }}</span>
@@ -181,7 +185,7 @@
     </style>
 
     @auth
-    <script src="/js/notifikasi.js?v=20261103f" data-url="{{ route('notifikasi.ringkasan') }}" data-uid="{{ auth()->id() }}" defer></script>
+    <script src="/js/notifikasi.js?v=20261103g" data-url="{{ route('notifikasi.ringkasan') }}" data-uid="{{ auth()->id() }}" data-push-subscribe="{{ route('push.subscribe') }}" data-push-unsubscribe="{{ route('push.unsubscribe') }}" data-push-vapid="{{ route('push.vapid') }}" defer></script>
     @endauth
 
     @stack('scripts')
