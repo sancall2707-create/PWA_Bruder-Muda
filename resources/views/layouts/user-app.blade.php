@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- FIC PWA Core Design System -->
-    <link rel="stylesheet" href="/css/fic-pwa.css?v=20261103h">
+    <link rel="stylesheet" href="/css/fic-pwa.css?v=20261103i">
 
     @stack('styles')
 </head>
@@ -185,7 +185,7 @@
     </style>
 
     @auth
-    <script src="/js/notifikasi.js?v=20261103h" data-url="{{ route('notifikasi.ringkasan') }}" data-uid="{{ auth()->id() }}" data-push-subscribe="{{ route('push.subscribe') }}" data-push-unsubscribe="{{ route('push.unsubscribe') }}" data-push-vapid="{{ route('push.vapid') }}" defer></script>
+    <script src="/js/notifikasi.js?v=20261103i" data-url="{{ route('notifikasi.ringkasan') }}" data-uid="{{ auth()->id() }}" data-push-subscribe="{{ route('push.subscribe') }}" data-push-unsubscribe="{{ route('push.unsubscribe') }}" data-push-vapid="{{ route('push.vapid') }}" defer></script>
     @endauth
 
     @stack('scripts')

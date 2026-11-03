@@ -105,4 +105,29 @@ class PushSubscriptionTest extends TestCase
             'endpoint' => 'https://fcm.googleapis.com/fcm/send/logout_test',
         ]);
     }
+
+    public function test_subscribe_di_perangkat_sama_memindahkan_kepemilikan_user(): void
+    {
+        $userA = $this->bruder();
+        $userB = $this->bruder();
+        $endpoint = 'https://fcm.googleapis.com/fcm/send/shared_device';
+
+        // User A login di HP
+        $this->actingAs($userA)->postJson(route('push.subscribe'), [
+            'endpoint' => $endpoint,
+            'keys' => ['p256dh' => 'k1', 'auth' => 'a1'],
+        ])->assertOk();
+
+        $this->assertDatabaseHas('push_subscriptions', ['user_id' => $userA->id, 'endpoint' => $endpoint]);
+
+        // User B login di HP yang sama tanpa tombol manual
+        $this->actingAs($userB)->postJson(route('push.subscribe'), [
+            'endpoint' => $endpoint,
+            'keys' => ['p256dh' => 'k1', 'auth' => 'a1'],
+        ])->assertOk();
+
+        // User A tidak boleh lagi punya token di perangkat itu, sekarang milik User B
+        $this->assertDatabaseMissing('push_subscriptions', ['user_id' => $userA->id, 'endpoint' => $endpoint]);
+        $this->assertDatabaseHas('push_subscriptions', ['user_id' => $userB->id, 'endpoint' => $endpoint]);
+    }
 }

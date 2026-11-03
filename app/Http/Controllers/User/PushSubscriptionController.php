@@ -20,10 +20,19 @@ class PushSubscriptionController extends Controller
             'keys.auth' => ['required', 'string'],
         ]);
 
+        $currentUser = $request->user();
+
+        // 1. Jika endpoint ini sebelumnya terdaftar atas nama user lain (misal di HP yang sama ganti akun),
+        // hapus kaitan lama agar notifikasi user lama tidak nyasar ke user ini.
+        PushSubscription::where('endpoint', $data['endpoint'])
+            ->where('user_id', '!=', $currentUser->id)
+            ->delete();
+
+        // 2. Simpan atau perbarui langganan untuk user yang sedang aktif login saat ini
         PushSubscription::updateOrCreate(
             ['endpoint' => $data['endpoint']],
             [
-                'user_id' => $request->user()->id,
+                'user_id' => $currentUser->id,
                 'p256dh' => $data['keys']['p256dh'],
                 'auth' => $data['keys']['auth'],
             ]

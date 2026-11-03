@@ -225,17 +225,33 @@
         if (btn.dataset.aktif === '1') { unsubscribe(); } else { subscribe(); }
     }
 
+    function syncSubscription() {
+        if (!pushDidukung()) { return; }
+        navigator.serviceWorker.ready.then(function (reg) {
+            reg.pushManager.getSubscription().then(function (sub) {
+                if (sub) {
+                    var k = sub.toJSON();
+                    kirimKeServer(URL_SUBSCRIBE, {
+                        endpoint: k.endpoint,
+                        keys: { p256dh: k.keys.p256dh, auth: k.keys.auth }
+                    }).then(function () {
+                        updateTombolPush(true);
+                    }).catch(function () {});
+                } else {
+                    updateTombolPush(false);
+                }
+            });
+        });
+    }
+
     function initPush() {
         if (!pushDidukung()) { return; }
         var btn = document.getElementById('pushToggle');
-        if (!btn) { return; }
-        btn.hidden = false;
-        btn.addEventListener('click', togglePush);
-        navigator.serviceWorker.ready.then(function (reg) {
-            reg.pushManager.getSubscription().then(function (sub) {
-                updateTombolPush(!!sub);
-            });
-        });
+        if (btn) {
+            btn.hidden = false;
+            btn.addEventListener('click', togglePush);
+        }
+        syncSubscription();
     }
 
     initPush();
