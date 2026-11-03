@@ -1,14 +1,14 @@
 /* Cache PWA Bruder FIC.
  * Naikkan CACHE_VERSION setiap kali aset statis berubah agar cache lama dibuang.
  */
-const CACHE_VERSION = '20261103g';
+const CACHE_VERSION = '20261103h';
 const STATIC_CACHE = `pwa-static-${CACHE_VERSION}`;
 const IMAGE_CACHE = `pwa-images-${CACHE_VERSION}`;
 const PAGE_CACHE = `pwa-pages-${CACHE_VERSION}`;
 const IMAGE_CACHE_LIMIT = 80;
 
 const PRECACHE_URLS = [
-    '/css/fic-pwa.css?v=20261103g',
+    '/css/fic-pwa.css?v=20261103h',
     '/images/logo-fic.png',
     '/images/logo-tppbm.png',
     '/images/icons/favicon-32.png',
@@ -178,16 +178,21 @@ self.addEventListener('push', (event) => {
     let data = { title: 'Bruder FIC', body: 'Notifikasi baru', url: '/', icon: '/images/logo-fic.png' };
     try { data = Object.assign(data, event.data.json()); } catch (e) { /* biar default */ }
 
-    event.waitUntil(
-        self.registration.showNotification(data.title, {
-            body: data.body,
-            icon: data.icon,
-            badge: '/images/icons/icon-192.png',
-            tag: data.tag || 'fic-default',
-            renotify: true,
-            data: { url: data.url },
-        })
-    );
+    const promise = self.registration.showNotification(data.title, {
+        body: data.body,
+        icon: data.icon,
+        badge: '/images/icons/icon-192.png',
+        tag: data.tag || 'fic-default',
+        renotify: true,
+        data: { url: data.url },
+    }).then(() => {
+        // Update badge lencana di ikon PWA jika didukung oleh browser/OS
+        if (navigator.setAppBadge) {
+            return navigator.setAppBadge().catch(() => {});
+        }
+    });
+
+    event.waitUntil(promise);
 });
 
 self.addEventListener('notificationclick', (event) => {
