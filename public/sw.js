@@ -1,7 +1,7 @@
 /* Cache PWA Bruder FIC.
  * Naikkan CACHE_VERSION setiap kali aset statis berubah agar cache lama dibuang.
  */
-const CACHE_VERSION = '20261025d';
+const CACHE_VERSION = '20261103a';
 const STATIC_CACHE = `pwa-static-${CACHE_VERSION}`;
 const IMAGE_CACHE = `pwa-images-${CACHE_VERSION}`;
 const PAGE_CACHE = `pwa-pages-${CACHE_VERSION}`;
@@ -136,7 +136,8 @@ async function networkFirstPage(request) {
 
     try {
         const response = await fetch(request);
-        if (response.ok && response.type === 'basic' && !mustNotStore(response) && url.pathname !== '/login') {
+        const finalPath = response.url ? new URL(response.url).pathname : url.pathname;
+        if (response.ok && response.type === 'basic' && !response.redirected && !mustNotStore(response) && url.pathname !== '/login' && finalPath !== '/login') {
             await cache.put(request, response.clone());
         }
         return response;

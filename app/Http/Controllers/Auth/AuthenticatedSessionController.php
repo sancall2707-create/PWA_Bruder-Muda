@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
@@ -18,9 +18,14 @@ class AuthenticatedSessionController extends Controller
     /**
      * Tampilkan halaman formulir login.
      */
-    public function create(): View
+    public function create(): Response
     {
-        return view('auth.login');
+        // no-store: browser/PWA tidak boleh memakai ulang halaman login lama,
+        // sebab token CSRF di dalamnya cepat basi dan memicu 419 Page Expired.
+        return response()
+            ->view('auth.login')
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache');
     }
 
     /**

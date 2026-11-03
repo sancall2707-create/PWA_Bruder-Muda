@@ -253,6 +253,27 @@
     </div>
 
     <script>
+        // Cegah token CSRF basi: muat ulang halaman jika dipulihkan dari cache
+        // (tombol kembali / bfcache) atau jika PWA lama tersembunyi di latar belakang.
+        (function () {
+            const MAX_HIDDEN_MS = 10 * 60 * 1000;
+            let hiddenAt = null;
+
+            window.addEventListener('pageshow', function (event) {
+                if (event.persisted) {
+                    window.location.reload();
+                }
+            });
+
+            document.addEventListener('visibilitychange', function () {
+                if (document.visibilityState === 'hidden') {
+                    hiddenAt = Date.now();
+                } else if (hiddenAt && Date.now() - hiddenAt > MAX_HIDDEN_MS) {
+                    window.location.reload();
+                }
+            });
+        })();
+
         const togglePasswordBtn = document.getElementById('togglePassword');
         const passwordInput = document.getElementById('password');
         const eyeIcon = document.getElementById('eyeIcon');
