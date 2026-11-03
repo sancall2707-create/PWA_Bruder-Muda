@@ -97,6 +97,13 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $user = Auth::user();
+        if ($user) {
+            // Putuskan langganan Web Push perangkat ini dari user yang sedang logout
+            // agar notifikasi user tidak nyasar ke admin atau user lain di perangkat yang sama
+            \App\Models\PushSubscription::where('user_id', $user->id)->delete();
+        }
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

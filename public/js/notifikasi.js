@@ -204,6 +204,21 @@
         });
     }
 
+    // Bersihkan langganan push browser saat formulir logout dikirim
+    document.querySelectorAll('form[action*="/logout"]').forEach(function (form) {
+        form.addEventListener('submit', function () {
+            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.ready.then(function (reg) {
+                    reg.pushManager.getSubscription().then(function (sub) {
+                        if (sub) {
+                            sub.unsubscribe().catch(function () {});
+                        }
+                    });
+                });
+            }
+        });
+    });
+
     function togglePush() {
         var btn = document.getElementById('pushToggle');
         if (!btn) { return; }

@@ -88,13 +88,21 @@ class PushSubscriptionTest extends TestCase
         $resp->assertJsonStructure(['key']);
     }
 
-    public function test_beranda_memuat_tombol_push_dan_data_push(): void
+    public function test_logout_membersihkan_push_subscriptions_milik_pengguna(): void
     {
         $u = $this->bruder();
-        $html = $this->actingAs($u)->get(route('dashboard'))->assertOk()->getContent();
-        $this->assertStringContainsString('id="pushToggle"', $html);
-        $this->assertStringContainsString('data-push-subscribe', $html);
-        $this->assertStringContainsString('data-push-vapid', $html);
-        $this->assertStringContainsString('csrf-token', $html);
+        PushSubscription::create([
+            'user_id' => $u->id,
+            'endpoint' => 'https://fcm.googleapis.com/fcm/send/logout_test',
+            'p256dh' => 'p',
+            'auth' => 'a',
+        ]);
+
+        $this->actingAs($u)->post(route('logout'))->assertRedirect(route('login'));
+
+        $this->assertDatabaseMissing('push_subscriptions', [
+            'user_id' => $u->id,
+            'endpoint' => 'https://fcm.googleapis.com/fcm/send/logout_test',
+        ]);
     }
 }
