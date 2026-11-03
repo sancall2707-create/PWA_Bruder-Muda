@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- FIC PWA Core Design System -->
-    <link rel="stylesheet" href="/css/fic-pwa.css?v=20261103d">
+    <link rel="stylesheet" href="/css/fic-pwa.css?v=20261103f">
 
     @stack('styles')
 </head>
@@ -30,6 +30,15 @@
                             <span class="identity-title-main">BRUDER FIC</span>
                             <span class="identity-title-sub">INDONESIA</span>
                         </div>
+                    </div>
+                    <div class="notif-wrap">
+                        <button type="button" id="notifBell" class="notif-bell" aria-label="Notifikasi" aria-haspopup="true" aria-expanded="false">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                            <span class="notif-badge notif-badge-bell" data-notif="total" hidden aria-live="polite"></span>
+                        </button>
                     </div>
                     <a href="{{ route('profil') }}" class="header-user-avatar" title="Profil Pengguna">
                         @php
@@ -54,6 +63,11 @@
                             {{ $initials }}
                         @endif
                     </a>
+                </div>
+                <div id="notifPanel" class="notif-panel" role="region" aria-label="Daftar notifikasi" hidden>
+                    <div class="notif-panel-head">Notifikasi</div>
+                    <div id="notifList" class="notif-list"></div>
+                    <div id="notifKosong" class="notif-kosong">Tidak ada notifikasi baru.</div>
                 </div>
                 <div class="header-greeting">
                     <span class="header-greeting-label">{{ $headerGreetingLabel ?? 'Beranda Bruder Muda' }}</span>
@@ -141,6 +155,7 @@
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
                 <span>Profil</span>
+                <span class="notif-badge notif-badge-nav" data-notif="pesan" hidden aria-label="Pesan khusus belum dibaca"></span>
             </a>
         </nav>
         @endif
@@ -164,6 +179,10 @@
     <style>
         @keyframes ficSpin { 100% { transform: rotate(360deg); } }
     </style>
+
+    @auth
+    <script src="/js/notifikasi.js?v=20261103f" data-url="{{ route('notifikasi.ringkasan') }}" data-uid="{{ auth()->id() }}" defer></script>
+    @endauth
 
     @stack('scripts')
 </body>

@@ -108,6 +108,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/profil/catatan', [ProfileController::class, 'notes'])->name('profil.catatan');
 
         // 16. Pesan Khusus Privat (Satu Arah) dari Pimpinan / TPPBM
+        Route::get('/notifikasi/ringkasan', [\App\Http\Controllers\User\NotificationSummaryController::class, 'summary'])->name('notifikasi.ringkasan');
         Route::get('/pesan-khusus', [UserDirectMessageController::class, 'index'])->name('pesan.index');
         Route::get('/pesan-khusus/{message}', [UserDirectMessageController::class, 'show'])->name('pesan.show');
     });

@@ -129,7 +129,8 @@
 </div>
 
 @if($sapaan)
-    <a href="{{ route('sapaan-provinsial') }}" class="card" style="display:block; text-decoration:none; color:inherit; padding:14px;">
+    <a href="{{ route('sapaan-provinsial') }}" class="card" style="display:block; text-decoration:none; color:inherit; padding:14px; position:relative;">
+        <span class="notif-badge notif-badge-card" data-notif="sapaan" hidden aria-label="Sapaan atau pengumuman baru"></span>
         <div style="font-size:11px; font-weight:800; letter-spacing:0.4px; color:var(--fic-gold); text-transform:uppercase;">{{ $sapaan->sapaanLabel() }}</div>
         @if($sapaan->image)
             <img src="{{ route('sapaan-provinsial.foto', $sapaan) }}" alt="Foto sapaan" style="width:100%; height:auto; max-height:640px; object-fit:contain; border-radius:12px; margin-top:10px; display:block;">
@@ -225,6 +226,7 @@
                 <h3 class="menu-card-title">Agenda Pribadi</h3>
                 <p class="menu-card-desc">Jadwal &amp; Rencana</p>
             </div>
+            <span class="notif-badge notif-badge-card" data-notif="agenda" hidden aria-label="Agenda baru"></span>
         </a>
 
         <!-- 4. Pengembangan Diri (Green) -->
