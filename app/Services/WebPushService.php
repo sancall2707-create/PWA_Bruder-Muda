@@ -22,7 +22,7 @@ class WebPushService
             ],
         ];
 
-        return new WebPush($auth, [], 30, ['verify' => true]);
+        return new WebPush($auth, ['TTL' => 86400]);
     }
 
     /**
