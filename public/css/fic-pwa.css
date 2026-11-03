@@ -1324,3 +1324,218 @@ textarea {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 }
+
+/* ==========================================================================
+   TAMPILAN ELEGAN v1
+   Lapisan gaya murni visual. Tidak mengubah struktur, fitur, maupun data.
+   Cadangan sebelum perubahan: /home/ubuntu/backups/css/
+   ========================================================================== */
+:root {
+    --fic-text-secondary: #566379;
+    --fic-text-muted: #76839A;
+    --fic-ink: #0F1B33;
+    --fic-line: #DCE6F6;
+    --radius-card: 18px;
+    --shadow-subtle: 0 1px 2px rgba(16, 40, 90, 0.06);
+    --shadow-card: 0 1px 2px rgba(16, 40, 90, 0.06), 0 8px 20px -8px rgba(16, 40, 90, 0.16);
+    --shadow-elevated: 0 2px 4px rgba(16, 40, 90, 0.06), 0 18px 38px -12px rgba(16, 40, 90, 0.26);
+    --fic-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, .card-title, .menu-card-title, .item-card-title {
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+}
+
+/* ---- Kepala halaman: gradasi lebih dalam, lengkung lembut ---------------- */
+.app-header,
+.sa-container .sa-header {
+    background: linear-gradient(135deg, #0A3B8F 0%, #1455C0 58%, #2C77DB 100%);
+    border-bottom: 0;
+    border-bottom-left-radius: 26px;
+    border-bottom-right-radius: 26px;
+    box-shadow: 0 10px 28px -10px rgba(10, 59, 143, 0.55);
+}
+
+.app-header { padding: 18px 20px 26px; }
+.sa-container .sa-header { padding: 20px 18px 30px; }
+
+.sa-container .sa-title { letter-spacing: -0.015em; }
+.sa-container .sa-subtitle { color: rgba(255, 255, 255, 0.88); line-height: 1.4; }
+.sa-container .sa-badge { background: rgba(255, 255, 255, 0.16); letter-spacing: 0.7px; }
+
+.header-greeting-name { letter-spacing: -0.012em; }
+.header-user-avatar { border-width: 2px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18); }
+
+/* ---- Permukaan kartu: lebih solid, bayangan berlapis ---------------------- */
+.card,
+.item-card,
+.menu-card {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(214, 226, 245, 0.95);
+    box-shadow: var(--shadow-card);
+}
+
+.progress-stat-card {
+    background: linear-gradient(165deg, #FFFFFF 0%, #F1F6FF 100%);
+    border: 1px solid rgba(206, 220, 244, 0.95);
+    box-shadow: var(--shadow-elevated);
+    padding: 22px 20px;
+}
+
+/* ---- Cincin dan statistik --------------------------------------------------- */
+.stat-title { color: var(--fic-text-secondary); letter-spacing: 0.7px; }
+.stat-ring-circle-bg { stroke: #D9E5FB !important; }
+.stat-ring-circle { stroke-width: 9; }
+.stat-ring-label { color: var(--fic-ink); }
+.stat-ring-count { font-size: 12px; padding: 3px 10px; }
+.stat-note { text-wrap: balance; color: var(--fic-text-secondary); }
+.stat-year-summary { border-top: 1px solid var(--fic-line); }
+
+.stat-card {
+    border: 1px solid var(--fic-line) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--shadow-card) !important;
+    padding: 16px 16px 15px !important;
+}
+.stat-card .stat-val { font-size: 28px !important; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.stat-card .stat-label { color: var(--fic-text-secondary) !important; font-size: 13px !important; }
+
+/* ---- Judul bagian seragam -------------------------------------------------- */
+.section-title { color: var(--fic-ink) !important; letter-spacing: -0.012em; }
+
+/* ---- Kartu bruder: tombol tonal agar tidak terlalu berat ------------------- */
+.user-card {
+    border: 1px solid var(--fic-line) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--shadow-card) !important;
+}
+.user-card .btn {
+    background: #EAF1FF !important;
+    color: #1455C0 !important;
+    border: 1px solid #C9DAFB;
+    box-shadow: none;
+    transition: background-color 0.18s var(--fic-ease), transform 0.12s var(--fic-ease);
+}
+.user-card .btn:active { background: #D9E6FF !important; transform: scale(0.97); }
+
+/* ---- Tombol, lencana, formulir -------------------------------------------- */
+.btn-primary {
+    background: linear-gradient(180deg, #1B63D6 0%, #1455C0 100%);
+    box-shadow: 0 1px 2px rgba(10, 59, 143, 0.3), 0 8px 18px -8px rgba(20, 85, 192, 0.55);
+    transition: transform 0.12s var(--fic-ease), box-shadow 0.18s var(--fic-ease), filter 0.18s var(--fic-ease);
+}
+.btn-primary:hover { background: linear-gradient(180deg, #1457C4 0%, #0F46A3 100%); }
+.btn-primary:active { transform: scale(0.985); filter: brightness(0.96); }
+.btn-secondary { border-color: var(--fic-line); background-color: rgba(255, 255, 255, 0.85); }
+.btn-secondary:active { transform: scale(0.985); }
+
+.badge { padding: 4px 11px; }
+.menu-card-icon { border-radius: 15px; }
+.menu-card { min-height: 140px; }
+.menu-card-desc { color: var(--fic-text-secondary); }
+
+.form-input, .form-textarea, .form-select {
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid #CFDBEE;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+    border-color: #1455C0;
+    box-shadow: 0 0 0 4px rgba(20, 85, 192, 0.14);
+}
+.form-label { color: var(--fic-ink); }
+
+/* ---- Menu bawah: penanda aktif berbentuk pil ------------------------------ */
+.bottom-nav,
+.sa-bottom-nav {
+    background-color: rgba(255, 255, 255, 0.94) !important;
+    border-top: 1px solid var(--fic-line) !important;
+    box-shadow: 0 -8px 24px -12px rgba(16, 40, 90, 0.2) !important;
+}
+.bottom-nav .nav-item,
+.sa-bottom-nav .sa-nav-item { color: #6B7890; }
+.bottom-nav .nav-item.active svg,
+.sa-bottom-nav .sa-nav-item.active svg {
+    box-sizing: content-box;
+    padding: 4px 16px;
+    background: #E4EDFF;
+    border-radius: 999px;
+    transform: none;
+}
+.bottom-nav .nav-item.active,
+.sa-bottom-nav .sa-nav-item.active { color: #1455C0; }
+
+/* ---- Gerak halus (hanya layar, hormati preferensi pengguna) --------------- */
+@media screen and (prefers-reduced-motion: no-preference) {
+    @keyframes ficRise {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: none; }
+    }
+    .sa-body > *,
+    .app-content > * {
+        animation: ficRise 0.38s var(--fic-ease) backwards;
+    }
+    .sa-body > *:nth-child(2), .app-content > *:nth-child(2) { animation-delay: 0.04s; }
+    .sa-body > *:nth-child(3), .app-content > *:nth-child(3) { animation-delay: 0.08s; }
+    .sa-body > *:nth-child(4), .app-content > *:nth-child(4) { animation-delay: 0.12s; }
+    .sa-body > *:nth-child(5), .app-content > *:nth-child(5) { animation-delay: 0.16s; }
+    .sa-body > *:nth-child(n+6), .app-content > *:nth-child(n+6) { animation-delay: 0.2s; }
+}
+
+/* Kartu statistik menumpuk lembut di tepi bawah kepala halaman (layar saja, bukan cetak).
+   Padding atas .sa-body = 20px, jadi -34px menghasilkan tumpang 14px;
+   padding bawah kepala halaman 30px menjaga subjudul tetap lega. */
+@media screen {
+    .sa-body > .progress-stat-card:first-child {
+        margin-top: -34px;
+        position: relative;
+        z-index: 2;
+    }
+}
+
+/* ---- Keterbacaan: naikkan kontras teks pucat (gaya inline lama) ------------ */
+[style*="color: #98A2B3"],
+[style*="color:#98A2B3"] { color: #667085 !important; }
+[style*="color:var(--fic-gold)"] { color: #9A5B00 !important; }
+
+/* ---- Tombol kembali: jelas terlihat di atas latar terang -------------------- */
+.btn-back {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background-color: #FFFFFF;
+    border: 1px solid var(--fic-line);
+    box-shadow: var(--shadow-subtle);
+    color: #1455C0;
+}
+.btn-back:active { transform: scale(0.95); }
+
+/* ---- Tombol Edit/Hapus di kartu agenda: target sentuh lebih nyaman ---------- */
+.agenda-actions { gap: 10px; }
+.agenda-actions a,
+.agenda-actions button { min-height: 40px !important; padding: 0 18px !important; }
+.agenda-actions a { border-color: #C9D5E8 !important; }
+
+/* ---- Teks kecil: naikkan keterbacaan --------------------------------------- */
+.stat-info-sub, .form-help, .item-card-meta, .menu-card-desc { font-size: 12.5px; }
+.item-card-meta { color: var(--fic-text-secondary); }
+.nav-item, .sa-nav-item { font-size: 11px; }
+
+/* ---- Judul seksi yang dipatahkan tombol: seimbangkan baris ------------------ */
+.sa-body div[style*="justify-content: space-between"] > span { min-width: 0; text-wrap: balance; }
+
+/* Judul seksi dekat dengan isinya (jarak lama terlalu longgar) */
+.sa-body > .section-title { margin-bottom: -4px; }
+
+/* ---- Kartu agenda/pengingat bergaya inline: samakan dengan sistem kartu ----- */
+.sa-body [style*="box-shadow: 0 2px 4px rgba(16,24,40,0.02)"] {
+    border-color: var(--fic-line) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--shadow-card) !important;
+}

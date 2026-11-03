@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/fic-pwa.css">
+    <link rel="stylesheet" href="/css/fic-pwa.css?v=20261103d">
     <style>
         body { background:#e7f0fb; background-image:linear-gradient(180deg,#d5e4f8 0%,#eef3fb 46%,#f7f9fc 100%); font-family:'Plus Jakarta Sans','Inter',sans-serif; margin:0; padding:0; min-height:100vh; display:flex; justify-content:center; }
         .container { width:100%; max-width:480px; background:linear-gradient(180deg,rgba(20,85,192,0.1) 0%,rgba(234,243,255,0.55) 180px,rgba(247,249,252,0.88) 100%); min-height:100vh; display:flex; flex-direction:column; box-shadow:0 0 30px rgba(0,62,151,0.08); padding-bottom:72px; box-sizing:border-box; }
@@ -30,15 +30,14 @@
         .name { font-weight:700; color:#101828; }
         .loc { font-size:12px; color:#667085; margin-top:2px; }
         .meta { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
-        .pill { font-size:11px; font-weight:800; border-radius:999px; padding:3px 8px; }
+        .pill { font-size:12px; font-weight:800; border-radius:999px; padding:4px 10px; }
         .actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:10px; }
         .actions form { margin:0; display:flex; }
-        .btn { background:#1455C0; color:#fff; min-height:36px; padding:8px 12px; border-radius:10px; font-weight:700; text-decoration:none; font-size:12px; line-height:1; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; text-align:center; white-space:nowrap; }
+        .btn { background:#1455C0; color:#fff; min-height:40px; padding:9px 14px; border-radius:12px; font-weight:700; text-decoration:none; font-size:12px; line-height:1; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; text-align:center; white-space:nowrap; }
         .btn-success { background:#027A48; color:#fff; }
         .btn-msg { background:#B57900; color:#fff; }
-        .btn { background:#1455C0; color:#fff; min-height:36px; padding:8px 12px; border-radius:10px; font-weight:700; text-decoration:none; font-size:12px; line-height:1; border:none; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; text-align:center; white-space:nowrap; }
-        .btn-muted { background:#F2F4F7; color:#344054; }
-        .btn-danger { background:#B42318; color:#fff; }
+        .btn-muted { background:#fff; color:#344054; border:1px solid #D0D5DD; }
+        .btn-danger { background:#FEF3F2; color:#B42318; border:1px solid #FECDCA; }
         .fab { position:fixed; right:max(16px, calc(50vw - 224px)); bottom:80px; z-index:90; width:56px; height:56px; border-radius:18px; background:#1455C0; color:#fff; display:flex; align-items:center; justify-content:center; text-decoration:none; line-height:0; padding:0; box-shadow:0 8px 18px rgba(20,85,192,0.35); }
         .fab svg { display:block; }
         .body { padding-bottom:120px; }
