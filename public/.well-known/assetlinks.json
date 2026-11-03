@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.formatio_fic.twa",
+    "sha256_cert_fingerprints": ["96:EB:79:50:DB:30:84:A1:7C:3F:43:49:E9:41:F5:7A:06:C1:EB:93:C7:03:46:AA:52:95:80:D1:09:B7:40:21"]
+  }
+}]
