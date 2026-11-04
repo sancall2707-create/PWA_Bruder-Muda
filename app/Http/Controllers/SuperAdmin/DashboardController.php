@@ -57,21 +57,7 @@ class DashboardController extends Controller
                 'raw_date' => $w->scheduled_at,
             ]);
 
-        $upPersonal = PersonalAgenda::with('user')
-            ->where('start_at', '>=', $now)
-            ->where('status', '!=', 'cancelled')
-            ->orderBy('start_at')
-            ->limit(5)
-            ->get()
-            ->map(fn ($p) => (object) [
-                'bruder'   => $p->user->name ?? 'Bruder Muda',
-                'type'     => 'Agenda Pribadi',
-                'title'    => $p->title,
-                'datetime' => $p->start_at ? $p->start_at->translatedFormat('d M Y, H:i') . ' WIB' : '-',
-                'location' => $p->location ?: 'Komunitas',
-                'color'    => '#B57900',
-                'raw_date' => $p->start_at,
-            ]);
+        $upPersonal = \App\Models\PersonalAgenda::upcomingForOverview($now, 5);
 
         $upcomingSchedules = $upBimbingan->concat($upWawanhati)->concat($upPersonal)->sortBy(fn($item) => $item->raw_date?->getTimestamp() ?? 0)->take(5)->values();
 

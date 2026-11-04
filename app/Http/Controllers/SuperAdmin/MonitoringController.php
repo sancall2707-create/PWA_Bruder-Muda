@@ -174,6 +174,8 @@ class MonitoringController extends Controller
             $users = User::where('role', 'user')->get();
         }
 
+        $broadcastKey = md5($validated['title'].'|'.$startAt->format('Y-m-d H:i:s').'|'.$validated['location']);
+
         $count = 0;
         foreach ($users as $user) {
             PersonalAgenda::create([
@@ -183,6 +185,8 @@ class MonitoringController extends Controller
                 'location' => $validated['location'],
                 'description' => $validated['description'] ?? null,
                 'status' => 'scheduled',
+                'is_provincial' => true,
+                'broadcast_key' => $broadcastKey,
             ]);
             $count++;
         }

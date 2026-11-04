@@ -107,13 +107,21 @@ class AgendaController extends Controller
         } else {
             $validated = $this->validateLainnya($request);
 
+            $startAt = \Carbon\Carbon::parse($this->combineDateAndTime($validated['start_date'], $validated['start_time']));
+            // Agenda yang ditulis admin / super admin otomatis menjadi Agenda Provinsi.
+            $provinsi = in_array(auth()->user()->role, ['admin', 'super_admin'], true);
+
             PersonalAgenda::create([
                 'user_id' => auth()->id(),
                 'title' => $validated['title'],
-                'start_at' => $this->combineDateAndTime($validated['start_date'], $validated['start_time']),
+                'start_at' => $startAt,
                 'location' => $validated['location'],
                 'description' => $validated['description'] ?? null,
                 'status' => 'scheduled',
+                'is_provincial' => $provinsi,
+                'broadcast_key' => $provinsi
+                    ? md5($validated['title'].'|'.$startAt->format('Y-m-d H:i:s').'|'.$validated['location'])
+                    : null,
             ]);
         }
 
