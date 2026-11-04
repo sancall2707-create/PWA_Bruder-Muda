@@ -39,6 +39,20 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
 });
 
+// Rotasi token Web Push oleh Service Worker (event `pushsubscriptionchange`).
+// Di luar grup `auth` dan dikecualikan dari CSRF karena dipanggil oleh Service Worker
+// saat tidak ada halaman terbuka: tidak ada sesi login maupun token CSRF. Endpoint ini
+// mengamankan diri sendiri dengan mewajibkan endpoint lama yang sudah terdaftar, dan
+// kepemilikan akun diambil dari baris lama di database, bukan dari masukan pemanggil.
+Route::post('/push/rotate', [\App\Http\Controllers\User\PushSubscriptionController::class, 'rotate'])
+    ->middleware('throttle:20,1')
+    ->name('push.rotate');
+
+// VAPID public key. Bukan rahasia (memang disiarkan ke browser) dan harus bisa dibaca
+// Service Worker saat merotasi token tanpa halaman terbuka, jadi tidak di grup `auth`.
+Route::get('/push/vapid-key', [\App\Http\Controllers\User\PushSubscriptionController::class, 'vapidKey'])
+    ->name('push.vapid');
+
 // Authenticated Routes (harus login)
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
@@ -109,7 +123,6 @@ Route::middleware('auth')->group(function () {
 
         // 16. Pesan Khusus Privat (Satu Arah) dari Pimpinan / TPPBM
         Route::get('/notifikasi/ringkasan', [\App\Http\Controllers\User\NotificationSummaryController::class, 'summary'])->name('notifikasi.ringkasan');
-        Route::get('/push/vapid-key', [\App\Http\Controllers\User\PushSubscriptionController::class, 'vapidKey'])->name('push.vapid');
         Route::post('/push/subscribe', [\App\Http\Controllers\User\PushSubscriptionController::class, 'store'])->name('push.subscribe');
         Route::post('/push/unsubscribe', [\App\Http\Controllers\User\PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');
         Route::get('/pesan-khusus', [UserDirectMessageController::class, 'index'])->name('pesan.index');

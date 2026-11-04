@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @include('partials.fic-icons')
     <title>{{ $title ?? 'Super Admin' }} - PWA BRUDER FIC</title>
 
@@ -12,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- FIC PWA Core Design System -->
-    <link rel="stylesheet" href="/css/fic-pwa.css?v=20261103i">
+    <link rel="stylesheet" href="/css/fic-pwa.css?v=20261104a">
 
     <style>
         body {
@@ -197,5 +198,18 @@
     <style>
         @keyframes ficSpin { 100% { transform: rotate(360deg); } }
     </style>
+
+    {{-- Penanda notifikasi versi minimal untuk panel Admin / Super Admin.
+         Tanpa lonceng dan tanpa elemen tampilan baru: skrip ini hanya menyelaraskan
+         token Web Push perangkat dengan akun yang sedang login, dan mencabutnya saat
+         logout, supaya notifikasi tidak nyasar ke akun sebelumnya. --}}
+    @auth
+    <script src="/js/notifikasi.js?v=20261104a"
+            data-url="{{ route('notifikasi.ringkasan') }}"
+            data-uid="{{ auth()->id() }}"
+            data-push-subscribe="{{ route('push.subscribe') }}"
+            data-push-unsubscribe="{{ route('push.unsubscribe') }}"
+            data-push-vapid="{{ route('push.vapid') }}" defer></script>
+    @endauth
 </body>
 </html>

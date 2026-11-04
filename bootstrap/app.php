@@ -18,6 +18,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
 
+        // Rotasi token Web Push dipanggil Service Worker tanpa halaman terbuka,
+        // sehingga tidak ada token CSRF. Endpoint itu mengamankan diri sendiri
+        // dengan mewajibkan endpoint lama yang sudah terdaftar di database.
+        $middleware->validateCsrfTokens(except: [
+            'push/rotate',
+        ]);
+
         $middleware->redirectTo(
             guests: '/login',
             users: function () {

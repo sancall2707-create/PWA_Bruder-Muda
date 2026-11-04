@@ -173,22 +173,7 @@
         if (!pushDidukung()) { return; }
         Notification.requestPermission().then(function (izin) {
             if (izin !== 'granted') { return; }
-            fetch(URL_VAPID, { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
-            .then(function (r) { return r.json(); })
-            .then(function (d) {
-                navigator.serviceWorker.ready.then(function (reg) {
-                    reg.pushManager.subscribe({
-                        userVisibleOnly: true,
-                        applicationServerKey: urlBase64ToUint8Array(d.key)
-                    }).then(function (sub) {
-                        var k = sub.toJSON();
-                        kirimKeServer(URL_SUBSCRIBE, {
-                            endpoint: k.endpoint,
-                            keys: { p256dh: k.keys.p256dh, auth: k.keys.auth }
-                        }).then(function () { updateTombolPush(true); });
-                    });
-                });
-            });
+            buatLangganan().catch(function () { /* diam */ });
         });
     }
 
@@ -225,23 +210,57 @@
         if (btn.dataset.aktif === '1') { unsubscribe(); } else { subscribe(); }
     }
 
+    /**
+     * Buat langganan push baru di perangkat ini, lalu kirim ke server.
+     * Tidak memunculkan dialog izin: hanya dipakai saat izin sudah 'granted'.
+     */
+    function buatLangganan() {
+        return fetch(URL_VAPID, { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+                if (!d || !d.key) { throw new Error('VAPID key tidak tersedia'); }
+                return navigator.serviceWorker.ready.then(function (reg) {
+                    return reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: urlBase64ToUint8Array(d.key)
+                    });
+                });
+            })
+            .then(function (sub) {
+                var k = sub.toJSON();
+                return kirimKeServer(URL_SUBSCRIBE, {
+                    endpoint: k.endpoint,
+                    keys: { p256dh: k.keys.p256dh, auth: k.keys.auth }
+                });
+            })
+            .then(function () { updateTombolPush(true); });
+    }
+
+    /**
+     * Selaraskan langganan perangkat ini dengan akun yang sedang login.
+     * - Sudah punya langganan        : kirim ulang agar kepemilikan pindah ke akun ini.
+     * - Belum punya, izin 'granted'  : buat langganan baru lalu kirim (tanpa dialog izin).
+     * - Belum punya, izin lain       : diam, tunggu pengguna menekan tombol.
+     */
     function syncSubscription() {
         if (!pushDidukung()) { return; }
         navigator.serviceWorker.ready.then(function (reg) {
-            reg.pushManager.getSubscription().then(function (sub) {
+            return reg.pushManager.getSubscription().then(function (sub) {
                 if (sub) {
                     var k = sub.toJSON();
-                    kirimKeServer(URL_SUBSCRIBE, {
+                    return kirimKeServer(URL_SUBSCRIBE, {
                         endpoint: k.endpoint,
                         keys: { p256dh: k.keys.p256dh, auth: k.keys.auth }
-                    }).then(function () {
-                        updateTombolPush(true);
-                    }).catch(function () {});
-                } else {
-                    updateTombolPush(false);
+                    }).then(function () { updateTombolPush(true); });
                 }
+
+                if (Notification.permission === 'granted') {
+                    return buatLangganan();
+                }
+
+                updateTombolPush(false);
             });
-        });
+        }).catch(function () { /* diam: penanda tidak boleh mengganggu halaman */ });
     }
 
     function initPush() {

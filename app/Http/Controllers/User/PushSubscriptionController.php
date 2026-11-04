@@ -66,4 +66,46 @@ class PushSubscriptionController extends Controller
             'key' => config('services.vapid.public_key'),
         ]);
     }
+
+    /**
+     * Perbarui langganan saat browser/FCM memutar (rotasi) token.
+     *
+     * Dipanggil oleh Service Worker lewat event `pushsubscriptionchange`, yang bisa
+     * terjadi tanpa halaman terbuka sehingga tidak ada token CSRF maupun sesi login.
+     * Permintaan mengamankan diri sendiri: pemanggil wajib menyertakan endpoint lama
+     * yang sudah terdaftar di database. Nilai itu berupa URL acak panjang dari FCM yang
+     * hanya diketahui perangkat pemilik, dan kepemilikan akun diambil dari baris lama
+     * (bukan dari masukan pemanggil), jadi token tidak bisa dipindah ke akun lain.
+     */
+    public function rotate(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'endpoint_lama' => ['required', 'string', 'max:500'],
+            'endpoint' => ['required', 'url', 'max:500'],
+            'keys.p256dh' => ['required', 'string'],
+            'keys.auth' => ['required', 'string'],
+        ]);
+
+        $lama = PushSubscription::where('endpoint', $data['endpoint_lama'])->first();
+
+        if (! $lama) {
+            return response()->json(['ok' => false, 'alasan' => 'langganan lama tidak dikenal'], 404);
+        }
+
+        $pemilik = $lama->user_id;
+
+        // Bersihkan baris lama dan sisa baris dengan endpoint baru (milik siapa pun),
+        // supaya tidak ada token kedaluwarsa yang tertinggal.
+        PushSubscription::where('endpoint', $data['endpoint_lama'])->delete();
+        PushSubscription::where('endpoint', $data['endpoint'])->delete();
+
+        PushSubscription::create([
+            'user_id' => $pemilik,
+            'endpoint' => $data['endpoint'],
+            'p256dh' => $data['keys']['p256dh'],
+            'auth' => $data['keys']['auth'],
+        ]);
+
+        return response()->json(['ok' => true]);
+    }
 }

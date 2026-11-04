@@ -1,14 +1,14 @@
 /* Cache PWA Bruder FIC.
  * Naikkan CACHE_VERSION setiap kali aset statis berubah agar cache lama dibuang.
  */
-const CACHE_VERSION = '20261103i';
+const CACHE_VERSION = '20261104a';
 const STATIC_CACHE = `pwa-static-${CACHE_VERSION}`;
 const IMAGE_CACHE = `pwa-images-${CACHE_VERSION}`;
 const PAGE_CACHE = `pwa-pages-${CACHE_VERSION}`;
 const IMAGE_CACHE_LIMIT = 80;
 
 const PRECACHE_URLS = [
-    '/css/fic-pwa.css?v=20261103i',
+    '/css/fic-pwa.css?v=20261104a',
     '/images/logo-fic.png',
     '/images/logo-tppbm.png',
     '/images/icons/favicon-32.png',
@@ -186,10 +186,13 @@ self.addEventListener('push', (event) => {
         renotify: true,
         data: { url: data.url },
     }).then(() => {
-        // Update badge lencana di ikon PWA jika didukung oleh browser/OS
-        if (navigator.setAppBadge) {
-            return navigator.setAppBadge().catch(() => {});
-        }
+        // Beri tahu halaman yang terbuka agar menyegarkan angka penanda & lencana.
+        // Lencana (setAppBadge) hanya tersedia di konteks halaman, bukan Service Worker.
+        return self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+            .then((list) => {
+                list.forEach((c) => c.postMessage({ jenis: 'notifikasi-baru' }));
+            })
+            .catch(() => {});
     });
 
     event.waitUntil(promise);
@@ -209,3 +212,47 @@ self.addEventListener('notificationclick', (event) => {
         })
     );
 });
+
+/* Token push dirotasi oleh browser/FCM: daftar ulang lalu kirim token baru ke server,
+ * supaya notifikasi tidak berhenti mendadak tanpa sebab yang terlihat pengguna. */
+self.addEventListener('pushsubscriptionchange', (event) => {
+    const daftarUlang = (async () => {
+        try {
+            const lama = event.oldSubscription || await self.registration.pushManager.getSubscription();
+
+            const res = await fetch('/push/vapid-key', { credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+            if (!res.ok) { return; }
+            const { key } = await res.json();
+            if (!key) { return; }
+
+            const baru = event.newSubscription || await self.registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: base64ToUint8Array(key),
+            });
+
+            if (!lama) { return; }
+
+            const k = baru.toJSON();
+            await fetch('/push/rotate', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                body: JSON.stringify({
+                    endpoint_lama: lama.endpoint,
+                    endpoint: k.endpoint,
+                    keys: { p256dh: k.keys.p256dh, auth: k.keys.auth },
+                }),
+            });
+        } catch (e) { /* diam: rotasi gagal tidak boleh mematikan Service Worker */ }
+    })();
+
+    event.waitUntil(daftarUlang);
+});
+
+function base64ToUint8Array(base64) {
+    const p = base64.replace(/-/g, '+').replace(/_/g, '/');
+    const raw = atob(p);
+    const arr = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) { arr[i] = raw.charCodeAt(i); }
+    return arr;
+}

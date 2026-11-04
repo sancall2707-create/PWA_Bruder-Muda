@@ -130,4 +130,101 @@ class PushSubscriptionTest extends TestCase
         $this->assertDatabaseMissing('push_subscriptions', ['user_id' => $userA->id, 'endpoint' => $endpoint]);
         $this->assertDatabaseHas('push_subscriptions', ['user_id' => $userB->id, 'endpoint' => $endpoint]);
     }
+
+    public function test_vapid_key_bisa_dibaca_tanpa_login(): void
+    {
+        // Service Worker merotasi token tanpa halaman terbuka, jadi tidak ada sesi login.
+        $this->getJson(route('push.vapid'))->assertOk()->assertJsonStructure(['key']);
+    }
+
+    public function test_rotasi_token_memindahkan_langganan_ke_endpoint_baru(): void
+    {
+        $u = $this->bruder();
+        $lama = 'https://fcm.googleapis.com/fcm/send/token_lama';
+        $baru = 'https://fcm.googleapis.com/fcm/send/token_baru';
+
+        PushSubscription::create(['user_id' => $u->id, 'endpoint' => $lama, 'p256dh' => 'p_lama', 'auth' => 'a_lama']);
+
+        // Tanpa sesi login dan tanpa token CSRF, seperti saat Service Worker bekerja
+        $this->postJson(route('push.rotate'), [
+            'endpoint_lama' => $lama,
+            'endpoint' => $baru,
+            'keys' => ['p256dh' => 'p_baru', 'auth' => 'a_baru'],
+        ])->assertOk()->assertJson(['ok' => true]);
+
+        $this->assertDatabaseMissing('push_subscriptions', ['endpoint' => $lama]);
+        $this->assertDatabaseHas('push_subscriptions', [
+            'endpoint' => $baru,
+            'user_id' => $u->id,
+            'p256dh' => 'p_baru',
+        ]);
+        $this->assertSame(1, PushSubscription::where('user_id', $u->id)->count());
+    }
+
+    public function test_rotasi_ditolak_bila_endpoint_lama_tidak_dikenal(): void
+    {
+        $this->postJson(route('push.rotate'), [
+            'endpoint_lama' => 'https://fcm.googleapis.com/fcm/send/palsu',
+            'endpoint' => 'https://fcm.googleapis.com/fcm/send/baru',
+            'keys' => ['p256dh' => 'p', 'auth' => 'a'],
+        ])->assertNotFound();
+
+        $this->assertDatabaseCount('push_subscriptions', 0);
+    }
+
+    public function test_rotasi_tidak_bisa_memindahkan_token_ke_akun_lain(): void
+    {
+        $korban = $this->bruder();
+        $penyerang = $this->bruder();
+        $lama = 'https://fcm.googleapis.com/fcm/send/milik_korban';
+
+        PushSubscription::create(['user_id' => $korban->id, 'endpoint' => $lama, 'p256dh' => 'p', 'auth' => 'a']);
+
+        // Penyerang sudah login, tetap tidak bisa mengklaim token korban:
+        // kepemilikan diambil dari baris lama di database, bukan dari sesi pemanggil.
+        $this->actingAs($penyerang)->postJson(route('push.rotate'), [
+            'endpoint_lama' => $lama,
+            'endpoint' => 'https://fcm.googleapis.com/fcm/send/milik_penyerang',
+            'keys' => ['p256dh' => 'p2', 'auth' => 'a2'],
+        ])->assertOk();
+
+        $this->assertDatabaseHas('push_subscriptions', [
+            'endpoint' => 'https://fcm.googleapis.com/fcm/send/milik_penyerang',
+            'user_id' => $korban->id,
+        ]);
+        $this->assertDatabaseMissing('push_subscriptions', ['user_id' => $penyerang->id]);
+    }
+
+    public function test_panel_super_admin_memuat_skrip_notifikasi_tanpa_lonceng(): void
+    {
+        $sa = User::factory()->create(['role' => 'super_admin', 'is_active' => true]);
+
+        $html = $this->actingAs($sa)->get('/super-admin')->assertOk()->getContent();
+
+        // Skrip & token CSRF wajib ada agar token push admin ikut diselaraskan dan dicabut
+        $this->assertStringContainsString('/js/notifikasi.js', $html);
+        $this->assertStringContainsString('csrf-token', $html);
+        $this->assertStringContainsString('data-push-subscribe', $html);
+
+        // Tampilan panel admin tidak boleh berubah: tidak ada lonceng maupun panel baru
+        $this->assertStringNotContainsString('id="notifBell"', $html);
+        $this->assertStringNotContainsString('id="notifPanel"', $html);
+    }
+
+    public function test_admin_bisa_menyimpan_dan_mencabut_token_push(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin', 'is_active' => true]);
+        $endpoint = 'https://fcm.googleapis.com/fcm/send/admin_device';
+
+        $this->actingAs($admin)->postJson(route('push.subscribe'), [
+            'endpoint' => $endpoint,
+            'keys' => ['p256dh' => 'p', 'auth' => 'a'],
+        ])->assertOk();
+
+        $this->assertDatabaseHas('push_subscriptions', ['user_id' => $admin->id, 'endpoint' => $endpoint]);
+
+        $this->actingAs($admin)->post(route('logout'))->assertRedirect(route('login'));
+
+        $this->assertDatabaseMissing('push_subscriptions', ['user_id' => $admin->id]);
+    }
 }
