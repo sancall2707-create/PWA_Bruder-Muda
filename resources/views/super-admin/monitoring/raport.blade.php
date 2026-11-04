@@ -270,7 +270,7 @@
                         <div style="font-size:12.5px; font-weight:700; color:#1F2937; margin-top:2px;">Kongregasi Bruder FIC Indonesia</div>
                         <div style="font-size:11px; color:#6B7280;">Tim Pemantap Panggilan Bruder Muda (TPPBM)</div>
                     </div>
-                    <img src="/images/logo-tppbm.png" alt="Logo TPPBM" style="width:52px; height:52px; object-fit:contain; flex-shrink:0;">
+                    <img src="/images/logo-tppbm.png?v=2" alt="Logo TPPBM" style="width:52px; height:52px; object-fit:contain; flex-shrink:0;">
                 </div>
 
                 <!-- GARIS GANDA PEMISAH KOP -->

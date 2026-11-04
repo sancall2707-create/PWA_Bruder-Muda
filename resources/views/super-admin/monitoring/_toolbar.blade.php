@@ -84,6 +84,17 @@ document.addEventListener('DOMContentLoaded', function () {
         selected: opt.selected
     }));
 
+    // Enter: pilih hasil pencarian pertama lalu muat ulang halaman dengan bruder itu.
+    searchInput.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter') return;
+        event.preventDefault();
+        const first = Array.from(select.options).find(opt => opt.value !== '' && !opt.disabled);
+        if (first) {
+            select.value = first.value;
+            select.form.submit();
+        }
+    });
+
     searchInput.addEventListener('input', function () {
         const term = this.value.trim().toLowerCase();
         select.innerHTML = '';
@@ -91,6 +102,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const matched = originalOptions.filter(opt =>
             opt.value === '' || opt.text.toLowerCase().includes(term)
         );
+
+        // Saat mencari, tampilkan hasil sebagai daftar terbuka agar langsung bisa diketuk.
+        if (term !== '') {
+            select.size = Math.min(Math.max(matched.length, 2), 6);
+        } else {
+            select.removeAttribute('size');
+        }
 
         if (matched.length === 0) {
             const noOpt = document.createElement('option');
