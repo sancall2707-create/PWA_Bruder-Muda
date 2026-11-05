@@ -195,6 +195,7 @@ class MonitoringQuery
             counterpart: 'Agenda pribadi',
             location: $agenda->location,
             summary: (string) ($agenda->description ?? ''),
+            provincialKey: $agenda->is_provincial ? ($agenda->broadcast_key ?: null) : null,
         ));
 
         return collect()
@@ -288,6 +289,8 @@ class MonitoringQuery
         ?string $location,
         string $summary,
         int $id = 0,
+        ?string $provincialKey = null,
+        int $copies = 1,
     ): object {
         $at = $at->copy()->locale('id');
         $done = in_array(strtolower($status), ['completed', 'approved', 'published', 'submitted', 'selesai', 'done'], true);
@@ -307,6 +310,40 @@ class MonitoringQuery
             'location' => $location ?: '',
             'summary' => $summary,
             'preview' => Str::limit($summary, 160),
+            'provincial_key' => $provincialKey,
+            'copies' => $copies,
         ];
+    }
+
+    /**
+     * Gabungkan salinan Agenda Provinsi (satu per akun bruder) menjadi satu baris.
+     * Baris lain tidak diubah. Dipakai untuk tampilan daftar/kalender, bukan ekspor.
+     */
+    public function collapseProvincial(Collection $rows): Collection
+    {
+        $jumlah = $rows->whereNotNull('provincial_key')->countBy('provincial_key');
+        $sudah = [];
+
+        return $rows->filter(function (object $row) use (&$sudah) {
+            if (empty($row->provincial_key)) {
+                return true;
+            }
+            if (isset($sudah[$row->provincial_key])) {
+                return false;
+            }
+            $sudah[$row->provincial_key] = true;
+
+            return true;
+        })->map(function (object $row) use ($jumlah) {
+            if (empty($row->provincial_key)) {
+                return $row;
+            }
+            $baris = clone $row;
+            $baris->bruder = 'TPPBM';
+            $baris->counterpart = 'Agenda Provinsi';
+            $baris->copies = (int) ($jumlah[$row->provincial_key] ?? 1);
+
+            return $baris;
+        })->values();
     }
 }

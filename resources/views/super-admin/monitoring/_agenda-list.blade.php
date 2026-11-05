@@ -11,7 +11,33 @@
                 <div style="margin-top:6px; font-size:12px; color:#667085; font-style:italic;">{{ $agenda->summary }}</div>
             @endif
 
-            @if(!empty($agenda->id) && $agenda->id > 0)
+            @if(!empty($agenda->provincial_key))
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:10px; padding-top:8px; border-top:1px dashed #E4E7EC;">
+                    <span style="font-size:11px; color:#667085;">Diterima {{ $agenda->copies }} akun bruder</span>
+                    <div style="display:flex; gap:6px;">
+                        <a href="{{ route('superadmin.monitoring.agenda.edit', $agenda->provincial_key) }}" style="display:inline-flex; align-items:center; gap:5px; background:#EFF4FF; color:#1455C0; border:1px solid #B2CCFF; border-radius:8px; padding:5px 10px; font-size:11px; font-weight:700; text-decoration:none; font-family:inherit;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 20h9"></path>
+                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                            </svg>
+                            Edit
+                        </a>
+                        <form method="POST" action="{{ route('superadmin.monitoring.agenda.destroy', $agenda->provincial_key) }}" onsubmit="return confirm('Hapus agenda ini dari seluruh akun Bruder Muda ({{ $agenda->copies }} akun)?');" style="margin:0;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="display:inline-flex; align-items:center; gap:5px; background:#FEF2F2; color:#B42318; border:1px solid #FECDCA; border-radius:8px; padding:5px 10px; font-size:11px; font-weight:700; cursor:pointer; font-family:inherit;">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6l-1 14H6L5 6"></path>
+                                    <path d="M10 11v6"></path><path d="M14 11v6"></path>
+                                    <path d="M9 6V4h6v2"></path>
+                                </svg>
+                                Hapus
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @elseif(!empty($agenda->id) && $agenda->id > 0)
                 <div style="display:flex; justify-content:flex-end; margin-top:10px; padding-top:8px; border-top:1px dashed #E4E7EC;">
                     <form method="POST" action="{{ route('superadmin.monitoring.agenda.destroySingle', ['category' => $agenda->category, 'id' => $agenda->id]) }}" onsubmit="return confirm('Hapus agenda ini?');" style="margin:0;">
                         @csrf

@@ -171,6 +171,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/monitoring/agenda/tambah', [MonitoringController::class, 'agendaCreate'])->name('monitoring.agenda.create');
         Route::post('/monitoring/agenda', [MonitoringController::class, 'agendaStore'])->name('monitoring.agenda.store');
         Route::get('/monitoring/agenda', [MonitoringController::class, 'agenda'])->name('monitoring.agenda');
+        Route::get('/monitoring/agenda/provinsi/{key}/edit', [MonitoringController::class, 'agendaEdit'])->where('key', '[a-f0-9]{32}')->name('monitoring.agenda.edit');
+        Route::put('/monitoring/agenda/provinsi/{key}', [MonitoringController::class, 'agendaUpdate'])->where('key', '[a-f0-9]{32}')->name('monitoring.agenda.update');
+        Route::delete('/monitoring/agenda/provinsi/{key}', [MonitoringController::class, 'agendaDestroy'])->where('key', '[a-f0-9]{32}')->name('monitoring.agenda.destroy');
         Route::delete('/monitoring/agenda/{category}/{id}', [MonitoringController::class, 'destroyAgendaSingle'])->name('monitoring.agenda.destroySingle');
         Route::get('/monitoring/export', [MonitoringController::class, 'export'])->name('monitoring.export');
         Route::get('/monitoring/jurnal', [MonitoringController::class, 'jurnalIndex'])->name('monitoring.jurnal.index');

@@ -1,6 +1,7 @@
 @extends('layouts.super-admin')
 
 @section('content')
+@php $editing = isset($agenda); @endphp
 <div style="margin-bottom: 14px;">
     <a href="{{ route('superadmin.monitoring.agenda') }}" style="display:inline-flex; align-items:center; gap:6px; color:#1455C0; text-decoration:none; font-size:13px; font-weight:700;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -10,9 +11,13 @@
 
 <div class="card" style="padding: 20px 18px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(14px); border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.85); box-shadow: 0 8px 24px rgba(0, 62, 151, 0.08);">
     <div style="margin-bottom: 16px;">
-        <h2 style="font-size: 16px; font-weight: 800; color: #101828; margin: 0 0 4px;">Tambah Agenda untuk Semua Bruder</h2>
+        <h2 style="font-size: 16px; font-weight: 800; color: #101828; margin: 0 0 4px;">{{ $editing ? 'Edit Agenda Provinsi' : 'Tambah Agenda untuk Semua Bruder' }}</h2>
         <p style="font-size: 12px; color: #667085; margin: 0; line-height: 1.5;">
-            Agenda yang ditambahkan di sini akan secara otomatis masuk ke kalender dan daftar agenda <strong>seluruh akun Bruder Muda</strong>.
+            @if($editing)
+                Perubahan akan diterapkan ke <strong>{{ $copies }} akun Bruder Muda</strong> yang menerima agenda ini.
+            @else
+                Agenda yang ditambahkan di sini akan secara otomatis masuk ke kalender dan daftar agenda <strong>seluruh akun Bruder Muda</strong>.
+            @endif
         </p>
     </div>
 
@@ -24,8 +29,9 @@
         </div>
     @endif
 
-    <form action="{{ route('superadmin.monitoring.agenda.store') }}" method="POST">
+    <form action="{{ $editing ? route('superadmin.monitoring.agenda.update', $agendaKey) : route('superadmin.monitoring.agenda.store') }}" method="POST">
         @csrf
+        @if($editing) @method('PUT') @endif
 
         <!-- Nama / Judul Kegiatan -->
         <div class="form-group" style="margin-bottom: 14px;">
@@ -36,7 +42,7 @@
                 type="text"
                 id="title"
                 name="title"
-                value="{{ old('title') }}"
+                value="{{ old('title', $editing ? $agenda->title : '') }}"
                 placeholder="Contoh: Retret Tahunan Formasi Bruder Muda"
                 class="form-input"
                 required
@@ -53,7 +59,7 @@
                 type="date"
                 id="start_date"
                 name="start_date"
-                value="{{ old('start_date', date('Y-m-d')) }}"
+                value="{{ old('start_date', $editing ? $agenda->start_at->format('Y-m-d') : date('Y-m-d')) }}"
                 class="form-input"
                 required
                 style="width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 12px; border: 1px solid #D0D5DD; font-size: 14px; font-family: inherit;"
@@ -69,7 +75,7 @@
                 type="time"
                 id="start_time"
                 name="start_time"
-                value="{{ old('start_time', '09:00') }}"
+                value="{{ old('start_time', $editing ? $agenda->start_at->format('H:i') : '09:00') }}"
                 class="form-input"
                 required
                 style="width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 12px; border: 1px solid #D0D5DD; font-size: 14px; font-family: inherit;"
@@ -85,7 +91,7 @@
                 type="text"
                 id="location"
                 name="location"
-                value="{{ old('location') }}"
+                value="{{ old('location', $editing ? $agenda->location : '') }}"
                 placeholder="Contoh: Kapel Pusat FIC Semarang"
                 class="form-input"
                 required
@@ -105,7 +111,7 @@
                 placeholder="Tuliskan keterangan tambahan atau perlengkapan yang perlu dibawa..."
                 class="form-input"
                 style="width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 12px; border: 1px solid #D0D5DD; font-size: 14px; font-family: inherit; resize: vertical;"
-            >{{ old('description') }}</textarea>
+            >{{ old('description', $editing ? $agenda->description : '') }}</textarea>
         </div>
 
         <!-- Kotak Info Otomatis -->
@@ -116,12 +122,16 @@
                 <line x1="12" y1="8" x2="12.01" y2="8"></line>
             </svg>
             <div style="font-size: 12px; color: #1E40AF; line-height: 1.5;">
-                Agenda ini akan otomatis terdistribusi dan muncul pada kalender agenda masing-masing Bruder Muda.
+                @if($editing)
+                    Semua salinan agenda ini di akun Bruder Muda akan diperbarui sekaligus.
+                @else
+                    Agenda ini akan otomatis terdistribusi dan muncul pada kalender agenda masing-masing Bruder Muda.
+                @endif
             </div>
         </div>
 
         <button type="submit" class="btn-primary" style="width: 100%; min-height: 46px; background: linear-gradient(135deg, #1455C0 0%, #003E97 100%); color: #fff; font-size: 14px; font-weight: 800; border-radius: 12px; border: none; cursor: pointer; box-shadow: 0 4px 14px rgba(20, 85, 192, 0.25);">
-            SIMPAN AGENDA UNTUK SEMUA BRUDER
+            {{ $editing ? 'SIMPAN PERUBAHAN AGENDA' : 'SIMPAN AGENDA UNTUK SEMUA BRUDER' }}
         </button>
     </form>
 </div>

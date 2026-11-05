@@ -123,7 +123,7 @@ class MonitoringController extends Controller
     public function agenda(Request $request): View
     {
         $filters = $this->monitoring->filters($request);
-        $agendas = $this->monitoring->agendas($filters);
+        $agendas = $this->monitoring->collapseProvincial($this->monitoring->agendas($filters));
         $tampilan = $request->input('tampilan') === 'kalender' ? 'kalender' : 'daftar';
 
         return view('super-admin.monitoring.agenda', [
@@ -202,6 +202,96 @@ class MonitoringController extends Controller
             'bulan' => $startAt->month,
             'tahun' => $startAt->year,
         ])->with('success', "Agenda '{$validated['title']}' berhasil ditambahkan ke {$count} akun Bruder Muda.");
+    }
+
+    private function agendaRules(): array
+    {
+        return [
+            'title' => ['required', 'string', 'max:255'],
+            'start_date' => ['required', 'date'],
+            'start_time' => ['required', 'date_format:H:i'],
+            'location' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:2000'],
+        ];
+    }
+
+    private function provincialCopies(string $key)
+    {
+        return PersonalAgenda::where('is_provincial', true)->where('broadcast_key', $key);
+    }
+
+    /**
+     * Formulir edit Agenda Provinsi (berlaku untuk semua salinan di akun bruder).
+     */
+    public function agendaEdit(string $key): View|RedirectResponse
+    {
+        $agenda = $this->provincialCopies($key)->orderBy('id')->first();
+
+        if (! $agenda) {
+            return redirect()->route('superadmin.monitoring.agenda')->with('error', 'Agenda provinsi tidak ditemukan.');
+        }
+
+        return view('super-admin.monitoring.agenda-create', [
+            'agenda' => $agenda,
+            'agendaKey' => $key,
+            'copies' => $this->provincialCopies($key)->count(),
+            'headerTitle' => 'Edit Agenda',
+            'headerSubtitle' => 'Perubahan berlaku untuk seluruh akun Bruder Muda',
+            'hideBottomNav' => true,
+        ]);
+    }
+
+    /**
+     * Perbarui semua salinan Agenda Provinsi sekaligus.
+     */
+    public function agendaUpdate(Request $request, string $key): RedirectResponse
+    {
+        $validated = $request->validate($this->agendaRules(), [
+            'title.required' => 'Nama / Judul Kegiatan wajib diisi.',
+            'start_date.required' => 'Hari & Tanggal Pelaksanaan wajib diisi.',
+            'start_time.required' => 'Waktu Pelaksanaan wajib diisi.',
+            'location.required' => 'Lokasi / Tempat Pelaksanaan wajib diisi.',
+        ]);
+
+        if (! $this->provincialCopies($key)->exists()) {
+            return redirect()->route('superadmin.monitoring.agenda')->with('error', 'Agenda provinsi tidak ditemukan.');
+        }
+
+        $startAt = Carbon::createFromFormat('Y-m-d H:i', "{$validated['start_date']} {$validated['start_time']}");
+        $newKey = md5($validated['title'].'|'.$startAt->format('Y-m-d H:i:s').'|'.$validated['location']);
+
+        $count = 0;
+        foreach ($this->provincialCopies($key)->get() as $copy) {
+            $copy->update([
+                'title' => $validated['title'],
+                'start_at' => $startAt,
+                'location' => $validated['location'],
+                'description' => $validated['description'] ?? null,
+                'broadcast_key' => $newKey,
+            ]);
+            $count++;
+        }
+
+        return redirect()->route('superadmin.monitoring.agenda', [
+            'bulan' => $startAt->month,
+            'tahun' => $startAt->year,
+        ])->with('success', "Agenda '{$validated['title']}' berhasil diperbarui di {$count} akun Bruder Muda.");
+    }
+
+    /**
+     * Hapus (soft delete) semua salinan Agenda Provinsi sekaligus.
+     */
+    public function agendaDestroy(string $key): RedirectResponse
+    {
+        $judul = optional($this->provincialCopies($key)->first())->title;
+        $deleted = $this->provincialCopies($key)->delete();
+
+        if ($deleted) {
+            return redirect()->route('superadmin.monitoring.agenda')
+                ->with('success', "Agenda '{$judul}' berhasil dihapus dari {$deleted} akun Bruder Muda.");
+        }
+
+        return redirect()->route('superadmin.monitoring.agenda')->with('error', 'Agenda provinsi tidak ditemukan.');
     }
 
     /**
