@@ -26,3 +26,8 @@ twa-release/*.apk
 twa-release/*.aab
 Homestead.yaml
 Thumbs.db
+
+# Kunci penandatangan APK TWA: JANGAN masuk repo (repo publik)
+twa-release/signing.keystore
+twa-release/signing-key-info.txt
+twa-release/*.jks
