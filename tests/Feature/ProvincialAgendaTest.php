@@ -34,7 +34,7 @@ class ProvincialAgendaTest extends TestCase
         $html = $this->actingAs($sa)->get(route('superadmin.dashboard'))->assertOk()->getContent();
         $this->assertSame(1, substr_count($html, 'margin-top: 2px;">Kapitel Provinsi</div>'));
         $this->assertStringContainsString('Agenda Provinsi', $html);
-        $this->assertStringContainsString('Seluruh Bruder Muda', $html);
+        $this->assertStringContainsString('>TPPBM<', $html);
         // Agenda provinsi tidak boleh dirinci per bruder pada daftar agenda terdekat.
         $this->assertSame(0, substr_count($html, 'Br. Uji 1 FIC</span>\n                        <span style="font-size: 11px; font-weight: 700; color: #0E3366;">Agenda Provinsi'));
     }

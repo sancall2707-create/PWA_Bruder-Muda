@@ -53,7 +53,7 @@ class PersonalAgenda extends Model
             ->unique(fn ($p) => $p->broadcast_key ?: md5($p->title.'|'.$p->start_at.'|'.$p->location))
             ->take($limit)
             ->map(fn ($p) => (object) [
-                'bruder'   => 'Seluruh Bruder Muda',
+                'bruder'   => 'TPPBM',
                 'type'     => 'Agenda Provinsi',
                 'title'    => $p->title,
                 'datetime' => $p->start_at ? $p->start_at->translatedFormat('d M Y, H:i').' WIB' : '-',
