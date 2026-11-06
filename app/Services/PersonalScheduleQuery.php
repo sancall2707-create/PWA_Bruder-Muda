@@ -53,7 +53,7 @@ class PersonalScheduleQuery
                 id: $agenda->id,
                 category: 'lainnya',
                 title: $agenda->title,
-                person: 'Agenda pribadi',
+                person: $agenda->is_provincial ? 'Agenda Provinsi' : 'Agenda pribadi',
                 startsAt: $agenda->start_at,
                 location: $agenda->location,
                 notes: $agenda->description,
