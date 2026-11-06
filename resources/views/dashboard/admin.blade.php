@@ -1,9 +1,9 @@
 @extends('layouts.super-admin')
 
 @php
-    $title = 'Beranda TPPBM';
-    $headerTitle = 'Beranda TPPBM';
-    $headerSubtitle = 'Tim Pendamping Pembinaan Bruder Muda';
+    $title = 'Beranda';
+    $headerTitle = 'Beranda';
+    $headerSubtitle = 'Tim Pemantap Panggilan Bruder Muda';
 @endphp
 
 @section('content')

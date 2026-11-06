@@ -44,8 +44,11 @@ class AdminDashboardTest extends TestCase
         $response = $this->actingAs($admin)->get(route('admin.dashboard'));
 
         $response->assertOk()
-            ->assertSee('Beranda TPPBM')
-            ->assertSee('TIM PENDAMPING TPPBM')
+            ->assertSee('Tim Pemantap Panggilan Bruder Muda')
+            ->assertDontSee('TIM PENDAMPING TPPBM')
+            ->assertDontSee('Tim Pendamping Pembinaan Bruder Muda')
+            ->assertDontSee('Beranda TPPBM')
+            ->assertSeeInOrder(['sa-badge', 'TPPBM', 'sa-title', 'Beranda', 'sa-subtitle', 'Tim Pemantap Panggilan Bruder Muda'], false)
             ->assertSee('Br. Pendamping FIC')
             ->assertSee('Br. Antonius FIC')
             ->assertSee('Monitoring & Ekspor Laporan')
@@ -82,7 +85,8 @@ class AdminDashboardTest extends TestCase
 
         $this->actingAs($ketua)->get(route('admin.dashboard'))
             ->assertOk()
-            ->assertSee('Beranda TPPBM')
+            ->assertSee('Tim Pemantap Panggilan Bruder Muda')
+            ->assertDontSee('Beranda TPPBM')
             ->assertSee('KETUA TPPBM');
 
         $this->actingAs($ketua)->get(route('superadmin.monitoring.raport'))->assertOk();

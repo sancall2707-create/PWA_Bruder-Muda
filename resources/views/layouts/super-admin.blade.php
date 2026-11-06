@@ -139,10 +139,10 @@
         <div class="sa-header">
             <div class="sa-header-top">
                 <div class="sa-badge">
-                    {{ auth()->user()->role === 'admin_ketua_tppbm' ? 'KETUA TPPBM' : (auth()->user()->role === 'admin' ? 'TIM PENDAMPING TPPBM' : 'SUPER ADMIN') }}
+                    {{ auth()->user()->role === 'admin_ketua_tppbm' ? 'KETUA TPPBM' : (auth()->user()->role === 'admin' ? 'TPPBM' : 'SUPER ADMIN') }}
                 </div>
                 <div style="display:flex; align-items:center; gap:8px; margin-left:auto;">
-                    <a href="{{ route('superadmin.profil') }}" title="Profil &amp; Akun Saya" style="display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,0.2); border:1.5px solid rgba(255,255,255,0.4); color:#fff; text-decoration:none; font-size:13px; font-weight:800; overflow:hidden;">
+                    <a href="{{ route('superadmin.profil') }}" title="Profil &amp; Akun Saya" style="display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,0.2); border:1.5px solid rgba(255,255,255,0.4); color:#fff; text-decoration:none; font-size:13px; font-weight:800; overflow:hidden;">
                         @php
                             $saUser = auth()->user();
                             $saWords = explode(' ', trim($saUser->name ?? 'SA'));
@@ -158,7 +158,7 @@
                     @include('layouts.partials.sa-menu-toggle')
                 </div>
             </div>
-            <h1 class="sa-title">{{ $headerTitle ?? (in_array(auth()->user()->role, ['admin', 'admin_ketua_tppbm']) ? 'Beranda TPPBM' : 'Beranda Super Admin') }}</h1>
+            <h1 class="sa-title">{{ $headerTitle ?? (in_array(auth()->user()->role, ['admin', 'admin_ketua_tppbm']) ? 'Beranda' : 'Beranda Super Admin') }}</h1>
             <p class="sa-subtitle">{{ $headerSubtitle ?? (in_array(auth()->user()->role, ['admin', 'admin_ketua_tppbm']) ? 'Pemantauan formasi rohani & pembinaan bruder muda' : 'Kelola pembinaan, bruder muda, & sapaan') }}</p>
         </div>
 
