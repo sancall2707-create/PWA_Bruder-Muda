@@ -191,7 +191,7 @@
                 </svg>
             </div>
             <div class="menu-card-text">
-                <h3 class="menu-card-title">Bimbingan Rohani</h3>
+                <h3 class="menu-card-title">Pembimbing Rohani</h3>
                 <p class="menu-card-desc">Laporan bimbingan</p>
             </div>
         </a>
