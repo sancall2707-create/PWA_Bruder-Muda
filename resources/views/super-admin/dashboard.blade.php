@@ -41,10 +41,10 @@
         @forelse($upcomingSchedules ?? [] as $sched)
             <div style="background: #ffffff; border-radius: 14px; border: 1px solid #E4E7EC; padding: 12px 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 4px rgba(16,24,40,0.02);">
                 <div style="width: 4px; height: 36px; border-radius: 4px; background: {{ $sched->color }}; flex-shrink: 0;"></div>
-                <div style="flex: 1;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 13px; font-weight: 700; color: #101828;">{{ $sched->bruder }}</span>
-                        <span style="font-size: 11px; font-weight: 700; color: {{ $sched->color }};">{{ $sched->type }}</span>
+                <div style="flex: 1; min-width: 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                        <span style="font-size: 13px; font-weight: 700; color: #101828; flex: 1; min-width: 0; line-height: 1.35; word-break: break-word;">{{ $sched->bruder }}</span>
+                        <span style="font-size: 11px; font-weight: 700; color: {{ $sched->color }}; white-space: nowrap; flex-shrink: 0; padding-top: 1px;">{{ $sched->type }}</span>
                     </div>
                     <div style="font-size: 12px; color: #475467; margin-top: 2px;">{{ $sched->title }}</div>
                     <div style="font-size: 11px; color: #667085; margin-top: 2px;">{{ $sched->datetime }} &bull; {{ $sched->location }}</div>

@@ -65,10 +65,10 @@
         @forelse($upcomingSchedules as $sched)
             <div style="background: #ffffff; border-radius: 14px; border: 1px solid #E4E7EC; padding: 12px 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 4px rgba(16,24,40,0.02);">
                 <div style="width: 4px; height: 36px; border-radius: 4px; background: {{ $sched->color }}; flex-shrink: 0;"></div>
-                <div style="flex: 1;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 13px; font-weight: 700; color: #101828;">{{ $sched->bruder }}</span>
-                        <span style="font-size: 11px; font-weight: 700; color: {{ $sched->color }};">{{ $sched->type }}</span>
+                <div style="flex: 1; min-width: 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                        <span style="font-size: 13px; font-weight: 700; color: #101828; flex: 1; min-width: 0; line-height: 1.35; word-break: break-word;">{{ $sched->bruder }}</span>
+                        <span style="font-size: 11px; font-weight: 700; color: {{ $sched->color }}; white-space: nowrap; flex-shrink: 0; padding-top: 1px;">{{ $sched->type }}</span>
                     </div>
                     <div style="font-size: 12px; color: #475467; margin-top: 2px;">{{ $sched->title }}</div>
                     <div style="font-size: 11px; color: #667085; margin-top: 2px;">{{ $sched->datetime }} &bull; {{ $sched->location }}</div>
@@ -92,12 +92,12 @@
     <div style="display: flex; flex-direction: column; gap: 10px;">
         @forelse($recentFeed as $feed)
             <div style="background: #ffffff; border-radius: 14px; border: 1px solid #E4E7EC; padding: 14px; box-shadow: 0 2px 6px rgba(16,24,40,0.03);">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-                    <div>
-                        <div style="font-weight: 700; font-size: 14px; color: #101828;">{{ $feed->user->name ?? 'Bruder Muda' }}</div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-weight: 700; font-size: 14px; color: #101828; line-height: 1.35; word-break: break-word;">{{ $feed->user->name ?? 'Bruder Muda' }}</div>
                         <div style="font-size: 12px; color: #667085; margin-top: 2px;">{{ $feed->type_label }} &bull; {{ $feed->date_label }}</div>
                     </div>
-                    <span style="padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: {{ $feed->bg_color }}; color: {{ $feed->theme_color }}; border: 1px solid {{ $feed->border_color }};">
+                    <span style="padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; white-space: nowrap; flex-shrink: 0; line-height: 1.2; background: {{ $feed->bg_color }}; color: {{ $feed->theme_color }}; border: 1px solid {{ $feed->border_color }};">
                         {{ $feed->status_label }}
                     </span>
                 </div>
