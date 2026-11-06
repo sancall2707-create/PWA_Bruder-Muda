@@ -119,6 +119,7 @@
                     </svg>
                     <span>{{ $agenda->location }}</span>
                 </div>
+            @unless($agenda->provincial && auth()->user()->role === 'user')
             <div style="display: flex; gap: 8px; margin-top: 12px;">
                 <a href="{{ route('agenda.edit', ['type' => $agenda->category, 'schedule' => $agenda->id]) }}" class="btn-secondary" style="flex: 1; min-height: 40px; padding: 8px 12px; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;">
                     Edit
@@ -129,6 +130,7 @@
                     <button type="submit" class="btn-danger" style="width: 100%; min-height: 40px; padding: 8px 12px; font-size: 13px;">Hapus</button>
                 </form>
             </div>
+            @endunless
         </div>
     @empty
         <x-empty-state

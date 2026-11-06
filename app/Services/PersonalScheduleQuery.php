@@ -58,6 +58,7 @@ class PersonalScheduleQuery
                 location: $agenda->location,
                 notes: $agenda->description,
                 status: $agenda->status,
+                provincial: (bool) $agenda->is_provincial,
             ));
 
         return collect()
@@ -94,6 +95,7 @@ class PersonalScheduleQuery
         ?string $location,
         ?string $notes,
         string $status,
+        bool $provincial = false,
     ): object {
         $startsAt = $startsAt->copy()->locale('id');
 
@@ -109,6 +111,7 @@ class PersonalScheduleQuery
             'location' => $location,
             'notes' => $notes,
             'status' => $status,
+            'provincial' => $provincial,
         ];
     }
 }

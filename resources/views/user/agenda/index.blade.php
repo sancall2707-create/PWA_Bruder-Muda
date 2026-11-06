@@ -169,6 +169,7 @@
                 </div>
             @endif
 
+            @unless($agenda->provincial && auth()->user()->role === 'user')
             <div class="agenda-actions">
                 <a href="{{ route('agenda.edit', ['type' => $agenda->category, 'schedule' => $agenda->id]) }}">Edit</a>
                 <form method="POST" action="{{ route('agenda.destroy', ['type' => $agenda->category, 'schedule' => $agenda->id]) }}" onsubmit="return confirm('Hapus agenda ini dari jadwal Anda?');" style="margin: 0;">
@@ -177,6 +178,7 @@
                     <button type="submit">Hapus</button>
                 </form>
             </div>
+            @endunless
         </div>
     @empty
         <x-empty-state

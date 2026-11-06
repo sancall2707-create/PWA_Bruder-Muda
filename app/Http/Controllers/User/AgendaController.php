@@ -192,7 +192,18 @@ class AgendaController extends Controller
             default => abort(404),
         };
 
-        return $query->where('user_id', auth()->id())->findOrFail($id);
+        $model = $query->where('user_id', auth()->id())->findOrFail($id);
+
+        // Agenda Provinsi dibuat Tim Pendamping/Super Admin; Bruder Muda hanya boleh melihatnya.
+        abort_if(
+            $model instanceof PersonalAgenda
+                && $model->is_provincial
+                && auth()->user()->role === 'user',
+            403,
+            'Agenda Provinsi hanya dapat diubah atau dihapus oleh Tim Pendamping.'
+        );
+
+        return $model;
     }
 
     /**
