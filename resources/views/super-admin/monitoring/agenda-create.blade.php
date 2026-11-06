@@ -71,15 +71,12 @@
             <label for="start_time" class="form-label" style="display:block; font-size: 12px; font-weight: 700; color: #344054; margin-bottom: 6px;">
                 Waktu Pelaksanaan <span style="color: #D92D20;">*</span>
             </label>
-            <input
-                type="time"
-                id="start_time"
+            <x-time-select
                 name="start_time"
-                value="{{ old('start_time', $editing ? $agenda->start_at->format('H:i') : '09:00') }}"
-                class="form-input"
-                required
-                style="width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 12px; border: 1px solid #D0D5DD; font-size: 14px; font-family: inherit;"
-            >
+                id="start_time"
+                :value="$editing ? $agenda->start_at->format('H:i') : '09:00'"
+                :required="true"
+            />
         </div>
 
         <!-- Lokasi / Tempat Pelaksanaan -->

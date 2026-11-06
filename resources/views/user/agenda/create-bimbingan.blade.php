@@ -67,14 +67,12 @@
             <label for="meeting_time" class="form-label">
                 Waktu Pertemuan <span class="required">*</span>
             </label>
-            <input
-                type="time"
-                id="meeting_time"
+            <x-time-select
                 name="meeting_time"
-                value="{{ old('meeting_time', $editing ? $schedule->scheduled_at->format('H:i') : '10:00') }}"
-                class="form-input"
-                required
-            >
+                id="meeting_time"
+                :value="$editing ? $schedule->scheduled_at->format('H:i') : '10:00'"
+                :required="true"
+            />
         </div>
 
         <!-- Tempat / Ruangan -->

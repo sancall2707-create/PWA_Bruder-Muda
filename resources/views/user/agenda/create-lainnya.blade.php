@@ -67,14 +67,12 @@
             <label for="start_time" class="form-label">
                 Waktu Pelaksanaan <span class="required">*</span>
             </label>
-            <input
-                type="time"
-                id="start_time"
+            <x-time-select
                 name="start_time"
-                value="{{ old('start_time', $editing ? $schedule->start_at->format('H:i') : '09:00') }}"
-                class="form-input"
-                required
-            >
+                id="start_time"
+                :value="$editing ? $schedule->start_at->format('H:i') : '09:00'"
+                :required="true"
+            />
         </div>
 
         <!-- Lokasi / Tempat -->
