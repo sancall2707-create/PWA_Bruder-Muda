@@ -40,7 +40,8 @@ class ProvincialPublicationTest extends TestCase
             ->assertSee('Sapaan Uji Kesetiaan')
             ->assertSee('Paragraf pertama sapaan uji.')
             ->assertSee('Paragraf kedua tetap utuh.')
-            ->assertSee('Pemimpin Provinsial FIC Indonesia')
+            ->assertSee('Pemimpin Provinsi FIC Indonesia')
+            ->assertDontSee('Pemimpin Provinsial')
             ->assertSee(route('sapaan-provinsial.foto', $message), false)
             ->assertDontSee('Menghidupi Panggilan dengan Sukacita dan Kesetiaan');
 

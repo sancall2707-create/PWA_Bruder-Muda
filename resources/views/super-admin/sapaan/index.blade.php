@@ -39,8 +39,8 @@
     <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; font-weight:700; color:#475467;">
         Peran
         <select name="author_role" id="author_role_select" aria-label="Peran" style="padding:12px 14px; border-radius:12px; border:1px solid #D0D5DD; font-size:14px; color:#101828;">
-            @foreach(['Pemimpin Provinsial FIC Indonesia', 'TPPBM'] as $role)
-                <option value="{{ $role }}" {{ old('author_role', $editing->author_role ?? 'Pemimpin Provinsial FIC Indonesia') === $role ? 'selected' : '' }}>{{ $role }}</option>
+            @foreach([\App\Models\ProvincialMessage::ROLE_PROVINSI, 'TPPBM'] as $role)
+                <option value="{{ $role }}" {{ \App\Models\ProvincialMessage::normalizeRole(old('author_role', $editing->author_role ?? \App\Models\ProvincialMessage::ROLE_PROVINSI)) === $role ? 'selected' : '' }}>{{ $role }}</option>
             @endforeach
         </select>
     </label>
@@ -139,7 +139,7 @@
                     if (nameInput.value === 'Br. Agustinus Giwal Santoso, FIC' || nameInput.value.trim() === '') {
                         nameInput.value = 'Tim Pendamping Pembinaan Bruder Muda (TPPBM)';
                     }
-                } else if (this.value === 'Pemimpin Provinsial FIC Indonesia') {
+                } else if (this.value === 'Pemimpin Provinsi FIC Indonesia') {
                     if (nameInput.value === 'Tim Pendamping Pembinaan Bruder Muda (TPPBM)' || nameInput.value.trim() === '') {
                         nameInput.value = 'Br. Agustinus Giwal Santoso, FIC';
                     }

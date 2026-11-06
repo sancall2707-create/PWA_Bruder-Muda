@@ -114,7 +114,8 @@ class ProvincialMessageManagementController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'author_name' => ['required', 'string', 'max:255'],
             'author_role' => ['required', Rule::in([
-                'Pemimpin Provinsial FIC Indonesia',
+                ProvincialMessage::ROLE_PROVINSI,
+                ProvincialMessage::ROLE_PROVINSI_LAMA,
                 'TPPBM',
             ])],
             'content' => ['required', 'string', 'min:10', 'max:5000'],
@@ -149,7 +150,7 @@ class ProvincialMessageManagementController extends Controller
             'title' => $validated['title'],
             'content' => $validated['content'],
             'author_name' => $validated['author_name'],
-            'author_role' => $validated['author_role'],
+            'author_role' => ProvincialMessage::normalizeRole($validated['author_role']),
             'image' => $image,
             'starts_at' => $kind === 'pengumuman' ? $this->schedule($validated) : null,
             'is_active' => true,

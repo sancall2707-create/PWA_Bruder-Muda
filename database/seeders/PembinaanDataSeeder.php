@@ -103,7 +103,7 @@ class PembinaanDataSeeder extends Seeder
             [
                 'content' => 'Hallo gays, jangan lupa sarapan pagi ini dengan santapan sabda. Temukan makna dari ayat kitab suci yang bermakna. Maaf ada Typo',
                 'author_name' => 'Br. Agustinus Giwal Santoso, FIC',
-                'author_role' => 'Pemimpin Provinsial FIC Indonesia',
+                'author_role' => 'Pemimpin Provinsi FIC Indonesia',
                 'kind' => 'sapaan',
                 'is_active' => false,
                 'published_at' => '2026-10-20 02:14:03',

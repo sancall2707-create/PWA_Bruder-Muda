@@ -101,6 +101,19 @@ class ProvincialMessage extends Model
         return $moment->copy()->locale('id')->translatedFormat('j F Y');
     }
 
+    public const ROLE_PROVINSI = 'Pemimpin Provinsi FIC Indonesia';
+
+    /** Penulisan lama yang masih tersimpan di database; hanya diganti saat ditampilkan. */
+    public const ROLE_PROVINSI_LAMA = 'Pemimpin Provinsial FIC Indonesia';
+
+    /**
+     * Samakan penulisan peran pimpinan provinsi tanpa mengubah data yang tersimpan.
+     */
+    public static function normalizeRole(?string $role): ?string
+    {
+        return $role === self::ROLE_PROVINSI_LAMA ? self::ROLE_PROVINSI : $role;
+    }
+
     /**
      * Label jenis sapaan dinamis berdasarkan peran pembuat/penulis.
      */
