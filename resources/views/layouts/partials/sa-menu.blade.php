@@ -101,13 +101,26 @@
     .sa-menu-close {
         width: 36px;
         height: 36px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         border: 1px solid rgba(255, 255, 255, 0.84);
         border-radius: 10px;
-        background: rgba(255, 255, 255, 0.55);
+        background: rgba(255, 255, 255, 0.7);
         color: #344054;
-        font-size: 18px;
-        line-height: 1;
         cursor: pointer;
+        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+        transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .sa-menu-close:hover {
+        background: #ffffff;
+        color: #101828;
+    }
+
+    .sa-menu-close svg {
+        display: block;
     }
 
     .sa-menu-list {
@@ -163,7 +176,12 @@
         <div class="sa-menu-sheet">
             <div class="sa-menu-head">
                 <div class="sa-menu-title">{{ $isAdmin ? 'Menu TPPBM' : 'Menu Super Admin' }}</div>
-                <button type="button" class="sa-menu-close" data-sa-menu-close aria-label="Tutup menu">×</button>
+                <button type="button" class="sa-menu-close" data-sa-menu-close aria-label="Tutup menu">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
             <div class="sa-menu-list">
                 <a class="sa-menu-link {{ request()->routeIs('admin.dashboard') || request()->routeIs('superadmin.dashboard') ? 'active' : '' }}" href="{{ $homeUrl }}">Beranda</a>
