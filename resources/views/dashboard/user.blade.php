@@ -74,7 +74,7 @@
             @if($stats['checklist']['bimbingan']['done'])
                 <a href="{{ route('bimbingan.index') }}" style="width:76px; min-width:76px; height:32px; display:inline-flex; align-items:center; justify-content:center; text-align:center; font-size:11px; font-weight:800; color:#027A48; text-decoration:none; background:#ECFDF3; border:1px solid #A6F4C5; border-radius:999px; box-sizing:border-box; flex-shrink:0;">Lihat &rarr;</a>
             @else
-                <a href="{{ route('bimbingan.create') }}" style="width:76px; min-width:76px; height:32px; display:inline-flex; align-items:center; justify-content:center; text-align:center; font-size:11px; font-weight:800; color:#fff; text-decoration:none; background:#1455C0; border-radius:999px; box-sizing:border-box; flex-shrink:0;">+ Isi</a>
+                <a href="{{ route('bimbingan.create') }}" aria-label="Isi Bimbingan Rohani" title="Isi Bimbingan Rohani" style="width:34px; min-width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center; color:#fff; text-decoration:none; background:#1455C0; border-radius:50%; box-sizing:border-box; flex-shrink:0; box-shadow:0 2px 6px rgba(16,24,40,.18);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></a>
             @endif
         </div>
 
@@ -98,7 +98,7 @@
             @if($stats['checklist']['wawanhati']['done'])
                 <a href="{{ route('wawanhati.index') }}" style="width:76px; min-width:76px; height:32px; display:inline-flex; align-items:center; justify-content:center; text-align:center; font-size:11px; font-weight:800; color:#027A48; text-decoration:none; background:#ECFDF3; border:1px solid #A6F4C5; border-radius:999px; box-sizing:border-box; flex-shrink:0;">Lihat &rarr;</a>
             @else
-                <a href="{{ route('wawanhati.create') }}" style="width:76px; min-width:76px; height:32px; display:inline-flex; align-items:center; justify-content:center; text-align:center; font-size:11px; font-weight:800; color:#fff; text-decoration:none; background:#00838F; border-radius:999px; box-sizing:border-box; flex-shrink:0;">+ Isi</a>
+                <a href="{{ route('wawanhati.create') }}" aria-label="Isi Wawanhati Pimpinan Lokal" title="Isi Wawanhati Pimpinan Lokal" style="width:34px; min-width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center; color:#fff; text-decoration:none; background:#00838F; border-radius:50%; box-sizing:border-box; flex-shrink:0; box-shadow:0 2px 6px rgba(16,24,40,.18);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></a>
             @endif
         </div>
 
@@ -122,7 +122,7 @@
             @if($stats['checklist']['jurnal']['done'])
                 <a href="{{ route('jurnal.index') }}" style="width:76px; min-width:76px; height:32px; display:inline-flex; align-items:center; justify-content:center; text-align:center; font-size:11px; font-weight:800; color:#027A48; text-decoration:none; background:#ECFDF3; border:1px solid #A6F4C5; border-radius:999px; box-sizing:border-box; flex-shrink:0;">Lihat &rarr;</a>
             @else
-                <a href="{{ route('jurnal.create') }}" style="width:76px; min-width:76px; height:32px; display:inline-flex; align-items:center; justify-content:center; text-align:center; font-size:11px; font-weight:800; color:#fff; text-decoration:none; background:#027A48; border-radius:999px; box-sizing:border-box; flex-shrink:0;">+ Isi</a>
+                <a href="{{ route('jurnal.create') }}" aria-label="Isi Jurnal Pengembangan Diri" title="Isi Jurnal Pengembangan Diri" style="width:34px; min-width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center; color:#fff; text-decoration:none; background:#027A48; border-radius:50%; box-sizing:border-box; flex-shrink:0; box-shadow:0 2px 6px rgba(16,24,40,.18);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></a>
             @endif
         </div>
     </div>
