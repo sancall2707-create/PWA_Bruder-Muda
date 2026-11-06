@@ -26,6 +26,8 @@ Route::get('/', function () {
         return match ($user->role) {
             'super_admin' => redirect('/super-admin'),
             'admin' => redirect('/admin'),
+            // Bruder Muda: setiap kali aplikasi dibuka (start_url "/"), halaman pertama adalah Sapaan & Pengumuman.
+            'user' => redirect('/sapaan-provinsial'),
             default => redirect('/dashboard'),
         };
     }
