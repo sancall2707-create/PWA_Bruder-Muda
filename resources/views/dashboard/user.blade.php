@@ -192,7 +192,7 @@
             </div>
             <div class="menu-card-text">
                 <h3 class="menu-card-title">Bimbingan Rohani</h3>
-                <p class="menu-card-desc">Laporan &amp; Jadwal</p>
+                <p class="menu-card-desc">Laporan bimbingan</p>
             </div>
         </a>
 
@@ -207,8 +207,8 @@
                 </svg>
             </div>
             <div class="menu-card-text">
-                <h3 class="menu-card-title">Wawanhati</h3>
-                <p class="menu-card-desc">Pimpinan Lokal</p>
+                <h3 class="menu-card-title">Pemimpin Lokal</h3>
+                <p class="menu-card-desc">Laporan wawanhati</p>
             </div>
         </a>
 
