@@ -1,7 +1,7 @@
 /* Cache PWA Bruder FIC.
  * Naikkan CACHE_VERSION setiap kali aset statis berubah agar cache lama dibuang.
  */
-const CACHE_VERSION = '20261105a';
+const CACHE_VERSION = '20261107a';
 const STATIC_CACHE = `pwa-static-${CACHE_VERSION}`;
 const IMAGE_CACHE = `pwa-images-${CACHE_VERSION}`;
 const PAGE_CACHE = `pwa-pages-${CACHE_VERSION}`;
@@ -67,7 +67,7 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    if (request.destination === 'image' || isImagePath(url.pathname)) {
+    if (request.destination === 'image' || isImagePath(url.pathname) || url.pathname.endsWith('/foto')) {
         event.respondWith(staleWhileRevalidate(request, IMAGE_CACHE, IMAGE_CACHE_LIMIT));
         return;
     }
@@ -80,8 +80,6 @@ self.addEventListener('fetch', (event) => {
 function isPrivateAsset(pathname) {
     return pathname.startsWith('/super-admin')
         || pathname.startsWith('/admin')
-        || pathname === '/profil/foto'
-        || pathname.endsWith('/foto')
         || pathname.includes('/bukti');
 }
 

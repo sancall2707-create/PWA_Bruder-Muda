@@ -35,7 +35,6 @@ class PwaCacheTest extends TestCase
         $this->assertStringContainsString('pwa-pages-', $source);
         $this->assertStringContainsString('/css/fic-pwa.css', $source);
         $this->assertStringContainsString('/images/logo-fic.png', $source);
-        $this->assertStringContainsString("pathname === '/profil/foto'", $source);
         $this->assertStringContainsString('no-store', $source);
         $this->assertStringContainsString('clear-private', $source);
     }

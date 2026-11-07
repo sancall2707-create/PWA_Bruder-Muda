@@ -47,7 +47,7 @@ class ProfileImageCompressor
         $etag = '"'.md5($path.$lastModified).'"';
 
         return $disk->response($path, null, [
-            'Cache-Control' => 'private, no-cache, must-revalidate',
+            'Cache-Control' => 'private, max-age=86400, stale-while-revalidate=604800',
             'ETag' => $etag,
             'Last-Modified' => gmdate('D, d M Y H:i:s', $lastModified).' GMT',
         ]);
